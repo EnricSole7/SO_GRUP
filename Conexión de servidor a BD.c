@@ -1,3 +1,10 @@
+//programa en C para consultar los datos de la base de datos
+//Incluir esta libreria para poder hacer las llamadas en shiva2.upc.es
+//#include <my_global.h>
+#include <mysql.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
 int main(int argc, char **argv)
 {
 	MYSQL *conn;
@@ -74,3 +81,17 @@ int main(int argc, char **argv)
 					mysql_errno(conn), mysql_error(conn));
 			exit (1);
 		}
+		//recogemos el resultado de la consulta 
+		resultado = mysql_store_result (conn); 
+		row = mysql_fetch_row (resultado);
+		if (row == NULL)
+			printf ("No se han obtenido datos en la consulta\n");
+		else
+			// El resultado debe ser una matriz con una sola fila
+			// y una columna que contiene el nombre
+			printf ("Nombre de la ciudad: %s\n", row[0] );
+		// cerrar la conexion con el servidor MYSQL 
+		mysql_close (conn);
+		exit(0);
+		
+}
