@@ -98,3 +98,13 @@ C:\Users\nrcso\OneDrive\Escriptori\ENRIC\UNI\EETAC\2n\Q2\SO\PROJCETE\V1\cliente\
 C:\Users\nrcso\OneDrive\Escriptori\ENRIC\UNI\EETAC\2n\Q2\SO\PROJCETE\V1\cliente\WindowsFormsApplication1\obj\Debug\clienteForm.csproj.CoreCompileInputs.cache
 C:\Users\nrcso\OneDrive\Escriptori\ENRIC\UNI\EETAC\2n\Q2\SO\PROJCETE\V1\cliente\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.exe
 C:\Users\nrcso\OneDrive\Escriptori\ENRIC\UNI\EETAC\2n\Q2\SO\PROJCETE\V1\cliente\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.pdb
+C:\SO\Proyecto\Version1\Version1.1\SO_GRUP\WindowsFormsApplication1\bin\Debug\WindowsFormsApplication1.exe
+C:\SO\Proyecto\Version1\Version1.1\SO_GRUP\WindowsFormsApplication1\bin\Debug\WindowsFormsApplication1.pdb
+C:\SO\Proyecto\Version1\Version1.1\SO_GRUP\WindowsFormsApplication1\obj\Debug\clienteForm.csproj.AssemblyReference.cache
+C:\SO\Proyecto\Version1\Version1.1\SO_GRUP\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.Form1.resources
+C:\SO\Proyecto\Version1\Version1.1\SO_GRUP\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.FormLogin.resources
+C:\SO\Proyecto\Version1\Version1.1\SO_GRUP\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.Properties.Resources.resources
+C:\SO\Proyecto\Version1\Version1.1\SO_GRUP\WindowsFormsApplication1\obj\Debug\clienteForm.csproj.GenerateResource.cache
+C:\SO\Proyecto\Version1\Version1.1\SO_GRUP\WindowsFormsApplication1\obj\Debug\clienteForm.csproj.CoreCompileInputs.cache
+C:\SO\Proyecto\Version1\Version1.1\SO_GRUP\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.exe
+C:\SO\Proyecto\Version1\Version1.1\SO_GRUP\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.pdb
