@@ -14,10 +14,12 @@ namespace WindowsFormsApplication1
     public partial class FormLogin : Form
     {
         Socket server;
+        Form1 f1 = new Form1();
         public FormLogin()
         {
             InitializeComponent();
         }
+        
 
         private void FormLogin_Load_1(object sender, EventArgs e)
         {
@@ -28,7 +30,7 @@ namespace WindowsFormsApplication1
             //Creamos un IPEndPoint con el ip del servidor y puerto del servidor 
             //al que deseamos conectarnos
             IPAddress direc = IPAddress.Parse("192.168.1.43");
-            IPEndPoint ipep = new IPEndPoint(direc, 9020);
+            IPEndPoint ipep = new IPEndPoint(direc, 9050);
 
 
             //Creamos el socket 
@@ -67,7 +69,7 @@ namespace WindowsFormsApplication1
                 if (response == "correcto")
                 {
                     MessageBox.Show("Inicio de sesión exitoso");
-                    Form1 f1 = new Form1();
+                   
                     f1.Show();
                     this.Close();
                 }
@@ -87,7 +89,7 @@ namespace WindowsFormsApplication1
             //Creamos un IPEndPoint con el ip del servidor y puerto del servidor 
             //al que deseamos conectarnos
             IPAddress direc = IPAddress.Parse("192.168.1.43");
-            IPEndPoint ipep = new IPEndPoint(direc, 9050);
+            IPEndPoint ipep = new IPEndPoint(direc, 9070);
 
 
             //Creamos el socket 
@@ -110,7 +112,7 @@ namespace WindowsFormsApplication1
 
             if ((nombre != null) && (password != null))
             {
-                string mensaje_registro = "2/" + nombre +"/"+ password;
+                string mensaje_registro = "2/" + nombre +"/"+ password +"/";
                 // Enviamos al servidor el nombre tecleado
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje_registro);
                 server.Send(msg);
@@ -119,17 +121,17 @@ namespace WindowsFormsApplication1
                 //Recibimos la respuesta del servidor
                 byte[] msg_response = new byte[80];
                 server.Receive(msg_response);
-                int response = Convert.ToInt32(Encoding.ASCII.GetString(msg_response).Split('\0')[0]);
+                string response = Encoding.ASCII.GetString(msg_response).Split('\0')[0];
                 //MessageBox.Show("La longitud de tu nombre es: " + mensaje);
 
-                if (response == 0)
+                if (response == "correcto")
                 {
                     MessageBox.Show("Usuario registrado");
                     Form1 f1 = new Form1();
                     f1.Show();
                     this.Close();
                 }
-                else if (response == 1)
+                else if (response == "incorrecto")
                 {
                     MessageBox.Show("Usuario ya existente");
                 }
