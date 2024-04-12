@@ -1,6 +1,6 @@
 ﻿namespace WindowsFormsApplication1
 {
-    partial class Form1
+    partial class Client
     {
         /// <summary>
         /// Variable del diseñador requerida.
@@ -42,6 +42,14 @@
             this.label3 = new System.Windows.Forms.Label();
             this.fecha = new System.Windows.Forms.TextBox();
             this.Desconectar = new System.Windows.Forms.Button();
+            this.login = new System.Windows.Forms.Button();
+            this.user_lbl = new System.Windows.Forms.Label();
+            this.register = new System.Windows.Forms.Button();
+            this.nameBox = new System.Windows.Forms.TextBox();
+            this.pswdBox = new System.Windows.Forms.TextBox();
+            this.namelbl = new System.Windows.Forms.Label();
+            this.pswdlbl = new System.Windows.Forms.Label();
+            this.database = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -90,7 +98,7 @@
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.Enviar_nombre);
             this.groupBox1.Controls.Add(this.nombre);
-            this.groupBox1.Location = new System.Drawing.Point(45, 32);
+            this.groupBox1.Location = new System.Drawing.Point(324, 64);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(4);
@@ -188,29 +196,115 @@
             // 
             // Desconectar
             // 
-            this.Desconectar.Location = new System.Drawing.Point(608, 23);
+            this.Desconectar.Location = new System.Drawing.Point(700, 13);
             this.Desconectar.Margin = new System.Windows.Forms.Padding(4);
             this.Desconectar.Name = "Desconectar";
-            this.Desconectar.Size = new System.Drawing.Size(112, 38);
+            this.Desconectar.Size = new System.Drawing.Size(130, 38);
             this.Desconectar.TabIndex = 7;
-            this.Desconectar.Text = "desconectar";
+            this.Desconectar.Text = "DISCONNECT";
             this.Desconectar.UseVisualStyleBackColor = true;
             this.Desconectar.Click += new System.EventHandler(this.Desconectar_Click);
             // 
-            // Form1
+            // login
+            // 
+            this.login.Location = new System.Drawing.Point(24, 206);
+            this.login.Margin = new System.Windows.Forms.Padding(4);
+            this.login.Name = "login";
+            this.login.Size = new System.Drawing.Size(112, 38);
+            this.login.TabIndex = 8;
+            this.login.Text = "LOGIN";
+            this.login.UseVisualStyleBackColor = true;
+            this.login.Click += new System.EventHandler(this.login_Click);
+            // 
+            // user_lbl
+            // 
+            this.user_lbl.AutoSize = true;
+            this.user_lbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.user_lbl.Location = new System.Drawing.Point(28, 64);
+            this.user_lbl.Name = "user_lbl";
+            this.user_lbl.Size = new System.Drawing.Size(66, 25);
+            this.user_lbl.TabIndex = 9;
+            this.user_lbl.Text = "USER";
+            // 
+            // register
+            // 
+            this.register.Location = new System.Drawing.Point(158, 206);
+            this.register.Margin = new System.Windows.Forms.Padding(4);
+            this.register.Name = "register";
+            this.register.Size = new System.Drawing.Size(112, 38);
+            this.register.TabIndex = 10;
+            this.register.Text = "REGISTER";
+            this.register.UseVisualStyleBackColor = true;
+            this.register.Click += new System.EventHandler(this.register_Click);
+            // 
+            // nameBox
+            // 
+            this.nameBox.Location = new System.Drawing.Point(133, 104);
+            this.nameBox.Name = "nameBox";
+            this.nameBox.Size = new System.Drawing.Size(137, 22);
+            this.nameBox.TabIndex = 11;
+            // 
+            // pswdBox
+            // 
+            this.pswdBox.Location = new System.Drawing.Point(133, 160);
+            this.pswdBox.Name = "pswdBox";
+            this.pswdBox.Size = new System.Drawing.Size(137, 22);
+            this.pswdBox.TabIndex = 12;
+            // 
+            // namelbl
+            // 
+            this.namelbl.AutoSize = true;
+            this.namelbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.namelbl.Location = new System.Drawing.Point(29, 106);
+            this.namelbl.Name = "namelbl";
+            this.namelbl.Size = new System.Drawing.Size(58, 20);
+            this.namelbl.TabIndex = 13;
+            this.namelbl.Text = "Name:";
+            // 
+            // pswdlbl
+            // 
+            this.pswdlbl.AutoSize = true;
+            this.pswdlbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.pswdlbl.Location = new System.Drawing.Point(29, 162);
+            this.pswdlbl.Name = "pswdlbl";
+            this.pswdlbl.Size = new System.Drawing.Size(88, 20);
+            this.pswdlbl.TabIndex = 14;
+            this.pswdlbl.Text = "Password:";
+            // 
+            // database
+            // 
+            this.database.Location = new System.Drawing.Point(324, 382);
+            this.database.Margin = new System.Windows.Forms.Padding(4);
+            this.database.Name = "database";
+            this.database.Size = new System.Drawing.Size(130, 52);
+            this.database.TabIndex = 15;
+            this.database.Text = "SHOW DATABASE";
+            this.database.UseVisualStyleBackColor = true;
+            this.database.Click += new System.EventHandler(this.database_Click);
+            // 
+            // Client
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(733, 361);
+            this.ClientSize = new System.Drawing.Size(868, 462);
+            this.Controls.Add(this.database);
+            this.Controls.Add(this.pswdlbl);
+            this.Controls.Add(this.namelbl);
+            this.Controls.Add(this.pswdBox);
+            this.Controls.Add(this.nameBox);
+            this.Controls.Add(this.register);
+            this.Controls.Add(this.user_lbl);
+            this.Controls.Add(this.login);
             this.Controls.Add(this.Desconectar);
             this.Controls.Add(this.groupBox1);
             this.Margin = new System.Windows.Forms.Padding(4);
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.Name = "Client";
+            this.Text = "Client";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -229,6 +323,14 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Button login;
+        private System.Windows.Forms.Label user_lbl;
+        private System.Windows.Forms.Button register;
+        private System.Windows.Forms.TextBox nameBox;
+        private System.Windows.Forms.TextBox pswdBox;
+        private System.Windows.Forms.Label namelbl;
+        private System.Windows.Forms.Label pswdlbl;
+        private System.Windows.Forms.Button database;
     }
 }
 
