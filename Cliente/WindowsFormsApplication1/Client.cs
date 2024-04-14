@@ -10,6 +10,7 @@ using System.Net;
 using System.Net.Sockets;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.Xml.Linq;
+using System.Windows.Forms.VisualStyles;
 
 namespace WindowsFormsApplication1
 {
@@ -18,6 +19,10 @@ namespace WindowsFormsApplication1
         Socket server;
         string USUARIO;
         string ServerState;
+
+        public static IPAddress direc = IPAddress.Parse("192.168.56.102");
+        public static IPEndPoint ipep = new IPEndPoint(direc, 9012);
+
         public Client()
         {
             InitializeComponent();
@@ -29,16 +34,17 @@ namespace WindowsFormsApplication1
             clientList.Enabled = false;
             logout.Visible = false;
             welcomelbl.Visible = false;
+            peticionesBox.Enabled = false;
+            createGAME.Enabled = false;
+            joinGame.Enabled = false;
+            USUARIO = null;
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             //Creamos un IPEndPoint con el ip del servidor y puerto del servidor 
             //al que deseamos conectarnos
-            IPAddress direc = IPAddress.Parse("192.168.56.102");
-            IPEndPoint ipep = new IPEndPoint(direc, 9080);
-
-
+            
             //Creamos el socket 
             server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             try
@@ -47,12 +53,16 @@ namespace WindowsFormsApplication1
                 //this.BackColor = Color.Green;
                 MessageBox.Show("CONNECTED TO SERVER");
                 ServerState = "UP";
+                offlinelbl.Visible = false;
+                conectserver.Visible = false;
             }
             catch (SocketException ex)
             {
                 //Si hay excepcion imprimimos error y salimos del programa con return 
                 MessageBox.Show("SERVER NOT CONNECTED");
                 ServerState = "DOWN";
+                offlinelbl.Visible = true;
+                conectserver.Visible = true;
                 return;
             }
 
@@ -100,6 +110,9 @@ namespace WindowsFormsApplication1
                     database.Enabled = true;
                     clientList.Enabled = true;
                     logout.Visible = true;
+                    peticionesBox.Enabled = true;
+                    createGAME.Enabled = true;
+                    joinGame.Enabled = true;
                     welcomelbl.Visible = true;
                     welcomelbl.Text = "WELCOME " + nombre;
                     nameBox.Text = "";
@@ -149,6 +162,9 @@ namespace WindowsFormsApplication1
                     database.Enabled = true;
                     clientList.Enabled = true;
                     logout.Visible = true;
+                    peticionesBox.Enabled = true;
+                    createGAME.Enabled = true;
+                    joinGame.Enabled = true;
                     welcomelbl.Visible = true;
                     welcomelbl.Text = "WELCOME " + nombre;
                     nameBox.Text = "";
@@ -245,7 +261,7 @@ namespace WindowsFormsApplication1
 
                 MessageBox.Show(response, "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                fecha.Text = "";
+                //server.Text = "";
             }
             else
             {
@@ -308,6 +324,9 @@ namespace WindowsFormsApplication1
             database.Enabled = false;
             clientList.Enabled = false;
             logout.Visible = false;
+            peticionesBox.Enabled = false;
+            createGAME.Enabled = false;
+            joinGame.Enabled = false;
             welcomelbl.Visible = false;
             welcomelbl.Text = "";
             nameBox.Visible = true;
@@ -316,6 +335,41 @@ namespace WindowsFormsApplication1
             register.Visible = true;
             namelbl.Visible = true;
             pswdlbl.Visible = true;
+        }
+
+        private void conectserver_Click(object sender, EventArgs e)
+        {
+            server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            try
+            {
+                server.Connect(ipep);//Intentamos conectar el socket
+                //this.BackColor = Color.Green;
+                MessageBox.Show("CONNECTION ESTABLISHED");
+                ServerState = "UP";
+                offlinelbl.Visible = false;
+                conectserver.Visible = false;
+            }
+            catch (SocketException ex)
+            {
+                //Si hay excepcion imprimimos error y salimos del programa con return 
+                MessageBox.Show("SERVER NOT CONNECTED");
+                ServerState = "DOWN";
+                offlinelbl.Visible = true;
+                conectserver.Visible = true;
+                return;
+            }
+        }
+
+        private void createGAME_Click(object sender, EventArgs e)
+        {
+            GameWndw G = new GameWndw();
+            G.SetGame(server, USUARIO);
+            G.ShowDialog();
+        }
+
+        private void joinGame_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

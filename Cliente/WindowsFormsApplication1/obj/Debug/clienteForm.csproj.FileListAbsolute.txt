@@ -108,3 +108,4 @@ C:\Users\nrcso\OneDrive\Escriptori\ENRIC\UNI\EETAC\2n\Q2\SO\PROJCETE\V1\V1\SO_GR
 C:\Users\nrcso\OneDrive\Escriptori\ENRIC\UNI\EETAC\2n\Q2\SO\PROJCETE\V1\V1\SO_GRUP\Cliente\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.pdb
 C:\Users\nrcso\OneDrive\Escriptori\ENRIC\UNI\EETAC\2n\Q2\SO\PROJCETE\V1\V1\SO_GRUP\Cliente\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.Client.resources
 C:\Users\nrcso\OneDrive\Escriptori\ENRIC\UNI\EETAC\2n\Q2\SO\PROJCETE\V1\V1\SO_GRUP\Cliente\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.DataBase.resources
+C:\Users\nrcso\OneDrive\Escriptori\ENRIC\UNI\EETAC\2n\Q2\SO\PROJCETE\V1\V1\SO_GRUP\Cliente\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.GameWndw.resources

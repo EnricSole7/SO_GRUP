@@ -44,7 +44,7 @@ void *AtenderCliente (void *socket)
 	}
 	
 	//inicializar la conexion
-	conn = mysql_real_connect (conn, "localhost","root", "mysql", "BD",0, NULL, 0);
+	conn = mysql_real_connect (conn, "localhost","root", "mysql", "data_base",0, NULL, 0);
 	//MYSQL *mysql, char *host, char *user, char *passwd, char *db, int port, char *unix_socket, long client_flag
 	
 	if (conn==NULL) 
@@ -176,53 +176,57 @@ void *AtenderCliente (void *socket)
 			//guardamos el nombre del usuario a desconectar
 			char usuario[60];
 			p = strtok (NULL,"/");
-			strcpy(usuario,p);
-			printf ("%s\n", usuario);
-			
-			char *d = strtok(conectados, "|");
-			strcpy(nom, d);
-			printf ("%s\n", nom);
-			//	|Enric|Juan|Maria
-			if(strcmp(usuario, nom) == 0)	//si el usuario a desconectar es el primero de la lista
+
+			if(p != NULL) //si hay usuario conectado
 			{
-				printf ("El usuario era el primero de la lista\n");
-				d = strtok(NULL, "|");
+				strcpy(usuario,p);
+				printf ("%s\n", usuario);
+	
+				char *d = strtok(conectados, "|");
+				strcpy(nom, d);
+				printf ("%s\n", nom);
+				//	|Enric|Juan|Maria
+				if(strcmp(usuario, nom) == 0)	//si el usuario a desconectar es el primero de la lista
+				{
+					printf ("El usuario era el primero de la lista\n");
+					d = strtok(NULL, "|");
+					
+					while(d != NULL)
+					{
+						strcpy(nom, d);
+						sprintf(newconectados, "%s|%s", newconectados, nom);
+						d = strtok(NULL, "|");
+					}
+				}
+				else	//si el usuario a desconectar no es el primero dee la lista
+				{
+					printf ("El usuario no era el primero de la lista\n");
+					//recorremos la lista de conectados hasta encontrar nuestro usuario
+					while(strcmp(usuario, nom) != 0)
+					{
+						//mientras no lo encontremos, construimos nuestra nueva lista sin el usuario
+						sprintf(newconectados, "%s|%s", newconectados, nom);
+						d = strtok(NULL, "|");
+						strcpy(nom, d);
+					}
+					printf ("%s\n", newconectados);
+					//cuando lo encontremos, lo saltamos en la lista y seguimos con los siguientes usuarios
+					d = strtok(NULL, "|");
+					
+					while(d != NULL)
+					{
+						strcpy(nom, d);
+						sprintf(newconectados, "%s|%s", newconectados, nom);
+						d = strtok(NULL, "|");
+					}
+				}
 				
-				while(d != NULL)
-				{
-					strcpy(nom, d);
-					sprintf(newconectados, "%s|%s", newconectados, nom);
-					d = strtok(NULL, "|");
-				}
-			}
-			else	//si el usuario a desconectar no es el primero dee la lista
-			{
-				printf ("El usuario no era el primero de la lista\n");
-				//recorremos la lista de conectados hasta encontrar nuestro usuario
-				while(strcmp(usuario, nom) != 0)
-				{
-					//mientras no lo encontremos, construimos nuestra nueva lista sin el usuario
-					sprintf(newconectados, "%s|%s", newconectados, nom);
-					d = strtok(NULL, "|");
-					strcpy(nom, d);
-				}
 				printf ("%s\n", newconectados);
-				//cuando lo encontremos, lo saltamos en la lista y seguimos con los siguientes usuarios
-				d = strtok(NULL, "|");
-				
-				while(d != NULL)
-				{
-					strcpy(nom, d);
-					sprintf(newconectados, "%s|%s", newconectados, nom);
-					d = strtok(NULL, "|");
-				}
+				//guardamos la nueva lista sin el usuario en la lista de conectados
+				pthread_mutex_lock (&mutex);	//No interrumpas ahora
+				strcpy(conectados, newconectados);
+				pthread_mutex_unlock(&mutex);	//Ya puedes interrumpir
 			}
-			
-			printf ("%s\n", newconectados);
-			//guardamos la nueva lista sin el usuario en la lista de conectados
-			pthread_mutex_lock (&mutex);	//No interrumpas ahora
-			strcpy(conectados, newconectados);
-			pthread_mutex_unlock(&mutex);	//Ya puedes interrumpir
 		}
 		
 		if (codigo == 99)	//SHOW LISTA CONECTADOS
@@ -253,7 +257,7 @@ void *AtenderCliente (void *socket)
 	}
 	// Se acabo el servicio para este cliente
 	close(socket_conn); 
-	printf ("Cleinte desconectado\n");
+	printf ("Cliente desconectado\n");
 }
 
 //establecer connexion con el servidor + thread segun el socket (varios usuarios)
@@ -275,7 +279,7 @@ int main(int argc, char *argv[])
 	//htonl formatea el numero que recibe al formato necesario
 	serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);
 	// escucharemos en el port 9050
-	serv_adr.sin_port = htons(9080);
+	serv_adr.sin_port = htons(9012);
 	if (bind(socket_listen, (struct sockaddr *) &serv_adr, sizeof(serv_adr)) < 0)
 		printf ("Error al bind\n");
 	//La cola de peticiones pendientes no podr? ser superior a 4
@@ -306,13 +310,6 @@ int main(int argc, char *argv[])
 		i++;
 	}
 	
-	/* //bucle nomes util si el bucle de peticions no és infinit
-	for (i = 0; i<5; i++)
-	{
-		//espera a que acabin tots els threads en marxa
-		pthread_join (thread[i], NULL);
-	}
-	*/
 }
 
 int login(char nombre[60], char password[60], MYSQL *conn) {
@@ -324,7 +321,7 @@ int login(char nombre[60], char password[60], MYSQL *conn) {
 	
 	strcpy(consulta, "\0");
 	
-	strcat (consulta, "SELECT * FROM jugador WHERE nombre = '");
+	strcat (consulta, "SELECT * FROM Player WHERE nombre = '");
 	strcat (consulta, nombre);
 	strcat (consulta, "'");
 	printf("consulta: %s\n", consulta);
@@ -368,7 +365,7 @@ int registro(char nombre[60], char password[60], MYSQL *conn)
 	//pasamos 'seconds' a un string para insertarlo a la base de datos
 	
 	// si existe usuario
-	err=mysql_query (conn, "SELECT * FROM jugador;");
+	err=mysql_query (conn, "SELECT * FROM Player;");
 	if (err!=0) {
 		printf ("Error al consultar datos de la base %u %s\n",
 				mysql_errno(conn), mysql_error(conn));
@@ -409,7 +406,7 @@ int registro(char nombre[60], char password[60], MYSQL *conn)
 	new_id = filas+1;
 	sprintf(id2,"%d",new_id);
 	
-	sprintf (consulta, "SELECT * FROM jugador WHERE nombre ='%s';", nombre);
+	sprintf (consulta, "SELECT * FROM Player WHERE nombre ='%s';", nombre);
 	printf("consulta: %s\n", consulta);
 	
 	
@@ -428,7 +425,7 @@ int registro(char nombre[60], char password[60], MYSQL *conn)
 	if(row == NULL)
 	{
 		//INSERT INTO datos_personales(nombre, contrasenya) VALUES ('name', 'password');
-		strcpy (consulta,"INSERT INTO jugador (id,nombre,contrasenya) VALUES (");
+		strcpy (consulta,"INSERT INTO Player (id,nombre,contrasenya) VALUES (");
 		
 		strcat (consulta, id2);
 		strcat (consulta, ",'");
@@ -454,7 +451,6 @@ int registro(char nombre[60], char password[60], MYSQL *conn)
 
 void ShowDataBase(char result[500], MYSQL *conn)
 {
-
 	char consulta[60];
 	char jugadores[100] = "";
 	char servers[50] = "";
@@ -466,11 +462,11 @@ void ShowDataBase(char result[500], MYSQL *conn)
 	strcpy(consulta, "\0");
 	
 	//BUSCAMOS PRIMERO TODOS LOS JUGADORES DE LA LISTA
-	sprintf(consulta, "SELECT * FROM jugador;");
+	sprintf(consulta, "SELECT * FROM Player;");
 	printf("%s\n", consulta);
 	err = mysql_query(conn, consulta);
 	if(err!=0){
-		sprintf(result, "NO HAY JUGADORES,");
+		sprintf(result, "NO PLAYERS,");
 	}
 	else
 	{
@@ -498,11 +494,11 @@ void ShowDataBase(char result[500], MYSQL *conn)
 	}
 
 	//BUSCAMOS AHORA LA ISTA DE SERVIDORES
-	sprintf(consulta, "SELECT * FROM servidor;");
+	sprintf(consulta, "SELECT * FROM Server;");
 	
 	err = mysql_query(conn, consulta);
 	if(err!=0){
-		strcat(result, "NO HAY SERVIDORES,");
+		strcat(result, "NO SERVERS,");
 	}
 	else
 	{
@@ -528,11 +524,11 @@ void ShowDataBase(char result[500], MYSQL *conn)
 	}
 
 	//BUSCAMOS AHORA LA ISTA DE PARTIDAS
-	sprintf(consulta, "SELECT * FROM partida;");
+	sprintf(consulta, "SELECT * FROM Game;");
 	
 	err = mysql_query(conn, consulta);
 	if(err!=0){
-		strcat(result, "NO HAY PARTIDAS,");
+		strcat(result, "NO GAMES,");
 	}
 	else
 	{
@@ -561,7 +557,7 @@ void ShowDataBase(char result[500], MYSQL *conn)
 
 void localizacion(char nombre[60], char respuesta[100], MYSQL *conn) 
 {
-	//Buscamos host_id del serrver donde ha ganado esta persona
+	//Buscamos host_id del serrver donde ha jugado esta persona
 	int err;
 	MYSQL_RES *resultado;
 	MYSQL_ROW row;
@@ -569,7 +565,7 @@ void localizacion(char nombre[60], char respuesta[100], MYSQL *conn)
 	
 	strcpy(consulta, "\0");
 	
-	sprintf (consulta, "SELECT servidor.host_id FROM jugador,partida,servidor WHERE jugador.nombre= '%s' AND jugador.id=partida.ganador AND partida.id_s=servidor.id;",nombre);
+	sprintf (consulta, "SELECT Server.host_id FROM Player,Game,Server WHERE Player.nombre= '%s' AND (Player.id=Game.id_j1 OR Player.id=Game.id_j2) AND Game.id_s=Server.id;",nombre);
 	
 	printf("consulta: %s\n",consulta);
 	
@@ -593,7 +589,7 @@ void localizacion(char nombre[60], char respuesta[100], MYSQL *conn)
 		{
 			char ciudades[200];
 			
-			sprintf(ciudades, "%s has won at: %s",nombre, row[0]);
+			sprintf(ciudades, "%s has played at: %s",nombre, row[0]);
 			row = mysql_fetch_row (resultado);
 			
 			while(row !=NULL)
@@ -620,14 +616,14 @@ void sacarnombre(char fecha[60],char respuesta[100], MYSQL *conn)
 	
 	strcpy(consulta, "\0");
 	
-	sprintf (consulta," SELECT jugador.nombre FROM partida,jugador WHERE partida.fecha='%s' AND partida.ganador=jugador.id;",fecha);
+	sprintf (consulta," SELECT DISTINCT Game.minijuego FROM Game WHERE Game.fecha='%s';",fecha);
 	
 	printf("consulta: %s\n",consulta);
 	
 	err = mysql_query(conn, consulta);
 	
 	if(err!=0){
-		sprintf(respuesta,"Nadie ha ganado en la fecha que dices");
+		sprintf(respuesta,"No se ha jugado en la fecha que dices");
 	}
 	else
 	{
@@ -637,21 +633,21 @@ void sacarnombre(char fecha[60],char respuesta[100], MYSQL *conn)
 		
 		if(row == NULL)		//La consulta esta vacia por lo que puede no existir o no haber ganado nunca
 		{
-			sprintf(respuesta,"Nadie ha ganado en la fecha que dices");
+			sprintf(respuesta,"No se ha jugado en la fecha que dices");
 		}
 		else
 		{
-			char nombre[200];
+			char minigame[200];
 			
-			sprintf(nombre, "%s",row[0]);
+			sprintf(minigame, "%s",row[0]);
 			row = mysql_fetch_row (resultado);
 			while(row !=NULL)
 			{
-				sprintf(nombre, "%s %s",nombre,row[0]);
+				sprintf(minigame, "%s %s",minigame,row[0]);
 			
 				row = mysql_fetch_row (resultado);
 			}
-			sprintf(respuesta, "%s has/have won on the selected date &s\n",nombre, fecha);
+			sprintf(respuesta, "%s was/were played on the selected date %s\n",minigame, fecha);
 		}
 		//retornamos la respuesta con el nombre dee la persona
 	}
@@ -668,7 +664,7 @@ void nombreserv(char servidor[60], char respuesta[100], MYSQL *conn)
 	
 	strcpy(consulta, "\0");
 	
-	sprintf (consulta, "SELECT DISTINCT jugador.nombre FROM jugador,partida,servidor WHERE servidor.host_id='%s' AND servidor.id=partida.id_s AND (partida.id_j1=jugador.id OR partida.id_j2=jugador.id);",servidor);
+	sprintf (consulta, "SELECT DISTINCT Player.nombre FROM Player,Game,Server WHERE Server.host_id='%s' AND Server.id=Game.id_s AND (Game.id_j1=Player.id OR Game.id_j2=Player.id);",servidor);
 	
 	printf("consulta: %s\n",consulta);
 	
@@ -693,7 +689,7 @@ void nombreserv(char servidor[60], char respuesta[100], MYSQL *conn)
 			char aux[200];
 			char nombres[200];
 			
-			sprintf(nombres, "The players who have won at %s are: %s", servidor, row[0]);
+			sprintf(nombres, "The players who have played at %s are: %s", servidor, row[0]);
 			sprintf(respuesta,"%s",nombres);
 			row = mysql_fetch_row (resultado);
 			while(row !=NULL)

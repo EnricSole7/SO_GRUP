@@ -65,6 +65,12 @@
     <Compile Include="DataBase.Designer.cs">
       <DependentUpon>DataBase.cs</DependentUpon>
     </Compile>
+    <Compile Include="GameWndw.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GameWndw.Designer.cs">
+      <DependentUpon>GameWndw.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Client.resx">
@@ -72,6 +78,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DataBase.resx">
       <DependentUpon>DataBase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GameWndw.resx">
+      <DependentUpon>GameWndw.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
