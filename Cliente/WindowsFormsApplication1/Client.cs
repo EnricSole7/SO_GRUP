@@ -9,17 +9,26 @@ using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Xml.Linq;
 
 namespace WindowsFormsApplication1
 {
     public partial class Client : Form
     {
         Socket server;
+        string USUARIO;
+        string ServerState;
         public Client()
         {
             InitializeComponent();
+            //forcem a que s'hagi de tancar el programa amb el botó de desconnectar
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            //this.Bounds = Screen.PrimaryScreen.WorkingArea;
 
             database.Enabled = false;
+            clientList.Enabled = false;
+            logout.Visible = false;
+            welcomelbl.Visible = false;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -37,72 +46,33 @@ namespace WindowsFormsApplication1
                 server.Connect(ipep);//Intentamos conectar el socket
                 //this.BackColor = Color.Green;
                 MessageBox.Show("CONNECTED TO SERVER");
-
+                ServerState = "UP";
             }
             catch (SocketException ex)
             {
                 //Si hay excepcion imprimimos error y salimos del programa con return 
                 MessageBox.Show("SERVER NOT CONNECTED");
+                ServerState = "DOWN";
                 return;
             }
 
         }
-        
-        private void Enviar_nombre_Click(object sender, EventArgs e)
-        {
-            string mensaje = "5/" + nombre.Text;
-            // Enviamos al servidor el nombre tecleado
-            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-            server.Send(msg);
-
-            //Recibimos la respuesta del servidor
-            byte[] msg2 = new byte[80];
-            server.Receive(msg2);
-            mensaje = Encoding.ASCII.GetString(msg2).Split (',')[0];
-            MessageBox.Show("Las localizaciones de los servers son: " + mensaje);
-
-        }
-
-        private void Enviar_fecha_Click(object sender, EventArgs e)
-        {
-            string mensaje = "6/" + fecha.Text;
-            // Enviamos al servidor el nombre tecleado
-            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-            server.Send(msg);
-
-            //Recibimos la respuesta del servidor
-            byte[] msg2 = new byte[80];
-            server.Receive(msg2);
-            mensaje = Encoding.ASCII.GetString(msg2).Split(',')[0];
-            MessageBox.Show("El ganador es: " + mensaje);
-        }
-
-        private void Enviar_server_Click(object sender, EventArgs e)
-        {
-            string mensaje = "7/" + server_box.Text;
-            // Enviamos al servidor el nombre tecleado
-            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-            server.Send(msg);
-
-            //Recibimos la respuesta del servidor
-            byte[] msg2 = new byte[80];
-            server.Receive(msg2);
-            mensaje = Encoding.ASCII.GetString(msg2).Split(',')[0];
-            MessageBox.Show("Los jugadores son: " + mensaje);
-        }
 
         private void Desconectar_Click(object sender, EventArgs e)
         {
-            //mensaje de desconexión
-            string mensaje = "0/";
-
-            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-            server.Send(msg);
-            // Se terminó el servicio. 
-            // Nos desconectamos
-            this.BackColor = Color.Gray;
-            server.Shutdown(SocketShutdown.Both);
-            server.Close();
+            if(ServerState == "UP") //si el servidor encara esta RUNNING es tanca
+            {
+                //mensaje de desconexión del USUARIO en cuestion
+                string mensaje = "0/" + USUARIO;
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
+                // Se terminó el servicio. 
+                // Nos desconectamos
+                server.Shutdown(SocketShutdown.Both);
+                server.Close();
+                ServerState = "DOWN";
+            }
+            
             this.Close();
         }
 
@@ -125,10 +95,21 @@ namespace WindowsFormsApplication1
 
                 if (response == "correcto")
                 {
+                    USUARIO = nombre;
                     MessageBox.Show("Login Successful", "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     database.Enabled = true;
+                    clientList.Enabled = true;
+                    logout.Visible = true;
+                    welcomelbl.Visible = true;
+                    welcomelbl.Text = "WELCOME " + nombre;
                     nameBox.Text = "";
                     pswdBox.Text = "";
+                    nameBox.Visible = false;
+                    pswdBox.Visible = false;
+                    login.Visible = false;
+                    register.Visible = false;
+                    namelbl.Visible = false;
+                    pswdlbl.Visible = false;
                 }
                 else if (response == "incorrecto")
                 {
@@ -140,7 +121,6 @@ namespace WindowsFormsApplication1
             else
             {
                 MessageBox.Show("Introduce Valid Values", "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-
             }
         }
 
@@ -164,10 +144,21 @@ namespace WindowsFormsApplication1
 
                 if (response == "correcto")
                 {
+                    USUARIO = nombre;
                     MessageBox.Show("User Added Correclty", "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     database.Enabled = true;
+                    clientList.Enabled = true;
+                    logout.Visible = true;
+                    welcomelbl.Visible = true;
+                    welcomelbl.Text = "WELCOME " + nombre;
                     nameBox.Text = "";
                     pswdBox.Text = "";
+                    nameBox.Visible = false;
+                    pswdBox.Visible = false;
+                    login.Visible = false;
+                    register.Visible = false;
+                    namelbl.Visible = false;
+                    pswdlbl.Visible = false;
                 }
                 else if (response == "incorrecto")
                 {
@@ -178,7 +169,87 @@ namespace WindowsFormsApplication1
             }
             else
             {
-                MessageBox.Show("Introduce valores validos");
+                MessageBox.Show("Introduce Valid Values", "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+        }
+
+        private void Enviar_nombre_Click(object sender, EventArgs e)
+        {
+            string name = nombre.Text;
+
+            if (name != null)
+            {
+                string mensaje_usuario = "3/" + name;
+                // Enviamos al servidor el nombre tecleado
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje_usuario);
+                server.Send(msg);
+
+                //Recibimos la respuesta del servidor
+                byte[] msg_response = new byte[80];
+                server.Receive(msg_response);
+                string response = Encoding.ASCII.GetString(msg_response).Split(',')[0];
+                //MessageBox.Show("La longitud de tu nombre es: " + mensaje);
+
+                MessageBox.Show(response, "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                nombre.Text = "";
+            }
+            else
+            {
+                MessageBox.Show("Introduce Valid Values", "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+
+        }
+
+        private void Enviar_fecha_Click(object sender, EventArgs e)
+        {
+            string date = fecha.Text;
+
+            if (date != null)
+            {
+                string mensaje_usuario = "4/" + date;
+                // Enviamos al servidor el nombre tecleado
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje_usuario);
+                server.Send(msg);
+
+                //Recibimos la respuesta del servidor
+                byte[] msg_response = new byte[80];
+                server.Receive(msg_response);
+                string response = Encoding.ASCII.GetString(msg_response).Split(',')[0];
+                //MessageBox.Show("La longitud de tu nombre es: " + mensaje);
+
+                MessageBox.Show(response, "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                fecha.Text = "";
+            }
+            else
+            {
+                MessageBox.Show("Introduce Valid Values", "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+        }
+
+        private void Enviar_server_Click(object sender, EventArgs e)
+        {
+            string servr = server_box.Text;
+
+            if (servr != null)
+            {
+                string mensaje_usuario = "5/" + servr;
+                // Enviamos al servidor el nombre tecleado
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje_usuario);
+                server.Send(msg);
+
+                //Recibimos la respuesta del servidor
+                byte[] msg_response = new byte[80];
+                server.Receive(msg_response);
+                string response = Encoding.ASCII.GetString(msg_response).Split(',')[0];
+                //MessageBox.Show("La longitud de tu nombre es: " + mensaje);
+
+                MessageBox.Show(response, "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                fecha.Text = "";
+            }
+            else
+            {
+                MessageBox.Show("Introduce Valid Values", "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
 
@@ -197,6 +268,54 @@ namespace WindowsFormsApplication1
             DataBase formDB = new DataBase();
             formDB.SetBD(response);
             formDB.ShowDialog();
+        }
+
+        private void clientList_Click(object sender, EventArgs e)
+        {
+            string mensaje_usuario = "99/";
+            // Enviamos al servidor el nombre i contraseña introducidos
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje_usuario);
+            server.Send(msg);
+
+            //Recibimos la respuesta del servidor
+            byte[] msg_response = new byte[500];
+            server.Receive(msg_response);
+            string response = Encoding.ASCII.GetString(msg_response).Split(',')[0];
+
+            if (response != null)
+            {
+                MessageBox.Show("Connected Users: " + response, "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                MessageBox.Show("No Users Connected", "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+
+            }
+
+        }
+
+        private void logout_Click(object sender, EventArgs e)
+        {
+            string mensaje = "0/" + USUARIO;
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+            server.Send(msg);
+            // Se terminó el servicio. 
+            // Nos desconectamos
+            server.Shutdown(SocketShutdown.Both);
+            server.Close();
+            ServerState = "DOWN";
+
+            database.Enabled = false;
+            clientList.Enabled = false;
+            logout.Visible = false;
+            welcomelbl.Visible = false;
+            welcomelbl.Text = "";
+            nameBox.Visible = true;
+            pswdBox.Visible = true;
+            login.Visible = true;
+            register.Visible = true;
+            namelbl.Visible = true;
+            pswdlbl.Visible = true;
         }
     }
 }

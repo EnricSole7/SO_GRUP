@@ -50,6 +50,9 @@
             this.namelbl = new System.Windows.Forms.Label();
             this.pswdlbl = new System.Windows.Forms.Label();
             this.database = new System.Windows.Forms.Button();
+            this.clientList = new System.Windows.Forms.Button();
+            this.welcomelbl = new System.Windows.Forms.Label();
+            this.logout = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -173,7 +176,7 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(326, 32);
             this.label4.TabIndex = 12;
-            this.label4.Text = "Devuelve la localización del server donde ha ganado\r\n esta persona\r\n";
+            this.label4.Text = "Devuelve la localización del server donde ha ganado\r\nesta persona\r\n";
             // 
             // label3
             // 
@@ -201,7 +204,7 @@
             this.Desconectar.Name = "Desconectar";
             this.Desconectar.Size = new System.Drawing.Size(130, 38);
             this.Desconectar.TabIndex = 7;
-            this.Desconectar.Text = "DISCONNECT";
+            this.Desconectar.Text = "CLOSE";
             this.Desconectar.UseVisualStyleBackColor = true;
             this.Desconectar.Click += new System.EventHandler(this.Desconectar_Click);
             // 
@@ -273,7 +276,7 @@
             // 
             // database
             // 
-            this.database.Location = new System.Drawing.Point(324, 382);
+            this.database.Location = new System.Drawing.Point(13, 290);
             this.database.Margin = new System.Windows.Forms.Padding(4);
             this.database.Name = "database";
             this.database.Size = new System.Drawing.Size(130, 52);
@@ -282,11 +285,45 @@
             this.database.UseVisualStyleBackColor = true;
             this.database.Click += new System.EventHandler(this.database_Click);
             // 
+            // clientList
+            // 
+            this.clientList.Location = new System.Drawing.Point(151, 290);
+            this.clientList.Margin = new System.Windows.Forms.Padding(4);
+            this.clientList.Name = "clientList";
+            this.clientList.Size = new System.Drawing.Size(130, 52);
+            this.clientList.TabIndex = 16;
+            this.clientList.Text = "SHOW CLIENT LIST";
+            this.clientList.UseVisualStyleBackColor = true;
+            this.clientList.Click += new System.EventHandler(this.clientList_Click);
+            // 
+            // welcomelbl
+            // 
+            this.welcomelbl.AutoSize = true;
+            this.welcomelbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.welcomelbl.Location = new System.Drawing.Point(28, 215);
+            this.welcomelbl.Name = "welcomelbl";
+            this.welcomelbl.Size = new System.Drawing.Size(0, 29);
+            this.welcomelbl.TabIndex = 17;
+            // 
+            // logout
+            // 
+            this.logout.Location = new System.Drawing.Point(85, 133);
+            this.logout.Margin = new System.Windows.Forms.Padding(4);
+            this.logout.Name = "logout";
+            this.logout.Size = new System.Drawing.Size(130, 38);
+            this.logout.TabIndex = 18;
+            this.logout.Text = "LOGOUT";
+            this.logout.UseVisualStyleBackColor = true;
+            this.logout.Click += new System.EventHandler(this.logout_Click);
+            // 
             // Client
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(868, 462);
+            this.Controls.Add(this.logout);
+            this.Controls.Add(this.welcomelbl);
+            this.Controls.Add(this.clientList);
             this.Controls.Add(this.database);
             this.Controls.Add(this.pswdlbl);
             this.Controls.Add(this.namelbl);
@@ -331,6 +368,9 @@
         private System.Windows.Forms.Label namelbl;
         private System.Windows.Forms.Label pswdlbl;
         private System.Windows.Forms.Button database;
+        private System.Windows.Forms.Button clientList;
+        private System.Windows.Forms.Label welcomelbl;
+        private System.Windows.Forms.Button logout;
     }
 }
 
