@@ -109,3 +109,14 @@ C:\Users\nrcso\OneDrive\Escriptori\ENRIC\UNI\EETAC\2n\Q2\SO\PROJCETE\V1\V1\SO_GR
 C:\Users\nrcso\OneDrive\Escriptori\ENRIC\UNI\EETAC\2n\Q2\SO\PROJCETE\V1\V1\SO_GRUP\Cliente\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.Client.resources
 C:\Users\nrcso\OneDrive\Escriptori\ENRIC\UNI\EETAC\2n\Q2\SO\PROJCETE\V1\V1\SO_GRUP\Cliente\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.DataBase.resources
 C:\Users\nrcso\OneDrive\Escriptori\ENRIC\UNI\EETAC\2n\Q2\SO\PROJCETE\V1\V1\SO_GRUP\Cliente\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.GameWndw.resources
+C:\SO\Proyecto\Version2\V2\SO_GRUP\V2\SO_GRUP\Cliente\WindowsFormsApplication1\bin\Debug\WindowsFormsApplication1.exe
+C:\SO\Proyecto\Version2\V2\SO_GRUP\V2\SO_GRUP\Cliente\WindowsFormsApplication1\bin\Debug\WindowsFormsApplication1.pdb
+C:\SO\Proyecto\Version2\V2\SO_GRUP\V2\SO_GRUP\Cliente\WindowsFormsApplication1\obj\Debug\clienteForm.csproj.AssemblyReference.cache
+C:\SO\Proyecto\Version2\V2\SO_GRUP\V2\SO_GRUP\Cliente\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.Client.resources
+C:\SO\Proyecto\Version2\V2\SO_GRUP\V2\SO_GRUP\Cliente\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.DataBase.resources
+C:\SO\Proyecto\Version2\V2\SO_GRUP\V2\SO_GRUP\Cliente\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.GameWndw.resources
+C:\SO\Proyecto\Version2\V2\SO_GRUP\V2\SO_GRUP\Cliente\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.Properties.Resources.resources
+C:\SO\Proyecto\Version2\V2\SO_GRUP\V2\SO_GRUP\Cliente\WindowsFormsApplication1\obj\Debug\clienteForm.csproj.GenerateResource.cache
+C:\SO\Proyecto\Version2\V2\SO_GRUP\V2\SO_GRUP\Cliente\WindowsFormsApplication1\obj\Debug\clienteForm.csproj.CoreCompileInputs.cache
+C:\SO\Proyecto\Version2\V2\SO_GRUP\V2\SO_GRUP\Cliente\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.exe
+C:\SO\Proyecto\Version2\V2\SO_GRUP\V2\SO_GRUP\Cliente\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.pdb

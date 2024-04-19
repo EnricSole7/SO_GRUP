@@ -20,13 +20,13 @@ namespace WindowsFormsApplication1
         string USUARIO;
         string ServerState;
 
-        public static IPAddress direc = IPAddress.Parse("192.168.56.102");
-        public static IPEndPoint ipep = new IPEndPoint(direc, 9012);
+        public static IPAddress direc = IPAddress.Parse("192.168.1.43");
+        public static IPEndPoint ipep = new IPEndPoint(direc, 9014);
 
         public Client()
         {
             InitializeComponent();
-            //forcem a que s'hagi de tancar el programa amb el botó de desconnectar
+            //forcem a que s'hagi de tancar el programa amb el botó de desconnectar 192.168.56.102
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             //this.Bounds = Screen.PrimaryScreen.WorkingArea;
 

@@ -221,6 +221,7 @@ void *AtenderCliente (void *socket)
 					}
 				}
 				
+				borrarnombre(nom,conn);
 				printf ("%s\n", newconectados);
 				//guardamos la nueva lista sin el usuario en la lista de conectados
 				pthread_mutex_lock (&mutex);	//No interrumpas ahora
@@ -342,6 +343,9 @@ int login(char nombre[60], char password[60], MYSQL *conn) {
 		while (row!=NULL){
 			//en este caso el id sera row[0], el nombre sera row[1], y la contrasena sera row[2]
 			if(strcmp(row[2], password) == 0){
+				sprintf (consulta,"INSERT INTO Connected VALUES ('%s');",nombre);
+				err = mysql_query(conn, consulta);
+				printf(consulta);
 				respuesta =0; //el usuario existe y la contrasena coincide
 			}else{
 				respuesta =  -1; //contrasena incorrecta
@@ -707,3 +711,30 @@ void nombreserv(char servidor[60], char respuesta[100], MYSQL *conn)
 		//retornamos la respuesta con los nombres
 	}
 }
+void borrarnombre(char nombre[60],  MYSQL *conn) 
+	{
+		//Buscamos host_id del serrver donde ha jugado esta persona
+		int err;
+		MYSQL_RES *resultado;
+		MYSQL_ROW row;
+		char consulta[500];
+		
+		strcpy(consulta, "\0");
+		sprintf (consulta, "DELETE FROM Connected WHERE conectado='%s';",nombre);
+		
+		printf("consulta: %s\n",consulta);
+		
+		err = mysql_query(conn, consulta);
+		if(err!=0)
+		{
+			printf("No has podido delogear");
+		}
+		else
+		{
+			printf("Deslogeo exitoso");
+			
+			//retornamos la respuesta con las ciudades (host id server))
+		}
+		
+	}
+	
