@@ -20,8 +20,8 @@ namespace WindowsFormsApplication1
         string USUARIO;
         string ServerState;
 
-        public static IPAddress direc = IPAddress.Parse("192.168.1.43");
-        public static IPEndPoint ipep = new IPEndPoint(direc, 9014);
+        public static IPAddress direc = IPAddress.Parse("10.4.119.5");
+        public static IPEndPoint ipep = new IPEndPoint(direc, 50080);
 
         public Client()
         {

@@ -44,7 +44,7 @@ void *AtenderCliente (void *socket)
 	}
 	
 	//inicializar la conexion
-	conn = mysql_real_connect (conn, "localhost","root", "mysql", "data_base",0, NULL, 0);
+	conn = mysql_real_connect (conn, "shiva2.upc.es","root", "mysql", "data_base",0, NULL, 0);
 	//MYSQL *mysql, char *host, char *user, char *passwd, char *db, int port, char *unix_socket, long client_flag
 	
 	if (conn==NULL) 
