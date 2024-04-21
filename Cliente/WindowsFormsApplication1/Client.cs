@@ -1,31 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using System.Net;
 using System.Net.Sockets;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using System.Xml.Linq;
-using System.Windows.Forms.VisualStyles;
+using System.Net;
+using System.Threading;
+
 
 namespace WindowsFormsApplication1
 {
     public partial class Client : Form
     {
         Socket server;
+        Thread client;
         string USUARIO;
         string ServerState;
-
-        public static IPAddress direc = IPAddress.Parse("192.168.56.102");
-        public static IPEndPoint ipep = new IPEndPoint(direc, 9012);
 
         public Client()
         {
             InitializeComponent();
+
+            CheckForIllegalCrossThreadCalls = false;
             //forcem a que s'hagi de tancar el programa amb el botó de desconnectar
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             //this.Bounds = Screen.PrimaryScreen.WorkingArea;
@@ -42,6 +36,7 @@ namespace WindowsFormsApplication1
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            /*
             //Creamos un IPEndPoint con el ip del servidor y puerto del servidor 
             //al que deseamos conectarnos
             
@@ -65,9 +60,127 @@ namespace WindowsFormsApplication1
                 conectserver.Visible = true;
                 return;
             }
-
+            */
         }
+        private void Main()
+        {
+            while (true)
+            {
+                //Recibimos la respuesta del servidor
+                byte[] msg_response = new byte[400];
+                server.Receive(msg_response);
 
+                //msg del tipus "2/Juan,"
+                string[] parts = Encoding.ASCII.GetString(msg_response).Split('#');
+                int code = Convert.ToInt32(parts[0]);
+                string response = parts[1].Split(',')[0];
+
+                switch (code)
+                {
+                    case 1:
+                        {
+                            if (response == "correcto")
+                            {
+                                string nombre = nameBox.Text;
+                                USUARIO = nombre;
+                                MessageBox.Show("Login Successful", "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                database.Enabled = true;
+                                clientList.Enabled = true;
+                                logout.Visible = true;
+                                peticionesBox.Enabled = true;
+                                createGAME.Enabled = true;
+                                joinGame.Enabled = true;
+                                welcomelbl.Visible = true;
+                                welcomelbl.Text = "WELCOME " + nombre;
+                                nameBox.Text = "";
+                                pswdBox.Text = "";
+                                nameBox.Visible = false;
+                                pswdBox.Visible = false;
+                                login.Visible = false;
+                                register.Visible = false;
+                                namelbl.Visible = false;
+                                pswdlbl.Visible = false;
+                            }
+                            else if (response == "incorrecto")
+                            {
+                                MessageBox.Show("Incorrect User or Password", "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                                nameBox.Text = "";
+                                pswdBox.Text = "";
+                            }
+                            break;
+                        }
+                    case 2:  //REGISTER
+                        {
+                            if (response == "correcto")
+                            {
+                                string nombre = nameBox.Text;
+                                USUARIO = nombre;
+                                MessageBox.Show("User Added Correclty", "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                database.Enabled = true;
+                                clientList.Enabled = true;
+                                logout.Visible = true;
+                                peticionesBox.Enabled = true;
+                                createGAME.Enabled = true;
+                                joinGame.Enabled = true;
+                                welcomelbl.Visible = true;
+                                welcomelbl.Text = "WELCOME " + nombre;
+                                nameBox.Text = "";
+                                pswdBox.Text = "";
+                                nameBox.Visible = false;
+                                pswdBox.Visible = false;
+                                login.Visible = false;
+                                register.Visible = false;
+                                namelbl.Visible = false;
+                                pswdlbl.Visible = false;
+                            }
+                            else if (response == "incorrecto")
+                            {
+                                MessageBox.Show("User Already Existing", "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                                nameBox.Text = "";
+                                pswdBox.Text = "";
+                            }
+                            break;
+                        }
+                    case 3:  //CONSULTA 1
+                        {
+                            MessageBox.Show(response, "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            nombre.Text = "";
+                            break;
+                        }
+                    case 4:  //CONSULTA 2
+                        {
+                            MessageBox.Show(response, "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            fecha.Text = "";
+                            break;
+                        }
+                    case 5:  //CONSULTA 3
+                        {
+                            MessageBox.Show(response, "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            server_box.Text = "";
+                            break;
+                        }
+                    case 99: //SHOW CONECTADOS
+                        {
+                            if (response != null)
+                            {
+                                MessageBox.Show("Connected Users: " + response, "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
+                            else
+                            {
+                                MessageBox.Show("No Users Connected", "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                            }
+                            break;
+                        }
+                    case 100:    //SHOW DATABASE
+                        {
+                            DataBase formDB = new DataBase();
+                            formDB.SetBD(response);
+                            formDB.ShowDialog();
+                            break;
+                        }
+                }
+            }
+        }
         private void Desconectar_Click(object sender, EventArgs e)
         {
             if(ServerState == "UP") //si el servidor encara esta RUNNING es tanca
@@ -81,6 +194,7 @@ namespace WindowsFormsApplication1
                 server.Shutdown(SocketShutdown.Both);
                 server.Close();
                 ServerState = "DOWN";
+                client.Abort();
             }
             
             this.Close();
@@ -97,39 +211,6 @@ namespace WindowsFormsApplication1
                 // Enviamos al servidor el nombre i contraseña introducidos
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje_usuario);
                 server.Send(msg);
-
-                //Recibimos la respuesta del servidor
-                byte[] msg_response = new byte[80];
-                server.Receive(msg_response);
-                string response = Encoding.ASCII.GetString(msg_response).Split(',')[0];
-
-                if (response == "correcto")
-                {
-                    USUARIO = nombre;
-                    MessageBox.Show("Login Successful", "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    database.Enabled = true;
-                    clientList.Enabled = true;
-                    logout.Visible = true;
-                    peticionesBox.Enabled = true;
-                    createGAME.Enabled = true;
-                    joinGame.Enabled = true;
-                    welcomelbl.Visible = true;
-                    welcomelbl.Text = "WELCOME " + nombre;
-                    nameBox.Text = "";
-                    pswdBox.Text = "";
-                    nameBox.Visible = false;
-                    pswdBox.Visible = false;
-                    login.Visible = false;
-                    register.Visible = false;
-                    namelbl.Visible = false;
-                    pswdlbl.Visible = false;
-                }
-                else if (response == "incorrecto")
-                {
-                    MessageBox.Show("Incorrect User or Password", "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    nameBox.Text = "";
-                    pswdBox.Text = "";
-                }
             }
             else
             {
@@ -148,40 +229,6 @@ namespace WindowsFormsApplication1
                 // Enviamos al servidor el nombre tecleado
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje_usuario);
                 server.Send(msg);
-
-                //Recibimos la respuesta del servidor
-                byte[] msg_response = new byte[80];
-                server.Receive(msg_response);
-                string response = Encoding.ASCII.GetString(msg_response).Split(',')[0];
-                //MessageBox.Show("La longitud de tu nombre es: " + mensaje);
-
-                if (response == "correcto")
-                {
-                    USUARIO = nombre;
-                    MessageBox.Show("User Added Correclty", "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    database.Enabled = true;
-                    clientList.Enabled = true;
-                    logout.Visible = true;
-                    peticionesBox.Enabled = true;
-                    createGAME.Enabled = true;
-                    joinGame.Enabled = true;
-                    welcomelbl.Visible = true;
-                    welcomelbl.Text = "WELCOME " + nombre;
-                    nameBox.Text = "";
-                    pswdBox.Text = "";
-                    nameBox.Visible = false;
-                    pswdBox.Visible = false;
-                    login.Visible = false;
-                    register.Visible = false;
-                    namelbl.Visible = false;
-                    pswdlbl.Visible = false;
-                }
-                else if (response == "incorrecto")
-                {
-                    MessageBox.Show("User Already Existing", "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    nameBox.Text = "";
-                    pswdBox.Text = "";
-                }
             }
             else
             {
@@ -199,15 +246,6 @@ namespace WindowsFormsApplication1
                 // Enviamos al servidor el nombre tecleado
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje_usuario);
                 server.Send(msg);
-
-                //Recibimos la respuesta del servidor
-                byte[] msg_response = new byte[80];
-                server.Receive(msg_response);
-                string response = Encoding.ASCII.GetString(msg_response).Split(',')[0];
-                //MessageBox.Show("La longitud de tu nombre es: " + mensaje);
-
-                MessageBox.Show(response, "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                nombre.Text = "";
             }
             else
             {
@@ -226,15 +264,6 @@ namespace WindowsFormsApplication1
                 // Enviamos al servidor el nombre tecleado
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje_usuario);
                 server.Send(msg);
-
-                //Recibimos la respuesta del servidor
-                byte[] msg_response = new byte[80];
-                server.Receive(msg_response);
-                string response = Encoding.ASCII.GetString(msg_response).Split(',')[0];
-                //MessageBox.Show("La longitud de tu nombre es: " + mensaje);
-
-                MessageBox.Show(response, "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                fecha.Text = "";
             }
             else
             {
@@ -252,16 +281,6 @@ namespace WindowsFormsApplication1
                 // Enviamos al servidor el nombre tecleado
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje_usuario);
                 server.Send(msg);
-
-                //Recibimos la respuesta del servidor
-                byte[] msg_response = new byte[80];
-                server.Receive(msg_response);
-                string response = Encoding.ASCII.GetString(msg_response).Split(',')[0];
-                //MessageBox.Show("La longitud de tu nombre es: " + mensaje);
-
-                MessageBox.Show(response, "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                //server.Text = "";
             }
             else
             {
@@ -275,15 +294,6 @@ namespace WindowsFormsApplication1
             // Enviamos al servidor el nombre i contraseña introducidos
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje_usuario);
             server.Send(msg);
-
-            //Recibimos la respuesta del servidor
-            byte[] msg_response = new byte[500];
-            server.Receive(msg_response);
-            string response = Encoding.ASCII.GetString(msg_response).Split(',')[0];
-
-            DataBase formDB = new DataBase();
-            formDB.SetBD(response);
-            formDB.ShowDialog();
         }
 
         private void clientList_Click(object sender, EventArgs e)
@@ -292,21 +302,6 @@ namespace WindowsFormsApplication1
             // Enviamos al servidor el nombre i contraseña introducidos
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje_usuario);
             server.Send(msg);
-
-            //Recibimos la respuesta del servidor
-            byte[] msg_response = new byte[500];
-            server.Receive(msg_response);
-            string response = Encoding.ASCII.GetString(msg_response).Split(',')[0];
-
-            if (response != null)
-            {
-                MessageBox.Show("Connected Users: " + response, "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            else
-            {
-                MessageBox.Show("No Users Connected", "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-
-            }
 
         }
 
@@ -339,6 +334,9 @@ namespace WindowsFormsApplication1
 
         private void conectserver_Click(object sender, EventArgs e)
         {
+            IPAddress direc = IPAddress.Parse("192.168.56.102");
+            IPEndPoint ipep = new IPEndPoint(direc, 9019);
+
             server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             try
             {
@@ -358,6 +356,9 @@ namespace WindowsFormsApplication1
                 conectserver.Visible = true;
                 return;
             }
+            ThreadStart th = delegate { Main(); };
+            client = new Thread(th);
+            client.Start();
         }
 
         private void createGAME_Click(object sender, EventArgs e)
