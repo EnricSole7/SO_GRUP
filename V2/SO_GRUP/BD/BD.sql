@@ -1,7 +1,7 @@
-DROP DATABASE IF EXISTS data_base;
-CREATE DATABASE data_base;
+DROP DATABASE IF EXISTS TG5_data_base;
+CREATE DATABASE TG5_data_base;
 
-USE data_base;
+USE TG5_data_base;
 
 CREATE TABLE Player(
 id INTEGER PRIMARY KEY NOT NULL,

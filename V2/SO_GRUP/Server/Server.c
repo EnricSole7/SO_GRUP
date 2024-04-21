@@ -11,6 +11,9 @@
 int contador_servicios;
 char conectados[200];
 
+int i;
+int sockets[100];	//vector de sockets
+
 //Estructura de dades d'accés "excluyente"
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -77,6 +80,7 @@ void *AtenderCliente (void *socket)
 		
 		char *p = strtok(peticion, "/");
 		codigo =  atoi (p);	//codigo
+		printf("%d\n",codigo);
 		
 		if (codigo == 1)	//LOGIN
 		{
@@ -91,20 +95,20 @@ void *AtenderCliente (void *socket)
 			printf("%d\n",resp);
 			if(resp==0)
 			{
-				sprintf(respuesta, "correcto,");
+				sprintf(respuesta, "1/correcto,");
 				//anyadir el usuario a la lista de conectados
 				pthread_mutex_lock (&mutex);	//No interrumpas ahorav
 				sprintf(conectados, "%s|%s", conectados, nombre);
 				pthread_mutex_unlock(&mutex);	//Ya puedes interrumpir
 			}
 			else
-			   sprintf(respuesta,"incorrecto,");
+			   sprintf(respuesta, "1/incorrecto,");
 			printf ("%s\n", respuesta);
 			// Y lo enviamos
 			write (socket_conn,respuesta, strlen(respuesta));
 		}
 		
-		if (codigo == 2)	//REGISTER
+		else if (codigo == 2)	//REGISTER
 		{
 			p= strtok (NULL,"/");
 			strcpy(nombre,p);		//nombre
@@ -116,31 +120,31 @@ void *AtenderCliente (void *socket)
 			printf("%d\n",resp);
 			if(resp==0)
 			{
-				sprintf(respuesta, "correcto,");
+				sprintf(respuesta, "2/correcto,");
 				//anyadir el usuario a la lista de conectados
 				pthread_mutex_lock (&mutex);	//No interrumpas ahora
 				sprintf(conectados, "%s|%s", conectados, nombre);
 				pthread_mutex_unlock(&mutex);	//Ya puedes interrumpir
 			}
 			else
-			   sprintf(respuesta, "incorrecto,");
+			   sprintf(respuesta, "2/incorrecto,");
 			printf ("%s\n", respuesta);
 			write (socket_conn,respuesta, strlen(respuesta));
 		}
 		
-		if (codigo==3)	//CONSULTA 1
+		else if (codigo==3)	//CONSULTA 1
 		{
 			p = strtok (NULL,"/");
 			strcpy(nombre,p);
 			
 			localizacion(nombre, respuesta, conn);
 			
-			printf ("%s\n", respuesta);
+			printf ("3/%s\n", respuesta);
 			
 			write (socket_conn,respuesta, strlen(respuesta));
 		}
 		
-		if (codigo==4)	//CONSULTA 2
+		else if (codigo==4)	//CONSULTA 2
 		{
 			char fecha[200];
 			p= strtok (NULL,"*");
@@ -148,12 +152,12 @@ void *AtenderCliente (void *socket)
 			
 			sacarnombre(fecha, respuesta, conn);
 
-			printf ("%s\n", respuesta);
+			printf ("4/%s\n", respuesta);
 			
 			write (socket_conn,respuesta, strlen(respuesta));
 		}
 		
-		if (codigo==5)	//COOOONSULTA 3
+		else if (codigo==5)	//COOOONSULTA 3
 		{
 			char servidor[200];
 			p = strtok (NULL,"/");
@@ -161,12 +165,12 @@ void *AtenderCliente (void *socket)
 			
 			nombreserv(servidor, respuesta, conn);
 
-			printf ("%s\n", respuesta);
+			printf ("5/%s\n", respuesta);
 			
 			write (socket_conn,respuesta, strlen(respuesta));
 		}
 		
-		if (codigo == 0)	//DESCONECTAR USUARIO
+		else if (codigo == 0)	//DESCONECTAR USUARIO
 		{
 			terminar = 1;
 			
@@ -220,7 +224,7 @@ void *AtenderCliente (void *socket)
 						d = strtok(NULL, "|");
 					}
 				}
-				
+				borrarnombre(nom,conn);
 				printf ("%s\n", newconectados);
 				//guardamos la nueva lista sin el usuario en la lista de conectados
 				pthread_mutex_lock (&mutex);	//No interrumpas ahora
@@ -228,32 +232,44 @@ void *AtenderCliente (void *socket)
 				pthread_mutex_unlock(&mutex);	//Ya puedes interrumpir
 			}
 		}
-		
-		if (codigo == 99)	//SHOW LISTA CONECTADOS
-		{
-			printf("%s\n", conectados);
-			sprintf(respuesta, "%s,", conectados);
-			write (socket_conn, respuesta, strlen(respuesta));
-		}
-		
-		if (codigo == 100)	//SHOW DATABASE
+		else if (codigo == 100)	//SHOW DATABASE
 		{
 			char basedatos[500];
 			char respuesta[500] = "";
 			printf("in\n");
 			ShowDataBase(respuesta, conn);
-			printf("%s\n",respuesta);
+			printf("100/%s\n",respuesta);
 			/*
 			//COMPROBACION QUE LA BASE DE DATOS NO TIENE TABLAS VACIAS
 			char *comp = strtok(basedatos, "/");
 			
 			if (strcmp(comp, "NO HAY JUGADORES,") == 0)
 			{
-				str
+			str
 			}
 			*/
 			write (socket_conn,respuesta, strlen(respuesta));
 		}
+		/*
+		if (codigo == 99)	//SHOW LISTA CONECTADOS
+		{
+			printf("99/%s\n", conectados);
+			sprintf(respuesta, "%s,", conectados);
+			write (socket_conn, respuesta, strlen(respuesta));
+		}
+		*/
+		if ((codigo == 0) || (codigo == 1) || (codigo == 2))
+		{
+			char notificacion[300];
+			sprintf(notificacion, "99/%s,", conectados);
+			printf ("%s\n", notificacion);
+			int j;
+			for(j=0;j<i;j++)
+			{
+				write (sockets[j], notificacion, strlen(notificacion));
+			}
+		}
+
 	}
 	// Se acabo el servicio para este cliente
 	close(socket_conn); 
@@ -279,7 +295,7 @@ int main(int argc, char *argv[])
 	//htonl formatea el numero que recibe al formato necesario
 	serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);
 	// escucharemos en el port 9050
-	serv_adr.sin_port = htons(9012);
+	serv_adr.sin_port = htons(9018);
 	if (bind(socket_listen, (struct sockaddr *) &serv_adr, sizeof(serv_adr)) < 0)
 		printf ("Error al bind\n");
 	//La cola de peticiones pendientes no podr? ser superior a 4
@@ -288,8 +304,7 @@ int main(int argc, char *argv[])
 	
 	contador_servicios = 0;
 	conectados[200] = "";
-	int i;
-	int sockets[100];	//vector de sockets
+
 	pthread_t thread;	//estructura de thread
 	i = 0;
 	// Bucle per atendre peticions
@@ -342,6 +357,9 @@ int login(char nombre[60], char password[60], MYSQL *conn) {
 		while (row!=NULL){
 			//en este caso el id sera row[0], el nombre sera row[1], y la contrasena sera row[2]
 			if(strcmp(row[2], password) == 0){
+				sprintf (consulta,"INSERT INTO Connected VALUES ('%s');",nombre);
+				err = mysql_query(conn, consulta);
+				printf(consulta);
 				respuesta =0; //el usuario existe y la contrasena coincide
 			}else{
 				respuesta =  -1; //contrasena incorrecta
@@ -439,7 +457,12 @@ int registro(char nombre[60], char password[60], MYSQL *conn)
 			return -1;
 			exit(1);
 		}else
+		{
+			sprintf (consulta,"INSERT INTO Connected VALUES ('%s');",nombre);
+			err = mysql_query(conn, consulta);
+			printf(consulta);
 		   return 0;
+		}
 		//retorna (-1) si ha habido un problema y (0) si la consulta ha salido bien
 	}
 	else
@@ -706,4 +729,31 @@ void nombreserv(char servidor[60], char respuesta[100], MYSQL *conn)
 		}
 		//retornamos la respuesta con los nombres
 	}
+}
+
+void borrarnombre(char nombre[60],  MYSQL *conn) 
+{
+	//Buscamos host_id del serrver donde ha jugado esta persona
+	int err;
+	MYSQL_RES *resultado;
+	MYSQL_ROW row;
+	char consulta[500];
+	
+	strcpy(consulta, "\0");
+	sprintf (consulta, "DELETE FROM Connected WHERE conectado='%s';",nombre);
+
+	printf("consulta: %s\n",consulta);
+	
+	err = mysql_query(conn, consulta);
+	if(err!=0)
+	{
+		printf("No has podido delogear");
+	}
+	else
+	{
+		printf("Deslogeo exitoso");
+		
+		//retornamos la respuesta con las ciudades (host id server))
+	}
+	
 }
