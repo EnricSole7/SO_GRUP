@@ -28,7 +28,8 @@ void *AtenderCliente (void *socket)
 	int ret;
 	struct sockaddr_in serv_adr;
 	char peticion[512];
-	char respuesta[512];
+	char respuesta[600];
+	char result[600];
 	char request[512];
 	int err;
 	
@@ -76,6 +77,7 @@ void *AtenderCliente (void *socket)
 		int codigo;
 		char nombre[30];
 		char contra[20];
+		char USER[30] = "";
 		int resp;
 		
 		char *p = strtok(peticion, "/");
@@ -95,19 +97,20 @@ void *AtenderCliente (void *socket)
 			printf("%d\n",resp);
 			if(resp==0)
 			{
-				sprintf(respuesta, "1/correcto,");
+				sprintf(respuesta, "1#correcto,");
 				//anyadir el usuario a la lista de conectados
 				pthread_mutex_lock (&mutex);	//No interrumpas ahorav
-				sprintf(conectados, "%s|%s", conectados, nombre);
+				sprintf(conectados, "%s|%s|", conectados, nombre);
 				pthread_mutex_unlock(&mutex);	//Ya puedes interrumpir
+				
+				sprintf(USER, nombre);
 			}
 			else
-			   sprintf(respuesta, "1/incorrecto,");
+			   sprintf(respuesta, "1#incorrecto,");
 			printf ("%s\n", respuesta);
 			// Y lo enviamos
 			write (socket_conn,respuesta, strlen(respuesta));
 		}
-		
 		else if (codigo == 2)	//REGISTER
 		{
 			p= strtok (NULL,"/");
@@ -120,14 +123,16 @@ void *AtenderCliente (void *socket)
 			printf("%d\n",resp);
 			if(resp==0)
 			{
-				sprintf(respuesta, "2/correcto,");
+				sprintf(respuesta, "2#correcto,");
 				//anyadir el usuario a la lista de conectados
 				pthread_mutex_lock (&mutex);	//No interrumpas ahora
 				sprintf(conectados, "%s|%s", conectados, nombre);
 				pthread_mutex_unlock(&mutex);	//Ya puedes interrumpir
+				
+				sprintf(USER, nombre);
 			}
 			else
-			   sprintf(respuesta, "2/incorrecto,");
+			   sprintf(respuesta, "2#incorrecto,");
 			printf ("%s\n", respuesta);
 			write (socket_conn,respuesta, strlen(respuesta));
 		}
@@ -137,9 +142,9 @@ void *AtenderCliente (void *socket)
 			p = strtok (NULL,"/");
 			strcpy(nombre,p);
 			
-			localizacion(nombre, respuesta, conn);
-			
-			printf ("3/%s\n", respuesta);
+			localizacion(nombre, result, conn);
+			sprintf(respuesta, "3#%s,", result);
+			printf ("%s\n", respuesta);
 			
 			write (socket_conn,respuesta, strlen(respuesta));
 		}
@@ -150,9 +155,9 @@ void *AtenderCliente (void *socket)
 			p= strtok (NULL,"*");
 			strcpy(fecha,p);
 			
-			sacarnombre(fecha, respuesta, conn);
-
-			printf ("4/%s\n", respuesta);
+			sacarnombre(fecha, result, conn);
+			sprintf(respuesta, "4#%s,", result);
+			printf ("%s\n", respuesta);
 			
 			write (socket_conn,respuesta, strlen(respuesta));
 		}
@@ -163,9 +168,9 @@ void *AtenderCliente (void *socket)
 			p = strtok (NULL,"/");
 			strcpy(servidor,p);
 			
-			nombreserv(servidor, respuesta, conn);
-
-			printf ("5/%s\n", respuesta);
+			nombreserv(servidor, result, conn);
+			sprintf(respuesta, "5#%s,", result);
+			printf ("%s\n", respuesta);
 			
 			write (socket_conn,respuesta, strlen(respuesta));
 		}
@@ -185,6 +190,7 @@ void *AtenderCliente (void *socket)
 			{
 				strcpy(usuario,p);
 				printf ("%s\n", usuario);
+				strcpy(USER,usuario);
 	
 				char *d = strtok(conectados, "|");
 				strcpy(nom, d);
@@ -231,14 +237,20 @@ void *AtenderCliente (void *socket)
 				strcpy(conectados, newconectados);
 				pthread_mutex_unlock(&mutex);	//Ya puedes interrumpir
 			}
+			
+			sprintf(respuesta, "0#User Disconnected,");
+			printf ("%s\n", respuesta);
+			
+			write (socket_conn,respuesta, strlen(respuesta));
 		}
 		else if (codigo == 100)	//SHOW DATABASE
 		{
-			char basedatos[500];
-			char respuesta[500] = "";
+			respuesta[600] = "";
 			printf("in\n");
-			ShowDataBase(respuesta, conn);
-			printf("100/%s\n",respuesta);
+			ShowDataBase(result, conn);
+			
+			sprintf(respuesta, "100#%s", result);
+			printf("%s\n",respuesta);
 			/*
 			//COMPROBACION QUE LA BASE DE DATOS NO TIENE TABLAS VACIAS
 			char *comp = strtok(basedatos, "/");
@@ -258,18 +270,29 @@ void *AtenderCliente (void *socket)
 			write (socket_conn, respuesta, strlen(respuesta));
 		}
 		*/
-		if ((codigo == 0) || (codigo == 1) || (codigo == 2))
+		if(strcmp(USER, "") != 0)	//Si hay un USER a modificar
 		{
+			//if ((codigo == 0) || (codigo == 1) || (codigo == 2))
 			char notificacion[300];
-			sprintf(notificacion, "99/%s,", conectados);
-			printf ("%s\n", notificacion);
+			if((codigo == 1) || (codigo == 2))
+			{
+				sprintf(notificacion, "99#0#New User Online: %s\nPlayers Online: %s,", USER, conectados);
+			}
+			else if (codigo == 0)
+			{
+				sprintf(notificacion, "99#1#User Disconnected: %s\nPlayers Online: %s,", USER, conectados);
+			}
 			int j;
+			printf ("%s\n", notificacion);
+			printf ("%d\n", i);
 			for(j=0;j<i;j++)
 			{
+				printf ("%s\n", notificacion);
 				write (sockets[j], notificacion, strlen(notificacion));
 			}
+			
 		}
-
+		printf ("DONE\n");
 	}
 	// Se acabo el servicio para este cliente
 	close(socket_conn); 
@@ -295,7 +318,7 @@ int main(int argc, char *argv[])
 	//htonl formatea el numero que recibe al formato necesario
 	serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);
 	// escucharemos en el port 9050
-	serv_adr.sin_port = htons(9018);
+	serv_adr.sin_port = htons(9026);
 	if (bind(socket_listen, (struct sockaddr *) &serv_adr, sizeof(serv_adr)) < 0)
 		printf ("Error al bind\n");
 	//La cola de peticiones pendientes no podr? ser superior a 4
@@ -486,7 +509,7 @@ void ShowDataBase(char result[500], MYSQL *conn)
 	
 	//BUSCAMOS PRIMERO TODOS LOS JUGADORES DE LA LISTA
 	sprintf(consulta, "SELECT * FROM Player;");
-	printf("%s\n", consulta);
+	
 	err = mysql_query(conn, consulta);
 	if(err!=0){
 		sprintf(result, "NO PLAYERS,");

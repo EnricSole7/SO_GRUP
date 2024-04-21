@@ -25,6 +25,10 @@ FOREIGN KEY (id_j2) REFERENCES Player(id),
 FOREIGN KEY (id_s) REFERENCES Server(id)
 )ENGINE=innoDB;
 
+CREATE TABLE Connected(
+conectado VARCHAR(20)
+)ENGINE=innoDB;
+
 INSERT INTO Player VALUES (1, 'Juan','Juanito14?');
 INSERT INTO Player VALUES (2, 'Maria','M12aria34');
 INSERT INTO Player VALUES (3, 'Lucas','L012345');
