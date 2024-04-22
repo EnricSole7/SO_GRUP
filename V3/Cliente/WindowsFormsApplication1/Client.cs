@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace WindowsFormsApplication1
 {
@@ -13,9 +14,10 @@ namespace WindowsFormsApplication1
         Thread client;
         string USUARIO;
         string ServerState;
+        List<string> ListaConectados = new List<string>();
 
         private static IPAddress direc = IPAddress.Parse("192.168.56.102");
-        private static IPEndPoint ipep = new IPEndPoint(direc, 9026);
+        private static IPEndPoint ipep = new IPEndPoint(direc, 9038);
 
         public Client()
         {
@@ -43,7 +45,7 @@ namespace WindowsFormsApplication1
                 byte[] msg_response = new byte[400];
                 server.Receive(msg_response);
 
-                //msg del tipus "2/Juan,"
+                //msg del tipus "2#Juan,"
 
                 //NOTA: TOTS ELS MSG DEL SERVER ACABEN AMB COMA (,) I ES DISTINGEIX EL CODI AMB HASHTAG (#)
                 string[] parts = Encoding.ASCII.GetString(msg_response).Split('#');
@@ -62,7 +64,7 @@ namespace WindowsFormsApplication1
                                 welcomelbl.Invoke(del);
                                 break;
                             }
-                        case 1:
+                        case 1:     //LOGIN
                             {
                                 if (response == "correcto")
                                 {
@@ -121,16 +123,81 @@ namespace WindowsFormsApplication1
                             }
                         case 99: //NOTIFICACIO CONECTATS/DESCONNECTATS
                             {
+                                string list = null;
+                                string user_conn;
+                                ListaConectados.Clear();    //reset de la llista de connectats (ara la plenarem)
 
                                 if (response == "0")    //USER S'HA CONECTAT
                                 {
                                     response = parts[2].Split(',')[0];
-                                    MessageBox.Show(response, "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                                    user_conn = response.Split('\n')[0];
+                                    list = response.Split('\n')[1];     //conté la llista de connectats (|Name|Name|Name|...)
+
+                                    int j = 0;
+                                    int separador_noms = 0;
+                                    string intermid = null;
+                                    string conectados_en_string = null;
+                                    while(j < list.Length)
+                                    {
+                                        separador_noms = list.IndexOf("|", j);
+                                        while (j < separador_noms)  //guardem nom per nom a la llista de connectats
+                                        {
+                                            intermid += list[j];
+                                            j++;
+                                        }
+                                        if(intermid != null)
+                                        {
+                                            ListaConectados.Add(intermid);
+                                            conectados_en_string += intermid + " ";
+                                        }
+
+                                        intermid = null;
+                                        j++;
+                                    }
+
+                                    MessageBox.Show(user_conn + "\nUsers Online: " + conectados_en_string, "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                                    
                                 }
                                 else if (response == "1") //USER S'HA DESCONNECTAT
                                 {
                                     response = parts[2].Split(',')[0];
-                                    MessageBox.Show(response, "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+
+                                    user_conn = response.Split('\n')[0];
+
+                                    list = response.Split('\n')[1];     //conté la llista de connectats (|Name|Name|Name|...)
+
+                                    int j = 0;
+                                    int separador_noms = 0;
+                                    string intermid = null;
+                                    string conectados_en_string = null;
+                                    while (j < list.Length)
+                                    {
+                                        if (list[list.Length - 1] == '|')
+                                        {
+                                            separador_noms = list.IndexOf("|", j);
+                                        }
+                                        else
+                                        {
+                                            separador_noms = list.IndexOf("\0", j);
+                                        }
+                                        
+                                        while (j < separador_noms)  //guardem nom per nom a la llista de connectats
+                                        {
+                                            intermid += list[j];
+                                            j++;
+                                        }
+                                        if (intermid != null)
+                                        {
+                                            ListaConectados.Add(intermid);
+                                        }
+                                        conectados_en_string += intermid + " ";
+                                        intermid = null;
+                                        j++;
+                                    }
+
+                                    MessageBox.Show(user_conn + "\nUsers Online: " + conectados_en_string, "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
                                     //COMPROVEM QUI S'ESTÀ DESCONNECTANT (SI JO O UN ALTRE USUARI)
                                     bool isitmedisconnecting = false;
@@ -153,6 +220,10 @@ namespace WindowsFormsApplication1
                                         client.Abort(); //tanquem el thread d'aquest client
                                     }
                                 }
+
+                                //Convertir string connectats a List<string>
+
+
                                 break;
                             }
                         case 100:    //SHOW DATABASE
@@ -348,7 +419,7 @@ namespace WindowsFormsApplication1
         private void createGAME_Click(object sender, EventArgs e)
         {
             GameWndw G = new GameWndw();
-            G.SetGame(server, USUARIO);
+            G.SetGame(server, USUARIO, ListaConectados);
             G.ShowDialog();
         }
 

@@ -15,12 +15,20 @@ namespace WindowsFormsApplication1
     {
         Socket SERVER;
         string USER;
+        List<string> ListaConnectados = new List<string>();
         public GameWndw()
         {
             InitializeComponent();
 
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Bounds = Screen.PrimaryScreen.WorkingArea;
+
+            int i = 0;
+            while(i < ListaConnectados.Count)
+            {
+                InvitePlayersBOX.Items.Insert(i, ListaConnectados[i]);
+                i++;
+            }
         }
 
         private void GameWndw_Load(object sender, EventArgs e)
@@ -28,10 +36,11 @@ namespace WindowsFormsApplication1
 
         }
 
-        public void SetGame(Socket serv, string user)
+        public void SetGame(Socket serv, string user, List<string> listconn)
         {
             SERVER = serv;
             USER = user;
+            ListaConnectados = listconn;
         }
     }
 }
