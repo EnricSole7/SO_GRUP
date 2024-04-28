@@ -8,3 +8,6 @@ Interfície Gràfica Versió 2:
 
 Vídeo de la Versió 3 del projecte:
      --- https://youtu.be/7yV9iEJ2pWk
+
+Video de la Versió 4 del projecte:
+     --- https://youtu.be/FeRGQ3XBPLg
