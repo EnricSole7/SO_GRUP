@@ -45,13 +45,15 @@ namespace WindowsFormsApplication1
         //  LOADERS DEL FROM
         //
         //
-        public void SetLobby(int numForm, Socket serv, string user, List<string> invitations)
+        public void SetLobby(int numForm, Socket serv, string user, List<string> invitations, List<string> listaconn)
         {
             this.Nform = numForm;
             this.SERVER = serv;
             this.USER = user;
             this.Invitations = invitations;
+            this.ListaConnectados = listaconn;
 
+            RefreshConnectedList(ListaConnectados);
             InvitationReceived(Invitations);
         }
 
@@ -77,19 +79,22 @@ namespace WindowsFormsApplication1
         {
             this.ListaConnectados = listconn;
 
-            playersonlineGrid.RowCount = ListaConnectados.Count;
+            playersonlineGrid.ColumnCount = 1;
+            playersonlineGrid.RowCount = ListaConnectados.Count - 1;
             playersonlineGrid.RowHeadersVisible = false;
             playersonlineGrid.Columns[0].HeaderText = "PLAYERS ONLINE";
             playersonlineGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
-            int i = 0;
-            while (i < ListaConnectados.Count)
+            int j = 0;
+            int k = 0;
+            while (j < ListaConnectados.Count)
             {
-                if (ListaConnectados[i] != USER) //nomes mostrem els que no son l'usuari en questio
+                if (ListaConnectados[j] != USER) //nomes mostrem els que no son l'usuari en questio
                 {
-                    playersonlineGrid.Rows[i].Cells[0].Value = ListaConnectados[i];
+                    playersonlineGrid.Rows[k].Cells[0].Value = ListaConnectados[j];
+                    k++;
                 }
-                i++;
+                j++;
             }
         }
         //
@@ -140,6 +145,7 @@ namespace WindowsFormsApplication1
         {
             this.Invitations = invitations;
 
+            invitationsgrid.RowCount = Invitations.Count;
             int i = 0;
 
             while(i < Invitations.Count)
@@ -148,6 +154,7 @@ namespace WindowsFormsApplication1
                 i++;
             }
 
+            //AL SERVER (CODIGO = 0) S HA DE CORRETGIR QUE TREGUI DE LA TAULA DE CONECTADOS A L'ULTIMA PERSONA QUE HI HAVIA (p* = NULL)
             //FALTA FER UN REMOVE.AT DE LA LLISTA D'INVITATIONS QUAN ACCEPTES UNA INVITACIO (EN UNA ALTRA FUNCIO)
         }
 

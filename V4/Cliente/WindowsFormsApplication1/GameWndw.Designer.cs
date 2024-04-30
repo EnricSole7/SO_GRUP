@@ -214,7 +214,7 @@
             this.invitationsgrid.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.invitationsgrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.invitationsgrid.ColumnHeadersVisible = false;
-            this.invitationsgrid.GridColor = System.Drawing.SystemColors.Control;
+            this.invitationsgrid.GridColor = System.Drawing.SystemColors.MenuText;
             this.invitationsgrid.Location = new System.Drawing.Point(6, 25);
             this.invitationsgrid.Name = "invitationsgrid";
             this.invitationsgrid.RowHeadersWidth = 51;

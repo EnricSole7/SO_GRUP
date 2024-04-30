@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Collections.Generic;
+using System.Drawing;
 
 namespace WindowsFormsApplication1
 {
@@ -15,13 +16,14 @@ namespace WindowsFormsApplication1
         Thread game;
         string USER;
         string ServerState;
+        bool alreadyclosing = false;
         string GAME;
         List<string> ListaConectados = new List<string>();
         List<string> Invitations = new List<string>();
         List<GameWndw> GameWndwForms = new List<GameWndw>();
 
         private static IPAddress direc = IPAddress.Parse("192.168.56.102");
-        private static IPEndPoint ipep = new IPEndPoint(direc, 9049);
+        private static IPEndPoint ipep = new IPEndPoint(direc, 9064);
 
         public Client()
         {
@@ -33,12 +35,22 @@ namespace WindowsFormsApplication1
             //this.Bounds = Screen.PrimaryScreen.WorkingArea;
 
             database.Enabled = false;
-            logout.Visible = false;
-            welcomelbl.Visible = false;
-            peticionesBox.Enabled = false;
             createGAME.Enabled = false;
             joinGame.Enabled = false;
+            statsbtn.Enabled = false;
+            DEV_closebtn.Visible = false;
+            logout.Visible = false;
+            welcomelbl.Visible = false;
+            returnbtn.Visible = false;
+            statsBox.Visible = false;
             USER = null;
+
+            playersonlineGrid.ColumnCount = 1;
+            playersonlineGrid.RowHeadersVisible = false;
+            playersonlineGrid.Columns[0].HeaderText = "PLAYERS ONLINE";
+            playersonlineGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            playersonlineGrid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            playersonlineGrid.ColumnHeadersDefaultCellStyle.BackColor = SystemColors.MenuText;
         }
 
         private void Main()
@@ -64,8 +76,28 @@ namespace WindowsFormsApplication1
                     {
                         case 0:
                             {
-                                DelegateUSERdisCONNECTED del = new DelegateUSERdisCONNECTED(USERdisCONNECTED);
-                                welcomelbl.Invoke(del);
+                                int operation = Convert.ToInt32(parts[1].Split(',')[0]);
+
+                                ServerState = "DOWN";
+
+
+
+                                if (operation == 0)  //CLOSE GAME
+                                {
+                                    server.Shutdown(SocketShutdown.Both);
+                                    //server.Close();
+                                }
+                                else                //LOGOUT
+                                {
+                                    DelegateUSERdisCONNECTED del = new DelegateUSERdisCONNECTED(USERdisCONNECTED);
+                                    welcomelbl.Invoke(del);
+                                    DelegateOFFLINE del_ = new DelegateOFFLINE(OFFLINE);
+                                    offlinelbl.Invoke(del_);
+                                    server.Shutdown(SocketShutdown.Both);
+                                    server.Close();
+                                }
+
+                                client.Abort(); //tanquem el thread d'aquest client
                                 break;
                             }
                         case 1:     //LOGIN
@@ -79,12 +111,19 @@ namespace WindowsFormsApplication1
                                     DelegateUSERCONNECTED del = new DelegateUSERCONNECTED(USERCONNECTED);
                                     welcomelbl.Invoke(del, new object[] { nombre });
                                 }
-                                else if (response == "incorrecto")
+                                else    //error
                                 {
-                                    MessageBox.Show("Incorrect User or Password", "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                                    MessageBox.Show(response, "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                                     DelegateUSERnotCONNECTED del = new DelegateUSERnotCONNECTED(USERnotCONNECTED);
                                     welcomelbl.Invoke(del);
                                 }
+
+                                if (USER == "HOST")
+                                {
+                                    DelegateDEVbtn del = new DelegateDEVbtn(USERnotDEVbtn);
+                                    DEV_closebtn.Invoke(del);
+                                }
+
                                 break;
                             }
                         case 2:  //REGISTER
@@ -100,10 +139,11 @@ namespace WindowsFormsApplication1
                                 }
                                 else if (response == "incorrecto")
                                 {
-                                    MessageBox.Show("User Already Existing", "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                                    MessageBox.Show("User Already Exists", "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                                     DelegateUSERnotCONNECTED del = new DelegateUSERnotCONNECTED(USERnotCONNECTED);
                                     welcomelbl.Invoke(del);
                                 }
+
                                 break;
                             }
                         case 3:  //CONSULTA 1
@@ -132,43 +172,49 @@ namespace WindowsFormsApplication1
                             }
                         case 99: //NOTIFICACIO CONECTATS/DESCONNECTATS
                             {
-                                string list = null;
-                                string user_conn;
+                                string list = parts[1].Split('\0')[0] ;
+                                
                                 ListaConectados.Clear();    //reset de la llista de connectats (ara la plenarem)
-                                int type_operation = Convert.ToInt32(parts[1].Split(',')[0]);
 
+                                int j = 0;
+                                int separador_noms = 0;
+                                string intermid = null;
+                                while (j < list.Length)
+                                {
+                                    separador_noms = list.IndexOf(" ", j);
+
+                                    if (separador_noms == -1)   //l'ultim de list no te espai
+                                    {
+                                        separador_noms = list.IndexOf(",", j);
+                                    }
+
+                                    while (j < separador_noms)  //guardem nom per nom a la llista de connectats
+                                    {
+                                        intermid += list[j];
+                                        j++;
+                                    }
+                                    if (intermid != null)
+                                    {
+                                        ListaConectados.Add(intermid);
+                                    }
+
+                                    intermid = null;
+                                    j++;
+                                }
+
+                                
+                                /*
+                                int type_operation = Convert.ToInt32(parts[1].Split(',')[0]);
+                                
                                 if (type_operation == 0)    //USER S'HA CONECTAT
                                 {
+
                                     response = parts[2].Split(',')[0];
 
                                     user_conn = response.Split('\n')[0];
-                                    list = response.Split('\n')[1];     //conté la llista de connectats (|Name|Name|Name|...)
+                                    list = response.Split('\n')[1];     //conté la llista de connectats (Name Name Name...)
 
-                                    int j = 0;
-                                    int separador_noms = 0;
-                                    string intermid = null;
-                                    string conectados_en_string = null;
-                                    while(j < list.Length)
-                                    {
-                                        separador_noms = list.IndexOf("|", j);
-                                        while (j < separador_noms)  //guardem nom per nom a la llista de connectats
-                                        {
-                                            intermid += list[j];
-                                            j++;
-                                        }
-                                        if(intermid != null)
-                                        {
-                                            ListaConectados.Add(intermid);
-                                            conectados_en_string += intermid + " ";
-                                        }
-
-                                        intermid = null;
-                                        j++;
-                                    }
-
-                                    MessageBox.Show(user_conn + "\nUsers Online: " + conectados_en_string, "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                                    
+                                    MessageBox.Show(user_conn + "\nUsers Online: " + list, "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
                                 }
                                 else if (type_operation == 1) //USER S'HA DESCONNECTAT
                                 {
@@ -178,60 +224,11 @@ namespace WindowsFormsApplication1
 
                                     list = response.Split('\n')[1];     //conté la llista de connectats (|Name|Name|Name|...)
 
-                                    int j = 0;
-                                    int separador_noms = 0;
-                                    string intermid = null;
-                                    string conectados_en_string = null;
-                                    while (j < list.Length)
-                                    {
-                                        if (list[list.Length - 1] == '|')
-                                        {
-                                            separador_noms = list.IndexOf("|", j);
-                                        }
-                                        else
-                                        {
-                                            separador_noms = list.IndexOf("\0", j);
-                                        }
-                                        
-                                        while (j < separador_noms)  //guardem nom per nom a la llista de connectats
-                                        {
-                                            intermid += list[j];
-                                            j++;
-                                        }
-                                        if (intermid != null)
-                                        {
-                                            ListaConectados.Add(intermid);
-                                        }
-                                        conectados_en_string += intermid + " ";
-                                        intermid = null;
-                                        j++;
-                                    }
-
-                                    MessageBox.Show(user_conn + "\nUsers Online: " + conectados_en_string, "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-
-                                    //COMPROVEM QUI S'ESTÀ DESCONNECTANT (SI JO O UN ALTRE USUARI)
-                                    bool isitmedisconnecting = false;
-                                    string whoisdisconnecting = response.Split('\n')[0];
-
-                                    if (whoisdisconnecting == "User Disconnected: " + USER)
-                                    {
-                                        isitmedisconnecting = true;
-                                    }
-
-                                    if (isitmedisconnecting == true)
-                                    {
-                                        // Se terminó el servicio. 
-                                        // Nos desconectamos
-                                        server.Shutdown(SocketShutdown.Both);
-                                        server.Close();
-                                        ServerState = "DOWN";
-                                        DelegateOFFLINE del = new DelegateOFFLINE(OFFLINE);
-                                        offlinelbl.Invoke(del);
-                                        client.Abort(); //tanquem el thread d'aquest client
-                                    }
+                                    MessageBox.Show(user_conn + "\nUsers Online: " + list, "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                                 }
+                                */
 
-                                //Actualitzar llista connectats del joc
+                                //Actualitzar llista connectats del JOC i al MENU
 
                                 int i = 0;
                                 while(i < GameWndwForms.Count)
@@ -239,6 +236,8 @@ namespace WindowsFormsApplication1
                                     GameWndwForms[i].RefreshConnectedList(ListaConectados);
                                 }
 
+                                DelegateREFRESHnumCONNECTED del = new DelegateREFRESHnumCONNECTED(REFRESHnumCONNECTED);
+                                numplayerslbl.Invoke(del);
 
                                 break;
                             }
@@ -259,6 +258,7 @@ namespace WindowsFormsApplication1
                                 if (response == "correcto")
                                 {
                                     GAME = parts[2].Split(',')[0];
+                                    game.Start();
                                     //GameWndwForms[GameWndwForms.Count].SetGame(GAME);
                                 }
                                 break;
@@ -352,28 +352,23 @@ namespace WindowsFormsApplication1
 
         private void Desconectar_Click(object sender, EventArgs e)
         {
+            alreadyclosing = true;
             if (ServerState == "UP") //si el servidor encara esta RUNNING es tanca
             {
                 //mensaje de desconexión del USUARIO en cuestion
-                string mensaje = "0/" + USER;
+                string mensaje = "0/0/" + USER;
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
-                // Se terminó el servicio. 
-                // Nos desconectamos
-                server.Shutdown(SocketShutdown.Both);
-                //server.Close();
-                ServerState = "DOWN";
-                client.Abort(); //tanquem el thread d'aquest client
             }
             this.Close();
         }
         //BOTH SAME UTILITY
         private void Client_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (ServerState == "UP") //si el servidor encara esta RUNNING es tanca
+            if ((ServerState == "UP") && (!alreadyclosing))//si el servidor encara esta RUNNING es tanca
             {
                 //mensaje de desconexión del USUARIO en cuestion
-                string mensaje = "0/" + USER;
+                string mensaje = "0/0/" + USER;
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
                 // Se terminó el servicio. 
@@ -415,7 +410,7 @@ namespace WindowsFormsApplication1
 
         private void logout_Click(object sender, EventArgs e)
         {
-            string mensaje = "0/" + USER;
+            string mensaje = "0/1/" + USER;
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
         }
@@ -425,7 +420,7 @@ namespace WindowsFormsApplication1
             string nombre = nameBox.Text;
             string password = pswdBox.Text;
 
-            if ((nombre != null) && (password != null))
+            if (((nombre != null) && (nombre != "")) && ((password != null) && (password != "")))
             {
                 string mensaje_usuario = "1/" + nombre + "/" + password;
                 // Enviamos al servidor el nombre i contraseña introducidos
@@ -443,7 +438,7 @@ namespace WindowsFormsApplication1
             string nombre = nameBox.Text;
             string password = pswdBox.Text;
 
-            if ((nombre != null) && (password != null))
+            if (((nombre != null) && (nombre != "")) && ((password != null) && (password != "")))
             {
                 string mensaje_usuario = "2/" + nombre + "/" + password;
                 // Enviamos al servidor el nombre tecleado
@@ -525,7 +520,6 @@ namespace WindowsFormsApplication1
             //creem i inicialitzem el thread corresponent a aquest client per aquesta partida
             ThreadStart thGame = delegate { STARTGAME(); };
             game = new Thread(thGame);
-            game.Start();
         }
 
         //THREAD DE createGAME
@@ -533,13 +527,14 @@ namespace WindowsFormsApplication1
         {
             int cont = GameWndwForms.Count;
             GameWndw G = new GameWndw();
+            GameWndwForms.Add(G);
+            //REFRESCAR LA LLISTA DE CONNECTATS PER PODER CONVIDAR
+            //G.RefreshConnectedList(ListaConectados);
             //PARAMETRES ESTETICS DEL LOBBY (HUD)
-            G.SetLobby(cont, server, USER, Invitations);
+            G.SetLobby(cont, server, USER, Invitations, ListaConectados);
             //PARAMETRES DE LA PARTIDA CREADA A MYSQL
             G.SetGame(GAME);
-            //REFRESCAR LA LLISTA DE CONNECTATS PER PODER CONVIDAR
-            G.RefreshConnectedList(ListaConectados);
-            GameWndwForms.Add(G);
+
             G.ShowDialog();
 
             //quan acabi el joc:
@@ -550,6 +545,30 @@ namespace WindowsFormsApplication1
 
         }
 
+        private void DEV_closebtn_Click(object sender, EventArgs e)
+        {
+            string mensaje = "-1/" + USER;
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+            server.Send(msg);
+            server.Shutdown(SocketShutdown.Both);
+            server.Close();
+            ServerState = "DOWN";
+            client.Abort(); //tanquem el thread d'aquest client
+
+            this.Close();
+        }
+
+        private void statsbtn_Click(object sender, EventArgs e)
+        {
+            DelegateSHOWSTATS del = new DelegateSHOWSTATS(SHOWSTATS);
+            statsBox.Invoke(del);
+        }
+
+        private void returnbtn_Click(object sender, EventArgs e)
+        {
+            DelegateQUITSTATS del = new DelegateQUITSTATS(QUITSTATS);
+            statsBox.Invoke(del);
+        }
 
         //DELEGATES
 
@@ -560,7 +579,7 @@ namespace WindowsFormsApplication1
             welcomelbl.Visible = true;
             database.Enabled = true;
             logout.Visible = true;
-            peticionesBox.Enabled = true;
+            statsbtn.Enabled = true;
             createGAME.Enabled = true;
             joinGame.Enabled = true;
             nameBox.Text = null;
@@ -587,7 +606,7 @@ namespace WindowsFormsApplication1
             welcomelbl.Text = null;
             database.Enabled = false;
             logout.Visible = false;
-            peticionesBox.Enabled = false;
+            statsbtn.Enabled = false;
             createGAME.Enabled = false;
             joinGame.Enabled = false;
             nameBox.Visible = true;
@@ -627,5 +646,168 @@ namespace WindowsFormsApplication1
             login.Enabled = false;
             register.Enabled = false;
         }
+
+        delegate void DelegateDEVbtn();
+        public void USERnotDEVbtn()
+        {
+            DEV_closebtn.Visible = true;
+        }
+
+        delegate void DelegateREFRESHnumCONNECTED();
+        public void REFRESHnumCONNECTED()
+        {
+            numplayerslbl.Text = "Number of players Online: " + ListaConectados.Count;
+
+            playersonlineGrid.RowCount = ListaConectados.Count; //menys l'usuari mateix que no conta
+
+            int j = 0;
+            int k = 0;
+            while(j < ListaConectados.Count)
+            {
+                if (ListaConectados[j] != USER)
+                {
+                    playersonlineGrid.Rows[k].Cells[0].Value = ListaConectados[j];
+                    k++;
+                }
+                j++; 
+            }
+        }
+
+        delegate void DelegateSHOWSTATS();
+        public void SHOWSTATS()
+        {
+            createGAME.Visible = false;
+            joinGame.Visible = false;
+            database.Visible = false;
+            statsbtn.Visible = false;
+            Desconectar.Visible = false;
+            playersonlineGrid.Visible = false;
+            returnbtn.Visible = true;
+            statsBox.Visible = true;
+        }
+
+        delegate void DelegateQUITSTATS();
+        public void QUITSTATS()
+        {
+            createGAME.Visible = true;
+            joinGame.Visible = true;
+            database.Visible = true;
+            statsbtn.Visible = true;
+            Desconectar.Visible = true;
+            playersonlineGrid.Visible = true;
+            returnbtn.Visible = false;
+            statsBox.Visible = false;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //CODI PER SI DE CAS
+
+        //  -- notificacions
+
+            /*
+            response = parts[2].Split(',')[0];
+
+            user_conn = response.Split('\n')[0];
+            list = response.Split('\n')[1];     //conté la llista de connectats (|Name|Name|Name|...)
+
+            int j = 0;
+            int separador_noms = 0;
+            string intermid = null;
+            string conectados_en_string = null;
+            while(j < list.Length)
+            {
+                separador_noms = list.IndexOf("|", j);
+                while (j < separador_noms)  //guardem nom per nom a la llista de connectats
+                {
+                    intermid += list[j];
+                    j++;
+                }
+                if(intermid != null)
+                {
+                    ListaConectados.Add(intermid);
+                    conectados_en_string += intermid + " ";
+                }
+
+                intermid = null;
+                j++;
+            }
+            */
+
+            /*
+            int j = 0;
+            int separador_noms = 0;
+            string intermid = null;
+            string conectados_en_string = null;
+            while (j < list.Length)
+            {
+                if (list[list.Length - 1] == '|')
+                {
+                    separador_noms = list.IndexOf("|", j);
+                }
+                else
+                {
+                    separador_noms = list.IndexOf("\0", j);
+                }
+                                        
+                while (j < separador_noms)  //guardem nom per nom a la llista de connectats
+                {
+                    intermid += list[j];
+                    j++;
+                }
+                if (intermid != null)
+                {
+                    ListaConectados.Add(intermid);
+                }
+                conectados_en_string += intermid + " ";
+                intermid = null;
+                j++;
+            }
+            */
+
+
+            /*
+            //COMPROVEM QUI S'ESTÀ DESCONNECTANT (SI JO O UN ALTRE USUARI)
+            bool isitmedisconnecting = false;
+            string whoisdisconnecting = response.Split('\n')[0];
+
+            if (whoisdisconnecting == "User Disconnected: " + USER)
+            {
+                isitmedisconnecting = true;
+            }
+
+            if (isitmedisconnecting == true)
+            {
+                // Se terminó el servicio. 
+                // Nos desconectamos
+                server.Shutdown(SocketShutdown.Both);
+                server.Close();
+                ServerState = "DOWN";
+                DelegateOFFLINE del = new DelegateOFFLINE(OFFLINE);
+                offlinelbl.Invoke(del);
+                client.Abort(); //tanquem el thread d'aquest client
+            }
+            */
     }
 }
