@@ -32,6 +32,10 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
             this.label2 = new System.Windows.Forms.Label();
             this.name_txt = new System.Windows.Forms.TextBox();
             this.Enviar_nombre = new System.Windows.Forms.Button();
@@ -62,18 +66,22 @@
             this.joinGame = new System.Windows.Forms.Button();
             this.DEV_closebtn = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.numplayerslbl = new System.Windows.Forms.Label();
             this.numgameslbl = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.labelTitulo = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.statsbtn = new System.Windows.Forms.Button();
             this.returnbtn = new System.Windows.Forms.Button();
-            this.numplayerslbl = new System.Windows.Forms.Label();
             this.playersonlineGrid = new System.Windows.Forms.DataGridView();
+            this.invitationsGrid = new System.Windows.Forms.DataGridView();
+            this.invitationslbl = new System.Windows.Forms.Label();
+            this.playersonlinelbl = new System.Windows.Forms.Label();
             this.statsBox.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.playersonlineGrid)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.invitationsGrid)).BeginInit();
             this.SuspendLayout();
             // 
             // label2
@@ -370,10 +378,10 @@
             // 
             // DEV_closebtn
             // 
-            this.DEV_closebtn.Location = new System.Drawing.Point(710, 346);
+            this.DEV_closebtn.Location = new System.Drawing.Point(761, 354);
             this.DEV_closebtn.Margin = new System.Windows.Forms.Padding(4);
             this.DEV_closebtn.Name = "DEV_closebtn";
-            this.DEV_closebtn.Size = new System.Drawing.Size(157, 38);
+            this.DEV_closebtn.Size = new System.Drawing.Size(160, 38);
             this.DEV_closebtn.TabIndex = 23;
             this.DEV_closebtn.Text = "CLOSE SERVER";
             this.DEV_closebtn.UseVisualStyleBackColor = true;
@@ -399,15 +407,14 @@
             this.groupBox1.TabIndex = 24;
             this.groupBox1.TabStop = false;
             // 
-            // label1
+            // numplayerslbl
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(86, 33);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(159, 16);
-            this.label1.TabIndex = 26;
-            this.label1.Text = "___________________";
+            this.numplayerslbl.AutoSize = true;
+            this.numplayerslbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.numplayerslbl.Location = new System.Drawing.Point(16, 315);
+            this.numplayerslbl.Name = "numplayerslbl";
+            this.numplayerslbl.Size = new System.Drawing.Size(0, 20);
+            this.numplayerslbl.TabIndex = 28;
             // 
             // numgameslbl
             // 
@@ -417,6 +424,16 @@
             this.numgameslbl.Name = "numgameslbl";
             this.numgameslbl.Size = new System.Drawing.Size(0, 20);
             this.numgameslbl.TabIndex = 27;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(86, 33);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(159, 16);
+            this.label1.TabIndex = 26;
+            this.label1.Text = "___________________";
             // 
             // labelTitulo
             // 
@@ -472,15 +489,6 @@
             this.returnbtn.UseVisualStyleBackColor = true;
             this.returnbtn.Click += new System.EventHandler(this.returnbtn_Click);
             // 
-            // numplayerslbl
-            // 
-            this.numplayerslbl.AutoSize = true;
-            this.numplayerslbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.numplayerslbl.Location = new System.Drawing.Point(16, 315);
-            this.numplayerslbl.Name = "numplayerslbl";
-            this.numplayerslbl.Size = new System.Drawing.Size(0, 20);
-            this.numplayerslbl.TabIndex = 28;
-            // 
             // playersonlineGrid
             // 
             this.playersonlineGrid.AllowUserToAddRows = false;
@@ -513,7 +521,7 @@
             dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.playersonlineGrid.DefaultCellStyle = dataGridViewCellStyle3;
             this.playersonlineGrid.GridColor = System.Drawing.SystemColors.MenuText;
-            this.playersonlineGrid.Location = new System.Drawing.Point(761, 116);
+            this.playersonlineGrid.Location = new System.Drawing.Point(761, 55);
             this.playersonlineGrid.Name = "playersonlineGrid";
             dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.MenuText;
@@ -531,14 +539,91 @@
             this.playersonlineGrid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.SystemColors.MenuText;
             this.playersonlineGrid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.White;
             this.playersonlineGrid.RowTemplate.Height = 24;
-            this.playersonlineGrid.Size = new System.Drawing.Size(160, 165);
+            this.playersonlineGrid.Size = new System.Drawing.Size(160, 122);
             this.playersonlineGrid.TabIndex = 34;
+            // 
+            // invitationsGrid
+            // 
+            this.invitationsGrid.AllowUserToAddRows = false;
+            this.invitationsGrid.AllowUserToDeleteRows = false;
+            this.invitationsGrid.AllowUserToResizeColumns = false;
+            this.invitationsGrid.AllowUserToResizeRows = false;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.MenuText;
+            dataGridViewCellStyle5.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.MenuText;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.Color.White;
+            this.invitationsGrid.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle5;
+            this.invitationsGrid.BackgroundColor = System.Drawing.SystemColors.MenuText;
+            this.invitationsGrid.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.invitationsGrid.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.MenuText;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle6.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.MenuText;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.invitationsGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            this.invitationsGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.MenuText;
+            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle7.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.MenuText;
+            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.invitationsGrid.DefaultCellStyle = dataGridViewCellStyle7;
+            this.invitationsGrid.GridColor = System.Drawing.SystemColors.MenuText;
+            this.invitationsGrid.Location = new System.Drawing.Point(761, 216);
+            this.invitationsGrid.Name = "invitationsGrid";
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.MenuText;
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle8.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.MenuText;
+            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.invitationsGrid.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
+            this.invitationsGrid.RowHeadersVisible = false;
+            this.invitationsGrid.RowHeadersWidth = 51;
+            this.invitationsGrid.RowTemplate.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.invitationsGrid.RowTemplate.DefaultCellStyle.BackColor = System.Drawing.SystemColors.MenuText;
+            this.invitationsGrid.RowTemplate.DefaultCellStyle.ForeColor = System.Drawing.Color.White;
+            this.invitationsGrid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.SystemColors.MenuText;
+            this.invitationsGrid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.White;
+            this.invitationsGrid.RowTemplate.Height = 24;
+            this.invitationsGrid.Size = new System.Drawing.Size(160, 123);
+            this.invitationsGrid.TabIndex = 35;
+            this.invitationsGrid.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.invitationsGrid_CellContentClick);
+            // 
+            // invitationslbl
+            // 
+            this.invitationslbl.AutoSize = true;
+            this.invitationslbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.invitationslbl.Location = new System.Drawing.Point(772, 184);
+            this.invitationslbl.Name = "invitationslbl";
+            this.invitationslbl.Size = new System.Drawing.Size(139, 25);
+            this.invitationslbl.TabIndex = 36;
+            this.invitationslbl.Text = "INVITATIONS";
+            // 
+            // playersonlinelbl
+            // 
+            this.playersonlinelbl.AutoSize = true;
+            this.playersonlinelbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.playersonlinelbl.Location = new System.Drawing.Point(796, 26);
+            this.playersonlinelbl.Name = "playersonlinelbl";
+            this.playersonlinelbl.Size = new System.Drawing.Size(85, 25);
+            this.playersonlinelbl.TabIndex = 37;
+            this.playersonlinelbl.Text = "ONLINE";
             // 
             // Client
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(960, 397);
+            this.Controls.Add(this.playersonlinelbl);
+            this.Controls.Add(this.invitationslbl);
+            this.Controls.Add(this.invitationsGrid);
             this.Controls.Add(this.playersonlineGrid);
             this.Controls.Add(this.returnbtn);
             this.Controls.Add(this.statsbtn);
@@ -564,6 +649,7 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.playersonlineGrid)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.invitationsGrid)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -609,6 +695,9 @@
         private System.Windows.Forms.Button returnbtn;
         private System.Windows.Forms.Label numplayerslbl;
         private System.Windows.Forms.DataGridView playersonlineGrid;
+        private System.Windows.Forms.DataGridView invitationsGrid;
+        private System.Windows.Forms.Label invitationslbl;
+        private System.Windows.Forms.Label playersonlinelbl;
     }
 }
 

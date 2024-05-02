@@ -16,14 +16,17 @@ namespace WindowsFormsApplication1
         Thread game;
         string USER;
         string ServerState;
+        bool Join = false;
+        string invitation;
         bool alreadyclosing = false;
         string GAME;
         List<string> ListaConectados = new List<string>();
         List<string> Invitations = new List<string>();
+        Dictionary<string, string> GameInvitations = new Dictionary<string, string>();  //utilitzat per unir-se a partides
         List<GameWndw> GameWndwForms = new List<GameWndw>();
 
         private static IPAddress direc = IPAddress.Parse("192.168.56.102");
-        private static IPEndPoint ipep = new IPEndPoint(direc, 9064);
+        private static IPEndPoint ipep = new IPEndPoint(direc, 9065);
 
         public Client()
         {
@@ -47,10 +50,15 @@ namespace WindowsFormsApplication1
 
             playersonlineGrid.ColumnCount = 1;
             playersonlineGrid.RowHeadersVisible = false;
-            playersonlineGrid.Columns[0].HeaderText = "PLAYERS ONLINE";
+            playersonlineGrid.ColumnHeadersVisible = false;
             playersonlineGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             playersonlineGrid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            playersonlineGrid.ColumnHeadersDefaultCellStyle.BackColor = SystemColors.MenuText;
+
+            invitationsGrid.ColumnCount = 1;
+            invitationsGrid.RowHeadersVisible = false;
+            invitationsGrid.ColumnHeadersVisible = false;
+            invitationsGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            invitationsGrid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
         }
 
         private void Main()
@@ -291,17 +299,17 @@ namespace WindowsFormsApplication1
                                 }
                                 else if (type_operation == 1)   //rebem una invitacio d'un altre jugador
                                 {
-                                    //msg del tipus "97#1#%s,"
-                                    inviting = parts[2].Split(',')[0];
+                                    //msg del tipus "97#1#%s#%s,"
+                                    inviting = parts[2];
+                                    string datos_partida = parts[3].Split(',')[0];
                                     Invitations.Add(inviting);
-
-                                    //HEM DE FER ARRIBAR LA INVITACIÓ AL CLIENT:
-                                    //SI ESTA AL FORMS DEL CLIENT, -> MESSAGEBOX
-                                    //SI ESTA AL FORMS DEL GAME, -> L'ENVIEM A TOTS ELS FORMS GAME QUE TINGUI OBERT VIA FUNCIÓ
-
+                                    GameInvitations.Add(inviting, datos_partida);
+                                    
                                     if(GameWndwForms.Count == 0)    //SI ESTA AL CLIENT:
                                     {
-                                        MessageBox.Show("Invitaion from " + inviting + " received. Added to your invitation log in game", "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                        DelegateREFRESHINVITATIONS del = new DelegateREFRESHINVITATIONS(REFRESHINVITATIONS);
+                                        invitationsGrid.Invoke(del);
+                                        //MessageBox.Show("Invitaion from " + inviting + " received. Added to your invitation log in game", "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
                                     }
                                     else    //SI ESTA IN GAME, ENVIEM LA INVITACIO A TOTS ELS FORMS OBERTS
                                     {
@@ -312,6 +320,26 @@ namespace WindowsFormsApplication1
                                         }
                                     }
                                 }
+                                break;
+                            }
+                        case 96:    //JOIN GAME
+                            {
+                                // "96#0#%s#%s,", game_info, otherplayers
+                                int result = Convert.ToInt32(parts[1]);
+
+                                if (result == 0)    //OK
+                                {
+                                    MessageBox.Show("OK", "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                                }
+                                else if (result == -1)  //partida plena
+                                {
+                                    MessageBox.Show("The game you are trying to join is already full", "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                                }
+                                else if (result == -2)  //no existeix la partida ja
+                                {
+                                    MessageBox.Show("The game you are trying to join has already ended or doesn't exist", "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                                }
+
                                 break;
                             }
                     }
@@ -540,9 +568,43 @@ namespace WindowsFormsApplication1
             //quan acabi el joc:
             GameWndwForms.RemoveAt(cont);
         }
+
         private void joinGame_Click(object sender, EventArgs e)
         {
+            string game = GameInvitations[invitation];
 
+            //el valor de invitation ve de la funcio de invitationsGrid_CellContentClick
+            string mensaje_usuario = "96/" + USER + "/" + invitation + "/" + game;
+            // Enviamos al servidor el nombre i contraseña introducidos
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje_usuario);
+            server.Send(msg);
+
+            Invitations.Remove(invitation);
+
+            invitation = null;
+
+            DelegateREFRESHINVITATIONS del = new DelegateREFRESHINVITATIONS(REFRESHINVITATIONS);
+            invitationsGrid.Invoke(del);
+        }
+
+        private void invitationsGrid_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            //si cliquem damunt de la invitacio ens podrem unir. Si tornem a clicar es cancela unir-se
+            if (!Join)
+            {
+                Join = true;
+                joinGame.Enabled = true;
+
+                if (invitationsGrid.Rows[e.RowIndex].Cells[e.ColumnIndex].Value != null)
+                {
+                    invitation = invitationsGrid.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
+                }
+            }
+            else if (Join)
+            {
+                Join = false;
+                joinGame.Enabled = false;
+            }
         }
 
         private void DEV_closebtn_Click(object sender, EventArgs e)
@@ -581,7 +643,8 @@ namespace WindowsFormsApplication1
             logout.Visible = true;
             statsbtn.Enabled = true;
             createGAME.Enabled = true;
-            joinGame.Enabled = true;
+            playersonlineGrid.Enabled = true;
+            invitationsGrid.Enabled = true;
             nameBox.Text = null;
             pswdBox.Text = null;
             nameBox.Visible = false;
@@ -609,6 +672,8 @@ namespace WindowsFormsApplication1
             statsbtn.Enabled = false;
             createGAME.Enabled = false;
             joinGame.Enabled = false;
+            playersonlineGrid.Enabled = false;
+            invitationsGrid.Enabled = false;
             nameBox.Visible = true;
             pswdBox.Visible = true;
             login.Visible = true;
@@ -630,6 +695,10 @@ namespace WindowsFormsApplication1
         {
             offlinelbl.Visible = false;
             conectserver.Visible = false;
+            playersonlineGrid.Visible = true;
+            playersonlinelbl.Visible = true;
+            invitationsGrid.Visible = true;
+            invitationslbl.Visible = true;
             nameBox.Enabled = true;
             pswdBox.Enabled = true;
             login.Enabled = true;
@@ -641,6 +710,10 @@ namespace WindowsFormsApplication1
         {
             offlinelbl.Visible = true;
             conectserver.Visible = true;
+            playersonlineGrid.Visible = false;
+            playersonlinelbl.Visible = false;
+            invitationsGrid.Visible = false;
+            invitationslbl.Visible = false;
             nameBox.Enabled = false;
             pswdBox.Enabled = false;
             login.Enabled = false;
@@ -673,6 +746,21 @@ namespace WindowsFormsApplication1
             }
         }
 
+        delegate void DelegateREFRESHINVITATIONS();
+        public void REFRESHINVITATIONS()
+        {
+            //numplayerslbl.Text = "Number of players Online: " + ListaConectados.Count;
+
+            invitationsGrid.RowCount = Invitations.Count; //menys l'usuari mateix que no conta
+
+            int j = 0;
+            while (j < Invitations.Count)
+            {
+                playersonlineGrid.Rows[j].Cells[0].Value = Invitations[j];
+                j++;
+            }
+        }
+
         delegate void DelegateSHOWSTATS();
         public void SHOWSTATS()
         {
@@ -682,6 +770,9 @@ namespace WindowsFormsApplication1
             statsbtn.Visible = false;
             Desconectar.Visible = false;
             playersonlineGrid.Visible = false;
+            playersonlinelbl.Visible = false;
+            invitationsGrid.Visible = false;
+            invitationslbl.Visible = false;
             returnbtn.Visible = true;
             statsBox.Visible = true;
         }
@@ -695,9 +786,13 @@ namespace WindowsFormsApplication1
             statsbtn.Visible = true;
             Desconectar.Visible = true;
             playersonlineGrid.Visible = true;
+            playersonlinelbl.Visible = true;
+            invitationsGrid.Visible = true;
+            invitationslbl.Visible = true;
             returnbtn.Visible = false;
             statsBox.Visible = false;
         }
+
 
 
 
@@ -726,88 +821,88 @@ namespace WindowsFormsApplication1
 
         //  -- notificacions
 
-            /*
-            response = parts[2].Split(',')[0];
+        /*
+        response = parts[2].Split(',')[0];
 
-            user_conn = response.Split('\n')[0];
-            list = response.Split('\n')[1];     //conté la llista de connectats (|Name|Name|Name|...)
+        user_conn = response.Split('\n')[0];
+        list = response.Split('\n')[1];     //conté la llista de connectats (|Name|Name|Name|...)
 
-            int j = 0;
-            int separador_noms = 0;
-            string intermid = null;
-            string conectados_en_string = null;
-            while(j < list.Length)
+        int j = 0;
+        int separador_noms = 0;
+        string intermid = null;
+        string conectados_en_string = null;
+        while(j < list.Length)
+        {
+            separador_noms = list.IndexOf("|", j);
+            while (j < separador_noms)  //guardem nom per nom a la llista de connectats
+            {
+                intermid += list[j];
+                j++;
+            }
+            if(intermid != null)
+            {
+                ListaConectados.Add(intermid);
+                conectados_en_string += intermid + " ";
+            }
+
+            intermid = null;
+            j++;
+        }
+        */
+
+        /*
+        int j = 0;
+        int separador_noms = 0;
+        string intermid = null;
+        string conectados_en_string = null;
+        while (j < list.Length)
+        {
+            if (list[list.Length - 1] == '|')
             {
                 separador_noms = list.IndexOf("|", j);
-                while (j < separador_noms)  //guardem nom per nom a la llista de connectats
-                {
-                    intermid += list[j];
-                    j++;
-                }
-                if(intermid != null)
-                {
-                    ListaConectados.Add(intermid);
-                    conectados_en_string += intermid + " ";
-                }
+            }
+            else
+            {
+                separador_noms = list.IndexOf("\0", j);
+            }
 
-                intermid = null;
+            while (j < separador_noms)  //guardem nom per nom a la llista de connectats
+            {
+                intermid += list[j];
                 j++;
             }
-            */
-
-            /*
-            int j = 0;
-            int separador_noms = 0;
-            string intermid = null;
-            string conectados_en_string = null;
-            while (j < list.Length)
+            if (intermid != null)
             {
-                if (list[list.Length - 1] == '|')
-                {
-                    separador_noms = list.IndexOf("|", j);
-                }
-                else
-                {
-                    separador_noms = list.IndexOf("\0", j);
-                }
-                                        
-                while (j < separador_noms)  //guardem nom per nom a la llista de connectats
-                {
-                    intermid += list[j];
-                    j++;
-                }
-                if (intermid != null)
-                {
-                    ListaConectados.Add(intermid);
-                }
-                conectados_en_string += intermid + " ";
-                intermid = null;
-                j++;
+                ListaConectados.Add(intermid);
             }
-            */
+            conectados_en_string += intermid + " ";
+            intermid = null;
+            j++;
+        }
+        */
 
 
-            /*
-            //COMPROVEM QUI S'ESTÀ DESCONNECTANT (SI JO O UN ALTRE USUARI)
-            bool isitmedisconnecting = false;
-            string whoisdisconnecting = response.Split('\n')[0];
+        /*
+        //COMPROVEM QUI S'ESTÀ DESCONNECTANT (SI JO O UN ALTRE USUARI)
+        bool isitmedisconnecting = false;
+        string whoisdisconnecting = response.Split('\n')[0];
 
-            if (whoisdisconnecting == "User Disconnected: " + USER)
-            {
-                isitmedisconnecting = true;
-            }
+        if (whoisdisconnecting == "User Disconnected: " + USER)
+        {
+            isitmedisconnecting = true;
+        }
 
-            if (isitmedisconnecting == true)
-            {
-                // Se terminó el servicio. 
-                // Nos desconectamos
-                server.Shutdown(SocketShutdown.Both);
-                server.Close();
-                ServerState = "DOWN";
-                DelegateOFFLINE del = new DelegateOFFLINE(OFFLINE);
-                offlinelbl.Invoke(del);
-                client.Abort(); //tanquem el thread d'aquest client
-            }
-            */
+        if (isitmedisconnecting == true)
+        {
+            // Se terminó el servicio. 
+            // Nos desconectamos
+            server.Shutdown(SocketShutdown.Both);
+            server.Close();
+            ServerState = "DOWN";
+            DelegateOFFLINE del = new DelegateOFFLINE(OFFLINE);
+            offlinelbl.Invoke(del);
+            client.Abort(); //tanquem el thread d'aquest client
+        }
+        */
     }
 }

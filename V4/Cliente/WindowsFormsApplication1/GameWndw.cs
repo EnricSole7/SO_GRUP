@@ -120,7 +120,7 @@ namespace WindowsFormsApplication1
             {
                 invited = playersonlineGrid.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
 
-                string mensaje = "97/" + Nform + "/" + USER + "/" + invited;
+                string mensaje = "97/" + Nform + "/" + USER + "/" + invited +"/" + datos_partida;
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 SERVER.Send(msg);
             }
