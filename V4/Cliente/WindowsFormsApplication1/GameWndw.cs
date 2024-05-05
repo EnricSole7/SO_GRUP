@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
 using System.ComponentModel.Design.Serialization;
+using Microsoft.Win32;
 
 namespace WindowsFormsApplication1
 {
@@ -16,23 +17,20 @@ namespace WindowsFormsApplication1
     {
         Socket SERVER;
         string USER;
+        public string creator;
         string datos_partida;
+        string server_info;
+        List<string> PLAYERS = new List<string>();
         int Nform;
         List<string> ListaConnectados = new List<string>();
 
-        List<string> Invitations = new List<string>();
+        //List<string> Invitations = new List<string>();
         public GameWndw()
         {
             InitializeComponent();
 
             //this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             //this.Bounds = Screen.PrimaryScreen.WorkingArea;
-
-            invitationsgrid.ColumnCount = 1;
-            invitationsgrid.RowHeadersVisible = false;
-            invitationsgrid.ColumnHeadersVisible = false;
-            invitationsgrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            invitationsgrid.ForeColor = Color.White;
         }
 
         private void GameWndw_Load(object sender, EventArgs e)
@@ -42,21 +40,16 @@ namespace WindowsFormsApplication1
 
         //
         //
-        //  LOADERS DEL FROM
+        //  LOADERS DEL FORM
         //
         //
-        public void SetLobby(int numForm, Socket serv, string user, List<string> invitations, List<string> listaconn)
+        public void SetLobby(int numForm, Socket serv, string user, List<string> listaconn)
         {
             this.Nform = numForm;
             this.SERVER = serv;
             this.USER = user;
-            this.Invitations = invitations;
             this.ListaConnectados = listaconn;
-
-            RefreshConnectedList(ListaConnectados);
-            InvitationReceived(Invitations);
         }
-
         public void SetGame(string partida)
         {
             this.datos_partida = partida;
@@ -70,33 +63,61 @@ namespace WindowsFormsApplication1
                 server += partida[i];
                 i++;
             }
-
-            //DelegatePRINTSERVER del = new DelegatePRINTSERVER(PRINTSERVER);
-            //server_value.Invoke(del, new object[] { server });
-            server_value.Text = server;
+            this.server_info = server;
         }
+        public void SetOtherPlayersOnJoining(string otherplayers)
+        {
+
+            otherplayers = otherplayers + " ";
+            int i = 0;
+            int separador;
+            string intermid = null;
+
+            while (i < otherplayers.Length)
+            {
+                separador = otherplayers.IndexOf(" ", i);
+                while (i < separador)
+                {
+                    intermid += otherplayers[i];
+                    i++;
+                }
+                if (intermid != null)
+                {
+                    this.PLAYERS.Add(intermid);
+                }
+                intermid = null;
+                i++;
+            }
+            //afegim tots els altres usuaris (primer el host) i finalment l'usuari que s'esta unint
+            this.PLAYERS.Add(this.USER);
+        }
+
         public void RefreshConnectedList(List<string> listconn)
         {
             this.ListaConnectados = listconn;
 
-            playersonlineGrid.ColumnCount = 1;
-            playersonlineGrid.RowCount = ListaConnectados.Count - 1;
-            playersonlineGrid.RowHeadersVisible = false;
-            playersonlineGrid.Columns[0].HeaderText = "PLAYERS ONLINE";
-            playersonlineGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-
-            int j = 0;
-            int k = 0;
-            while (j < ListaConnectados.Count)
-            {
-                if (ListaConnectados[j] != USER) //nomes mostrem els que no son l'usuari en questio
-                {
-                    playersonlineGrid.Rows[k].Cells[0].Value = ListaConnectados[j];
-                    k++;
-                }
-                j++;
-            }
+            DelegateCREATECONECTADOSGRID del = new DelegateCREATECONECTADOSGRID(CREATECONECTADOSGRID);
+            playersonlineGrid.Invoke(del);
         }
+
+        private void GameWndw_Shown(object sender, EventArgs e)
+        {
+            DelegateSETCREATOR del1 = new DelegateSETCREATOR(SETCREATOR);
+            player2_lbl.Invoke(del1, new object[] { this.creator });
+
+            DelegateCREATEINVITATIONSGRID del2 = new DelegateCREATEINVITATIONSGRID(CREATEINVITATIONSGRID);
+            invitationsgrid.Invoke(del2);
+
+            DelegatePRINTSERVER del3 = new DelegatePRINTSERVER(PRINTSERVER);
+            server_value.Invoke(del3, new object[] { this.server_info });
+
+            DelegateINSERTPLAYERSINGAME del4 = new DelegateINSERTPLAYERSINGAME(INSERTPLAYERSINGAME);
+            player1_lbl.Invoke(del4);
+
+            DelegateCREATECONECTADOSGRID del5 = new DelegateCREATECONECTADOSGRID(CREATECONECTADOSGRID);
+            playersonlineGrid.Invoke(del5);
+        }
+
         //
         //
         //
@@ -106,23 +127,37 @@ namespace WindowsFormsApplication1
 
         private void exitbtn_Click(object sender, EventArgs e)
         {
+            if (creator != null)    //si tanca la partida el creador
+            {
+                string mensaje = "95/" + "1" + Nform + "/" + USER + "/" + datos_partida;
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                SERVER.Send(msg);
+            }
+            else    //si tanca la partida un altre jugador 
+            {
+                string mensaje = "95/" + "0" + Nform + "/" + USER + "/" + datos_partida;
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                SERVER.Send(msg);
+            }
+
 
             this.Close();
-
         }
 
         //INVITE PLAYER
         private void playersonlineGrid_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             string invited;
-
-            if (playersonlineGrid.Rows[e.RowIndex].Cells[e.ColumnIndex].Value != null)
+            if (creator != null)    //NOMES POT CONVIDAR EL HOST DE LA PARTIDA
             {
-                invited = playersonlineGrid.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
+                if (playersonlineGrid.Rows[e.RowIndex].Cells[e.ColumnIndex].Value != null)
+                {
+                    invited = playersonlineGrid.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
 
-                string mensaje = "97/" + Nform + "/" + USER + "/" + invited +"/" + datos_partida;
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-                SERVER.Send(msg);
+                    string mensaje = "97/" + Nform + "/" + USER + "/" + invited + "/" + datos_partida;
+                    byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                    SERVER.Send(msg);
+                }
             }
         }
 
@@ -141,22 +176,22 @@ namespace WindowsFormsApplication1
             }
         }
         //REBEM UNA INVITACIO 
-        public void InvitationReceived(List<string> invitations)
+        public void InvitationReceived(string inviting)
         {
-            this.Invitations = invitations;
 
-            invitationsgrid.RowCount = Invitations.Count;
-            int i = 0;
+            MessageBox.Show("Invitaion from " + inviting + " added to your client hub", "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-            while(i < Invitations.Count)
-            {
-                invitationsgrid.Rows[i].Cells[0].Value = Invitations[i];
-                i++;
-            }
-
-            //AL SERVER (CODIGO = 0) S HA DE CORRETGIR QUE TREGUI DE LA TAULA DE CONECTADOS A L'ULTIMA PERSONA QUE HI HAVIA (p* = NULL)
-            //FALTA FER UN REMOVE.AT DE LA LLISTA D'INVITATIONS QUAN ACCEPTES UNA INVITACIO (EN UNA ALTRA FUNCIO)
         }
+
+        public void PlayerJoined(string playerjoined, int position)
+        {
+            DelegatePLAYERJOINED del = new DelegatePLAYERJOINED(PLAYERJOINED);
+            player2_lbl.Invoke(del, new object[] { playerjoined , position });
+        }
+
+
+
+
 
         //DELEGATES
 
@@ -164,6 +199,97 @@ namespace WindowsFormsApplication1
         public void PRINTSERVER(string server)
         {
             server_value.Text = server;
+        }
+
+        delegate void DelegateSETCREATOR(string creator);
+        public void SETCREATOR(string creator)
+        {
+            player1_lbl.Text = creator;
+        }
+
+        delegate void DelegateCREATEINVITATIONSGRID();
+        public void CREATEINVITATIONSGRID()
+        {
+            invitationsgrid.ColumnCount = 1;
+            invitationsgrid.RowHeadersVisible = false;
+            invitationsgrid.ColumnHeadersVisible = false;
+            invitationsgrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            invitationsgrid.ForeColor = Color.White;
+        }
+
+        delegate void DelegateCREATECONECTADOSGRID();
+        public void CREATECONECTADOSGRID()
+        {
+            playersonlineGrid.ColumnCount = 1;
+            playersonlineGrid.Rows.Clear();
+            playersonlineGrid.RowCount = ListaConnectados.Count /*- 1*/;
+            playersonlineGrid.RowHeadersVisible = false;
+            playersonlineGrid.ColumnHeadersVisible = false;
+            playersonlineGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+            int j = 0;
+            int k = 0;
+            while (j < ListaConnectados.Count)
+            {
+                if (ListaConnectados[j] != USER) //nomes mostrem els que no son l'usuari en questio
+                {
+                    playersonlineGrid.Rows[k].Cells[0].Value = ListaConnectados[j];
+                    k++;
+                }
+                j++;
+            }
+        }
+
+        delegate void DelegateINSERTPLAYERSINGAME();
+        public void INSERTPLAYERSINGAME()
+        {
+            int i = 0;
+
+            if (i < this.PLAYERS.Count)
+            {
+                player1_lbl.Text = this.PLAYERS[i];
+                i++;
+                if (i < this.PLAYERS.Count)
+                {
+                    player2_lbl.Text = this.PLAYERS[i];
+                    i++;
+                    if (i < this.PLAYERS.Count)
+                    {
+                        player3_lbl.Text = this.PLAYERS[i];
+                        i++;
+                        if (i < this.PLAYERS.Count)
+                        {
+                            player4_lbl.Text = this.PLAYERS[i];
+                            i++;
+                            if (i < this.PLAYERS.Count)
+                            {
+                                player5_lbl.Text = this.PLAYERS[i];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        delegate void DelegatePLAYERJOINED(string player, int position);
+        public void PLAYERJOINED(string player, int position)
+        {
+            if(position == 2)
+            {
+                player2_lbl.Text = player;
+            }
+            if (position == 3)
+            {
+                player3_lbl.Text = player;
+            }
+            if (position == 4)
+            {
+                player4_lbl.Text = player;
+            }
+            if (position == 5)
+            {
+                player5_lbl.Text = player;
+            }
         }
     }
 }
