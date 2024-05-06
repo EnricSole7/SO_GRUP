@@ -30,7 +30,7 @@ namespace WindowsFormsApplication1
         List<GameWndw> GameWndwForms = new List<GameWndw>();
 
         private static IPAddress direc = IPAddress.Parse("192.168.56.102");
-        private static IPEndPoint ipep = new IPEndPoint(direc, 9070);
+        private static IPEndPoint ipep = new IPEndPoint(direc, 9074);
 
         public Client()
         {
@@ -381,6 +381,29 @@ namespace WindowsFormsApplication1
 
                                 break;
                             }
+                        case 95:    //LEAVE GAME
+                            {
+                                // "95#0#%s#%d,", disconnecting, NForm);
+
+                                int result = Convert.ToInt32(parts[1]);
+                                string disconnecting = parts[2];
+                                NForm = Convert.ToInt32(parts[3].Split(',')[0]);
+
+                                if (result == -1)    // tanca partida el host
+                                {
+                                    MessageBox.Show("Error player leaving game", "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+
+                                }
+                                if (result == 2)    // missatge nomes pel host quan tanca la partida i pel jugador quan tanca partida
+                                {
+                                    MessageBox.Show("Game closed", "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                                }
+                                else
+                                {
+                                    GameWndwForms[NForm].PlayerLeft(result, disconnecting);
+                                }
+                                break;
+                            }
                     }
                 }
             }
@@ -609,6 +632,7 @@ namespace WindowsFormsApplication1
             }
             if (Joining)    //s'uneix algu i per tant s'ha d'actualitzar
             {
+                G.creator = null;
                 G.SetOtherPlayersOnJoining(OTHERPLAYERS);
             }
             Joining = false;
@@ -631,6 +655,8 @@ namespace WindowsFormsApplication1
             server.Send(msg);
 
             Invitations.Remove(invitation);
+            GameInvitations.Remove(invitation);
+            FormInvitations.Remove(invitation);
 
             invitation = null;
 
@@ -802,7 +828,7 @@ namespace WindowsFormsApplication1
         public void REFRESHINVITATIONS()
         {
             //numplayerslbl.Text = "Number of players Online: " + ListaConectados.Count;
-
+            invitationsGrid.Rows.Clear();
             invitationsGrid.RowCount = Invitations.Count;
 
             int j = 0;

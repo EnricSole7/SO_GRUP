@@ -390,13 +390,13 @@ void *AtenderCliente (void *socket)
 			}
 			else
 			{
-				int i = 0;
-				while (i < resp)	//resp es el numero de sockets a los que informar
+				int k = 0;
+				while (k < resp)	//resp es el numero de sockets a los que informar
 				{
 					sprintf(respuesta, "96#1#%s#%d#%d,", invited , resp, NForm);
-					printf ("JOINGAME otherplayer socket %d: %s\n", othersockets[i], respuesta);
-					write (sockets[othersockets[i]],respuesta, strlen(respuesta));
-					i++;
+					printf ("JOINGAME otherplayer socket %d: %s\n", othersockets[k], respuesta);
+					write (sockets[othersockets[k]],respuesta, strlen(respuesta));
+					k++;
 				}
 				sprintf(respuesta, "96#0#%s#%s#%d,", game_info, otherplayers, NForm);
 				printf ("JOINGAME invited: %s\n", respuesta);
@@ -409,8 +409,11 @@ void *AtenderCliente (void *socket)
 			int creator;
 			char disconnecting[30];
 			char game_info[60];
+			char players[100];
+			int playersockets[4];
+			int playerscount;
 			
-			//"95/" + "1" + Nform + "/" + USER + "/" + datos_partida;
+			//"95/" + "1" + Nform + "/" + USER + "/" + datos_partida + "/" + listplayers + "/" + playerscount;
 			
 			p= strtok (NULL,"/");
 			creator = atoi(p);
@@ -424,7 +427,47 @@ void *AtenderCliente (void *socket)
 			p= strtok (NULL,"/");
 			sprintf(game_info, p);
 			
-			resp = LeaveGame(
+			p= strtok (NULL,"/");
+			sprintf(players, p);
+			
+			p= strtok (NULL,"/");
+			playerscount = atoi(p);
+			
+			resp = LeaveGame(creator, disconnecting, game_info, players, playerscount, playersockets, conn);
+			
+			int k = 0;
+			
+			if (resp == 1) //el host cierra partida
+			{
+
+				while (k < playerscount - 1)	//informamos al numero de jugadores de la partida (menos al host -> -1)
+				{
+					sprintf(respuesta, "95#1#%s#%d,", disconnecting, NForm);
+					printf ("LEAVEGAME player socket %d: %s\n", playersockets[k], respuesta);
+					write (sockets[playersockets[k]],respuesta, strlen(respuesta));
+					k++;
+				}
+				sprintf(respuesta, "95#2#%s#%d,", disconnecting, NForm);
+				printf ("LEAVEGAME player HOST: %s\n", respuesta);
+			}
+			else if (resp == 0)	//un jugador abandona la partida
+			{
+				while (k < playerscount - 1)	//informamos al numero de jugadores de la partida (menos al usuario -> -1)
+				{
+					sprintf(respuesta, "95#0#%s#%d,", disconnecting, NForm);
+					printf ("LEAVEGAME player socket %d: %s\n", playersockets[k], respuesta);
+					write (sockets[playersockets[k]],respuesta, strlen(respuesta));
+					k++;
+				}
+				sprintf(respuesta, "95#2#%s#%d,", disconnecting, NForm);
+				printf ("LEAVEGAME player LEAVING: %s\n", respuesta);
+			}
+			else
+			{
+				sprintf(respuesta, "95#-1#%s#%d,", disconnecting, NForm);
+				printf ("LEAVEGAME error\n", respuesta);
+			}
+			write (socket_conn,respuesta, strlen(respuesta));
 		}
 			
 		if(NotificateConnected)	//Si hay un USER a modificar
@@ -462,7 +505,7 @@ void *AtenderCliente (void *socket)
 			NotificateConnected = false;
 		}
 		
-		printf ("DONE\n");
+		printf ("DONE\n\n///////////////////////////////////////////////////////////////// \n\n");
 	}
 	// Se acabo el servicio para este cliente
 	close(socket_conn); 
@@ -489,7 +532,7 @@ int main(int argc, char *argv[])
 	serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);
 	// escucharemos en el port 9050
 	int port = 50080;
-	serv_adr.sin_port = htons(9070);
+	serv_adr.sin_port = htons(9074);
 	if (bind(socket_listen, (struct sockaddr *) &serv_adr, sizeof(serv_adr)) < 0)
 		printf ("Error al bind\n");
 	//La cola de peticiones pendientes no podr? ser superior a 4
@@ -1046,7 +1089,7 @@ int CreateGame(char nombre[60], char partida[200], MYSQL *conn)
 	}	
 }
 
-int BuscarSocket(char invitado[30], MYSQL *conn)
+int BuscarSocket(char namesocket[30], MYSQL *conn)
 {
 	int err;
 	MYSQL_RES *resultado;
@@ -1056,22 +1099,7 @@ int BuscarSocket(char invitado[30], MYSQL *conn)
 	bool found = false;
 	//Devolvera toda la lista de conectados. buscamos el index del invitado
 	//EL INDEX DEL INVITADO COINCIDE CON SU INDEX DE SOCKET
-	/*
-	sprintf (consulta, "SELECT * FROM Connected");
-	printf("consulta: %s\n", consulta);
-	
-	err = mysql_query(conn, consulta);
-	resultado = mysql_store_result(conn);
-	row = mysql_fetch_row(resultado);
-	
-	while(row != NULL)
-	{
-		row = mysql_fetch_row (resultado);
-		j++;
-	}
-	//printf("NUMBER OF CONNECTED: %d\n", j);
-	//printf("NUMBER OF SOCKETS: %d\n", i);
-	*/
+
 	j = 0;
 	sprintf (consulta, "SELECT * FROM Connected");
 	err = mysql_query(conn, consulta);
@@ -1079,7 +1107,7 @@ int BuscarSocket(char invitado[30], MYSQL *conn)
 	row = mysql_fetch_row(resultado);
 	while((row != NULL) && (!found))
 	{
-		if(strcmp(row[0], invitado) == 0)
+		if(strcmp(row[0], namesocket) == 0)
 		{
 			found = true;
 		}
@@ -1092,12 +1120,12 @@ int BuscarSocket(char invitado[30], MYSQL *conn)
 	
 	if(found == false)
 	{
-		printf("ERROR");
+		printf("SOCKET : ERROR\n");
 		return -1;
 	}
 	else
 	{
-		printf("INVITED NUMBER: %d\n", j);
+		printf("SOCKET number: %d\n", j);
 		return j;
 	}
 	
@@ -1152,7 +1180,7 @@ int JoinGame(char invited[30], char inviting[30], char partida[60], char otherpl
 	err = mysql_query(conn, consulta);
 	resultado = mysql_store_result(conn);
 	row = mysql_fetch_row(resultado);
-	//(id_j1, id_j2, id_j3, id_j4, id_j5, id_s, fecha, minijuego)
+	//(id_j1, id_j2, id_j3, id_j4, id_j5, id_s, fecha, minijuego, ended)
 	int j = 1;
 	int id_x;
 	bool found  = false;
@@ -1213,9 +1241,9 @@ int JoinGame(char invited[30], char inviting[30], char partida[60], char otherpl
 	
 	printf("JOINGAME : successfully joined game - position %s\n", index_id_to_ad);
 	
+	
 	//ahora devolveremos la lista de gente que esta en la partida:
 	
-
 	//anyadimos el jugador que nos invita a la lista de jugadores de la partida ya que seguro que esta
 	sprintf(otherplayers, "%s", inviting);
 	
@@ -1303,7 +1331,154 @@ int JoinGame(char invited[30], char inviting[30], char partida[60], char otherpl
 }
 
 
-
+int LeaveGame(int creator, char disconnecting[30], char partida[60], char players[100], int playerscount, int playersockets[4], MYSQL *conn)
+{
+	printf("LEAVEGAME leaving: %s\n", disconnecting); 
+	printf("LEAVEGAME game: %s\n", partida); 
+	int err;
+	MYSQL_RES *resultado;
+	MYSQL_ROW row;
+	char consulta[500];
+	int contador = 0;
+	char server[20];
+	char partida_cpy[60];
+	char players_cpy[100];
+	char date[30];
+	int idplayerhost;
+	int idserver;
+	int id_discon;
+	int idplayers[5] = {0};	//maximo otros 4 jugadores
+	int id_fromtable;
+	bool found = false;
+	
+	
+	//partida del estilo : ("%s|%d|%s", server, id_j1, date)
+	sprintf(partida_cpy, "%s|", partida);
+	
+	//cogemos los valores de la partida
+	char *h = strtok(partida_cpy, "|");
+	sprintf(server, h);
+	h = strtok(NULL, "|");
+	idplayerhost = atoi(h);
+	h = strtok(NULL, "|");
+	sprintf(date, h);
+	
+	//buscamos el id del server
+	
+	sprintf (consulta, "SELECT id FROM Server WHERE host_id = '%s';", server);
+	err = mysql_query(conn, consulta);
+	resultado = mysql_store_result(conn);
+	row = mysql_fetch_row(resultado);
+	
+	//no hace falta pasar por filtros porque si ha llegado hasta aqui es que todo existe i es correcto
+	
+	idserver = atoi(row[0]);
+	
+	//GUARDAMOS TODOS LOS SOCKETS A LOS QUE HAY QUE AVISAR (A TODOS LOS INTEGRANTES DE LA PARTIDA EXCEPTO EL QUE SE DESCONECTA) - seguimos la misma metodologia que en JoinGame
+	char namesocket[30];
+	int j = 0;
+	printf("LEAVEGAME players : %s\n", players);
+	if (strcmp(players, "-") != 0)	//players = - cuando se desconecta el host y estaba el solo en la partida
+	{
+		sprintf(players_cpy, players);
+		
+		char *l = strtok(players_cpy, " ");
+		
+		while(j < playerscount - 1) //no incluimos al que se desconecta
+		{
+			sprintf(namesocket, l);
+			playersockets[j] = BuscarSocket(namesocket, conn);
+			printf("LEAVEGAME socket %s: %d\n", namesocket, playersockets[j]);
+			j++;
+			l = strtok(NULL, " ");
+		}
+	}
+	
+	printf("LEAVEGAME sockets: %d %d %d %d \n", playersockets[0], playersockets[1], playersockets[2], playersockets[3]);
+	if (creator == 1)	//esta cerrando partida el host
+	{
+		//actualizamos la partida en la base de datos con parametro ended = 1 (ha terminado)
+		sprintf (consulta, "UPDATE Game SET ended = 1 WHERE id_j1 = %d AND id_s = %d AND fecha = '%s';", idplayerhost, idserver, date);
+		//printf("JOINGAME : %s \n", consulta);
+		err = mysql_query(conn, consulta);
+		
+		//ahora actualizamos a todos los players de la partida que esta ha terminado
+		
+		printf("LEAVEGAME OK : leaving HOST\n");
+		printf("LEAVEGAME players now: %s\n", players);
+		printf("JOINGAME playersockets: %d %d %d %d \n", playersockets[0], playersockets[1], playersockets[2], playersockets[3]);
+		
+		return 1;
+	}
+	else if (creator == 0)	//creator = 0 --- se va un usuario que no es el host de la partida (no se cierra)
+	{
+		//s haura de fer el update de la taula Game de la partida
+		//borrar el jugador que marxa -> actualitzar la taula movent els ids dels jugadors a la nova posicio -> actualitzar llista de players
+		
+		//guardamos todos los ids de las personas de la partida
+		sprintf (consulta, "SELECT * FROM Game WHERE id_j1 = %d AND id_s = %d AND fecha = '%s';", idplayerhost, idserver, date);
+		printf("LEAVEGAME : %s \n", consulta);
+		err = mysql_query(conn, consulta);
+		resultado = mysql_store_result(conn);
+		row = mysql_fetch_row(resultado);
+		//(id_j1, id_j2, id_j3, id_j4, id_j5, id_s, fecha, minijuego, ended)
+		j = 0;
+		while (j < playerscount)
+		{
+			idplayers[j] = atoi(row[j]);
+			j++;
+		}
+		printf("LEAVEGAME : OK \n");
+		
+		printf ("LEAVEGAME ids : %d %d %d %d %d\n", idplayers[0], idplayers[1], idplayers[2], idplayers[3], idplayers[4]);
+		//buscamos el id del jugador a desconectar
+		sprintf (consulta, "SELECT id FROM Player WHERE nombre = '%s';", disconnecting);
+		err = mysql_query(conn, consulta);
+		resultado = mysql_store_result(conn);
+		row = mysql_fetch_row(resultado);
+		
+		id_discon = atoi(row[0]);
+		printf("LEAVEGAME : OK \n");
+		//lo buscamos en la lista de ids de la partida
+		j = 0;
+		while (!found)
+		{
+			if (idplayers[j] == id_discon)
+			{
+				found = true;
+			}
+			else
+			{
+				j++;
+			}
+		}
+		printf("LEAVEGAME : OK \n");
+		//lo sustituimos en la lista para luego insertarlo updated en la partida
+		while (j + 1 < playerscount)
+		{
+			idplayers[j] = idplayers[j + 1];
+			j++;
+		}
+		//ponemos el resto de ids a 1 (default developer)
+		while (j < 5)
+		{
+			idplayers[j] = 1;
+			j++;
+		}
+		printf("LEAVEGAME : OK \n");
+		//sustituimos el jugador que se ha ido en la tabla
+		//idplayers[0] es el host (este no lo actualizamos ya que en este caso (creator = 0) este no se esta desconectando
+		sprintf (consulta, "UPDATE Game SET id_j2 = %d, id_j3 = %d, id_j4 = %d, id_j5 = %d WHERE id_j1 = %d AND id_s = %d AND fecha = '%s';", idplayers[1], idplayers[2], idplayers[3], idplayers[4], idplayerhost, idserver, date);
+		printf("LEAVEGAME : %s \n", consulta);
+		err = mysql_query(conn, consulta);
+		
+		return 0;
+	}
+	else
+	{
+		return -1;
+	}
+}
 
 
 

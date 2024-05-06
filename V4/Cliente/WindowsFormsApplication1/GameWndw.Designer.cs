@@ -46,14 +46,12 @@
             this.player3_lbl = new System.Windows.Forms.Label();
             this.player2_lbl = new System.Windows.Forms.Label();
             this.player1_lbl = new System.Windows.Forms.Label();
-            this.invitationsgrid = new System.Windows.Forms.DataGridView();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.form_value = new System.Windows.Forms.Label();
+            this.form_lbl = new System.Windows.Forms.Label();
             this.peticionesBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.playersonlineGrid)).BeginInit();
             this.playersBox.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.invitationsgrid)).BeginInit();
-            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // exitbtn
@@ -170,7 +168,7 @@
             // 
             this.server_lbl.AutoSize = true;
             this.server_lbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.server_lbl.Location = new System.Drawing.Point(24, 33);
+            this.server_lbl.Location = new System.Drawing.Point(24, 41);
             this.server_lbl.Name = "server_lbl";
             this.server_lbl.Size = new System.Drawing.Size(82, 20);
             this.server_lbl.TabIndex = 21;
@@ -180,7 +178,7 @@
             // 
             this.server_value.AutoSize = true;
             this.server_value.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.server_value.Location = new System.Drawing.Point(112, 33);
+            this.server_value.Location = new System.Drawing.Point(112, 41);
             this.server_value.Name = "server_value";
             this.server_value.Size = new System.Drawing.Size(0, 20);
             this.server_value.TabIndex = 22;
@@ -258,37 +256,6 @@
             this.player1_lbl.TabIndex = 26;
             this.player1_lbl.Text = "<<<<>>>>";
             // 
-            // invitationsgrid
-            // 
-            this.invitationsgrid.AllowUserToAddRows = false;
-            this.invitationsgrid.AllowUserToDeleteRows = false;
-            this.invitationsgrid.AllowUserToResizeColumns = false;
-            this.invitationsgrid.AllowUserToResizeRows = false;
-            this.invitationsgrid.BackgroundColor = System.Drawing.SystemColors.MenuText;
-            this.invitationsgrid.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.invitationsgrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.invitationsgrid.ColumnHeadersVisible = false;
-            this.invitationsgrid.GridColor = System.Drawing.SystemColors.MenuText;
-            this.invitationsgrid.Location = new System.Drawing.Point(6, 25);
-            this.invitationsgrid.Name = "invitationsgrid";
-            this.invitationsgrid.RowHeadersWidth = 51;
-            this.invitationsgrid.RowTemplate.Height = 24;
-            this.invitationsgrid.Size = new System.Drawing.Size(188, 130);
-            this.invitationsgrid.TabIndex = 24;
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.BackColor = System.Drawing.SystemColors.MenuText;
-            this.groupBox1.Controls.Add(this.invitationsgrid);
-            this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox1.ForeColor = System.Drawing.SystemColors.Control;
-            this.groupBox1.Location = new System.Drawing.Point(1007, 431);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(200, 161);
-            this.groupBox1.TabIndex = 23;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "INVITATIONS";
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -299,15 +266,35 @@
             this.label1.TabIndex = 26;
             this.label1.Text = "PLAYERS ONLINE";
             // 
+            // form_value
+            // 
+            this.form_value.AutoSize = true;
+            this.form_value.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.form_value.Location = new System.Drawing.Point(93, 13);
+            this.form_value.Name = "form_value";
+            this.form_value.Size = new System.Drawing.Size(0, 20);
+            this.form_value.TabIndex = 28;
+            // 
+            // form_lbl
+            // 
+            this.form_lbl.AutoSize = true;
+            this.form_lbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.form_lbl.Location = new System.Drawing.Point(24, 13);
+            this.form_lbl.Name = "form_lbl";
+            this.form_lbl.Size = new System.Drawing.Size(63, 20);
+            this.form_lbl.TabIndex = 27;
+            this.form_lbl.Text = "FORM:";
+            // 
             // GameWndw
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1500, 778);
+            this.Controls.Add(this.form_value);
+            this.Controls.Add(this.form_lbl);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.playersBox);
             this.Controls.Add(this.players_lbl);
-            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.server_value);
             this.Controls.Add(this.server_lbl);
             this.Controls.Add(this.playersonlineGrid);
@@ -322,8 +309,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.playersonlineGrid)).EndInit();
             this.playersBox.ResumeLayout(false);
             this.playersBox.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.invitationsgrid)).EndInit();
-            this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -348,8 +333,8 @@
         private System.Windows.Forms.Label player3_lbl;
         private System.Windows.Forms.Label player2_lbl;
         private System.Windows.Forms.Label player1_lbl;
-        private System.Windows.Forms.DataGridView invitationsgrid;
-        private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label form_value;
+        private System.Windows.Forms.Label form_lbl;
     }
 }

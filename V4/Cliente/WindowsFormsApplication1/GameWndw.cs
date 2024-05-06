@@ -65,9 +65,8 @@ namespace WindowsFormsApplication1
             }
             this.server_info = server;
         }
-        public void SetOtherPlayersOnJoining(string otherplayers)
+        public void SetOtherPlayersOnJoining(string otherplayers)   //funcio NOMES per al jugador que s'esta unint a la partida
         {
-
             otherplayers = otherplayers + " ";
             int i = 0;
             int separador;
@@ -88,7 +87,7 @@ namespace WindowsFormsApplication1
                 intermid = null;
                 i++;
             }
-            //afegim tots els altres usuaris (primer el host) i finalment l'usuari que s'esta unint
+            //afegim tots els altres usuaris (primer el host) i finalment l'usuari que s'esta unint a la seva llista
             this.PLAYERS.Add(this.USER);
         }
 
@@ -105,44 +104,20 @@ namespace WindowsFormsApplication1
             DelegateSETCREATOR del1 = new DelegateSETCREATOR(SETCREATOR);
             player2_lbl.Invoke(del1, new object[] { this.creator });
 
-            DelegateCREATEINVITATIONSGRID del2 = new DelegateCREATEINVITATIONSGRID(CREATEINVITATIONSGRID);
-            invitationsgrid.Invoke(del2);
+            DelegatePRINTSERVER del2 = new DelegatePRINTSERVER(PRINTSERVER);
+            server_value.Invoke(del2, new object[] { this.server_info, this.Nform });
 
-            DelegatePRINTSERVER del3 = new DelegatePRINTSERVER(PRINTSERVER);
-            server_value.Invoke(del3, new object[] { this.server_info });
+            DelegateINSERTPLAYERSINGAME del3 = new DelegateINSERTPLAYERSINGAME(INSERTPLAYERSINGAME);
+            player1_lbl.Invoke(del3);
 
-            DelegateINSERTPLAYERSINGAME del4 = new DelegateINSERTPLAYERSINGAME(INSERTPLAYERSINGAME);
-            player1_lbl.Invoke(del4);
-
-            DelegateCREATECONECTADOSGRID del5 = new DelegateCREATECONECTADOSGRID(CREATECONECTADOSGRID);
-            playersonlineGrid.Invoke(del5);
+            DelegateCREATECONECTADOSGRID del4 = new DelegateCREATECONECTADOSGRID(CREATECONECTADOSGRID);
+            playersonlineGrid.Invoke(del4);
         }
-
         //
         //
         //
         //
         //
-
-
-        private void exitbtn_Click(object sender, EventArgs e)
-        {
-            if (creator != null)    //si tanca la partida el creador
-            {
-                string mensaje = "95/" + "1" + Nform + "/" + USER + "/" + datos_partida;
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-                SERVER.Send(msg);
-            }
-            else    //si tanca la partida un altre jugador 
-            {
-                string mensaje = "95/" + "0" + Nform + "/" + USER + "/" + datos_partida;
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-                SERVER.Send(msg);
-            }
-
-
-            this.Close();
-        }
 
         //INVITE PLAYER
         private void playersonlineGrid_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -189,32 +164,76 @@ namespace WindowsFormsApplication1
             player2_lbl.Invoke(del, new object[] { playerjoined , position });
         }
 
+        private void exitbtn_Click(object sender, EventArgs e)
+        {
+            string listplayers = null;
+            int playerscount = PLAYERS.Count;
 
+            foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (inclou host, altres i el user)
+            {
+                if (player != USER)
+                    listplayers += player + " ";
+            }
 
+            if (creator != null)    //si tanca la partida el creador (host)
+            {
+                if (listplayers == null) //vol dir que nomes hi ha el host a la partida i que la tanca
+                {
+                    listplayers = "-";
+                }
+                string mensaje = "95/" + "1/" + Nform + "/" + USER + "/" + datos_partida + "/" + listplayers + "/" + playerscount;
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                SERVER.Send(msg);
+            }
+            else    //si tanca la partida un altre jugador 
+            {
+                string mensaje = "95/" + "0/" + Nform + "/" + USER + "/" + datos_partida + "/" + listplayers + "/" + playerscount;
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                SERVER.Send(msg);
+            }
+
+            PLAYERS.Clear();    //netegem la llista de jugadors del jugador que marxa
+            this.Close();
+        }
+
+        public void PlayerLeft(int result, string disconnected)
+        {
+            if (result == 1)    //tanca partida el creador (informem als altres usuaris)
+            {
+                MessageBox.Show("Host " + disconnected + " has exited to lobby. Game closing", "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                this.Close();
+            }
+            else if (result == 0)   //marxa de la partida un altre usuari (informem als altres usuaris i al host)
+            {
+                MessageBox.Show("Player " + disconnected + " disconnected. Waiting for additional player", "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                //la llista de jugadors ja s'ha actualitzat al crear el missatge al servidor, nomes queda actualitzar-la visualment
+
+                this.PLAYERS.Remove(disconnected);  //treiem el jugador desconnectat de la llista
+                DelegateINSERTPLAYERSINGAME del = new DelegateINSERTPLAYERSINGAME(INSERTPLAYERSINGAME);
+                player1_lbl.Invoke(del);
+            }
+        }
 
 
         //DELEGATES
 
-        delegate void DelegatePRINTSERVER(string server);
-        public void PRINTSERVER(string server)
+        delegate void DelegatePRINTSERVER(string server, int numform);
+        public void PRINTSERVER(string server, int numform)
         {
             server_value.Text = server;
+            form_value.Text = numform.ToString();
         }
 
         delegate void DelegateSETCREATOR(string creator);
         public void SETCREATOR(string creator)
         {
             player1_lbl.Text = creator;
-        }
-
-        delegate void DelegateCREATEINVITATIONSGRID();
-        public void CREATEINVITATIONSGRID()
-        {
-            invitationsgrid.ColumnCount = 1;
-            invitationsgrid.RowHeadersVisible = false;
-            invitationsgrid.ColumnHeadersVisible = false;
-            invitationsgrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            invitationsgrid.ForeColor = Color.White;
+            if (creator != null)    //es null quan no es el host qui modifica el seu valor
+            {
+                this.PLAYERS.Add(creator);  //afegim el creador (host) a la seva propia llista de jugadors
+            }
         }
 
         delegate void DelegateCREATECONECTADOSGRID();
@@ -244,6 +263,12 @@ namespace WindowsFormsApplication1
         public void INSERTPLAYERSINGAME()
         {
             int i = 0;
+            //primer resetegem els valors dels labels
+            player1_lbl.Text = null;
+            player2_lbl.Text = null;
+            player3_lbl.Text = null;
+            player4_lbl.Text = null;
+            player5_lbl.Text = null;
 
             if (i < this.PLAYERS.Count)
             {
@@ -274,6 +299,8 @@ namespace WindowsFormsApplication1
         delegate void DelegatePLAYERJOINED(string player, int position);
         public void PLAYERJOINED(string player, int position)
         {
+            this.PLAYERS.Add(player);   //afegim el jugador que s'uneix a la llista dels jugadors que ja estan a la partida
+
             if(position == 2)
             {
                 player2_lbl.Text = player;
