@@ -29,8 +29,8 @@ namespace WindowsFormsApplication1
         Dictionary<string, int> FormInvitations = new Dictionary<string, int>();  //utilitzat per unir-se a partides
         List<GameWndw> GameWndwForms = new List<GameWndw>();
 
-        private static IPAddress direc = IPAddress.Parse("192.168.56.102");
-        private static IPEndPoint ipep = new IPEndPoint(direc, 9074);
+        private static IPAddress direc = IPAddress.Parse("10.4.119.5");
+        private static IPEndPoint ipep = new IPEndPoint(direc, 50080);
 
         public Client()
         {

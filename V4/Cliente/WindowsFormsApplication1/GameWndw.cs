@@ -202,7 +202,8 @@ namespace WindowsFormsApplication1
             {
                 MessageBox.Show("Host " + disconnected + " has exited to lobby. Game closing", "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                this.Close();
+                DelegateCLOSE del = new DelegateCLOSE(CLOSE);
+                this.Invoke(del);
             }
             else if (result == 0)   //marxa de la partida un altre usuari (informem als altres usuaris i al host)
             {
@@ -241,7 +242,7 @@ namespace WindowsFormsApplication1
         {
             playersonlineGrid.ColumnCount = 1;
             playersonlineGrid.Rows.Clear();
-            playersonlineGrid.RowCount = ListaConnectados.Count /*- 1*/;
+            playersonlineGrid.RowCount = ListaConnectados.Count - 1;
             playersonlineGrid.RowHeadersVisible = false;
             playersonlineGrid.ColumnHeadersVisible = false;
             playersonlineGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
@@ -317,6 +318,12 @@ namespace WindowsFormsApplication1
             {
                 player5_lbl.Text = player;
             }
+        }
+
+        delegate void DelegateCLOSE();
+        public void CLOSE()
+        {
+            this.Close();
         }
     }
 }
