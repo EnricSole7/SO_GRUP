@@ -49,6 +49,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.form_value = new System.Windows.Forms.Label();
             this.form_lbl = new System.Windows.Forms.Label();
+            this.startgamebtn = new System.Windows.Forms.Button();
             this.peticionesBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.playersonlineGrid)).BeginInit();
             this.playersBox.SuspendLayout();
@@ -94,16 +95,18 @@
             this.checkTBD.TabIndex = 16;
             this.checkTBD.TabStop = true;
             this.checkTBD.UseVisualStyleBackColor = true;
+            this.checkTBD.CheckedChanged += new System.EventHandler(this.checkTBD_CheckedChanged);
             // 
             // checkMaze
             // 
             this.checkMaze.AutoSize = true;
-            this.checkMaze.Location = new System.Drawing.Point(16, 109);
+            this.checkMaze.Location = new System.Drawing.Point(16, 103);
             this.checkMaze.Name = "checkMaze";
             this.checkMaze.Size = new System.Drawing.Size(17, 16);
             this.checkMaze.TabIndex = 15;
             this.checkMaze.TabStop = true;
             this.checkMaze.UseVisualStyleBackColor = true;
+            this.checkMaze.CheckedChanged += new System.EventHandler(this.checkMaze_CheckedChanged);
             // 
             // checkSymbols
             // 
@@ -114,6 +117,7 @@
             this.checkSymbols.TabIndex = 14;
             this.checkSymbols.TabStop = true;
             this.checkSymbols.UseVisualStyleBackColor = true;
+            this.checkSymbols.CheckedChanged += new System.EventHandler(this.checkSymbols_CheckedChanged);
             // 
             // label5
             // 
@@ -130,7 +134,7 @@
             // 
             this.maze_lbl.AutoSize = true;
             this.maze_lbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.maze_lbl.Location = new System.Drawing.Point(40, 101);
+            this.maze_lbl.Location = new System.Drawing.Point(40, 95);
             this.maze_lbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.maze_lbl.Name = "maze_lbl";
             this.maze_lbl.Size = new System.Drawing.Size(83, 29);
@@ -156,7 +160,7 @@
             this.playersonlineGrid.AllowUserToResizeRows = false;
             this.playersonlineGrid.BackgroundColor = System.Drawing.Color.White;
             this.playersonlineGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.playersonlineGrid.Location = new System.Drawing.Point(28, 373);
+            this.playersonlineGrid.Location = new System.Drawing.Point(28, 461);
             this.playersonlineGrid.Name = "playersonlineGrid";
             this.playersonlineGrid.RowHeadersWidth = 51;
             this.playersonlineGrid.RowTemplate.Height = 24;
@@ -260,7 +264,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(39, 345);
+            this.label1.Location = new System.Drawing.Point(39, 433);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(181, 25);
             this.label1.TabIndex = 26;
@@ -285,11 +289,24 @@
             this.form_lbl.TabIndex = 27;
             this.form_lbl.Text = "FORM:";
             // 
+            // startgamebtn
+            // 
+            this.startgamebtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.startgamebtn.Location = new System.Drawing.Point(28, 336);
+            this.startgamebtn.Margin = new System.Windows.Forms.Padding(4);
+            this.startgamebtn.Name = "startgamebtn";
+            this.startgamebtn.Size = new System.Drawing.Size(201, 59);
+            this.startgamebtn.TabIndex = 29;
+            this.startgamebtn.Text = "START GAME";
+            this.startgamebtn.UseVisualStyleBackColor = true;
+            this.startgamebtn.Click += new System.EventHandler(this.startgamebtn_Click);
+            // 
             // GameWndw
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1500, 778);
+            this.Controls.Add(this.startgamebtn);
             this.Controls.Add(this.form_value);
             this.Controls.Add(this.form_lbl);
             this.Controls.Add(this.label1);
@@ -336,5 +353,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label form_value;
         private System.Windows.Forms.Label form_lbl;
+        private System.Windows.Forms.Button startgamebtn;
     }
 }

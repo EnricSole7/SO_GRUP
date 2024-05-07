@@ -10,6 +10,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.ComponentModel.Design.Serialization;
 using Microsoft.Win32;
+using System.Runtime.CompilerServices;
 
 namespace WindowsFormsApplication1
 {
@@ -23,6 +24,11 @@ namespace WindowsFormsApplication1
         List<string> PLAYERS = new List<string>();
         int Nform;
         List<string> ListaConnectados = new List<string>();
+
+        string minigame = null;
+        bool symbols_checked = false;
+        bool maze_checked = false;
+        bool tbd_checked = false;
 
         //List<string> Invitations = new List<string>();
         public GameWndw()
@@ -216,6 +222,54 @@ namespace WindowsFormsApplication1
                 player1_lbl.Invoke(del);
             }
         }
+
+        private void checkSymbols_CheckedChanged(object sender, EventArgs e)
+        {
+            symbols_checked = true;
+            maze_checked = false;
+            tbd_checked = false;
+            minigame = "SYMBOLS";
+        }
+
+        private void checkMaze_CheckedChanged(object sender, EventArgs e)
+        {
+            symbols_checked = false;
+            maze_checked = true;
+            tbd_checked = false;
+            minigame = "MAZE";
+        }
+
+        private void checkTBD_CheckedChanged(object sender, EventArgs e)
+        {
+            symbols_checked = false;
+            maze_checked = false;
+            tbd_checked = true;
+            minigame = "TBD";
+        }
+
+        private void startgamebtn_Click(object sender, EventArgs e)
+        {
+            if ((minigame != null) && (creator != null) && (minigame != "TBD") && (minigame != "MAZE")) 
+            {
+                string listplayers = null;
+                int playerscount = PLAYERS.Count;
+
+                foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (inclou host, altres i el user)
+                {
+                    listplayers += player + " ";
+                }
+                string mensaje = "94/" + Nform + "/" + USER + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + minigame;
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                SERVER.Send(msg);
+            }
+            else
+            {
+                MessageBox.Show("Select a minigame before starting", "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+
+
 
 
         //DELEGATES
