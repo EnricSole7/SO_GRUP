@@ -406,6 +406,43 @@ namespace WindowsFormsApplication1
                                 }
                                 break;
                             }
+                        case 94:
+                            {
+                                int game = Convert.ToInt32(parts[1]);
+                                if(game == 0)   //SYMBOLS
+                                {
+                                    int destination = Convert.ToInt32(parts[2]);
+                                    if (destination == 0)   //destinat al host
+                                    {
+                                        // "94#0#0#%s#%d,", vectorimagenes_host, NForm);
+
+                                        string vectorimatges_host = parts[3];
+                                        NForm = Convert.ToInt32(parts[4].Split(',')[0]);
+
+                                        GameWndwForms[NForm].StartGameSymbols(vectorimatges_host, destination);
+                                    }
+                                    else if (destination == 1)  //destinat als altres jugadors
+                                    {
+                                        //  "94#0#1#%s#%d,", vectorimagenes_others, NForm);
+
+                                        string vectorimatges_jugadors = parts[3];
+                                        NForm = Convert.ToInt32(parts[4].Split(',')[0]);
+
+                                        GameWndwForms[NForm].StartGameSymbols(vectorimatges_jugadors, destination);
+                                    }
+                                }
+                                else if (game == 1) //MAZE
+                                {
+
+                                }
+                                else if(game == 2)  //TBD
+                                {
+
+                                }
+
+
+                                break;
+                            }
                     }
                 }
             }

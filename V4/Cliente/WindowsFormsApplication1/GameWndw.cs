@@ -21,14 +21,19 @@ namespace WindowsFormsApplication1
         public string creator;
         string datos_partida;
         string server_info;
-        List<string> PLAYERS = new List<string>();
         int Nform;
+        
+        List<string> PLAYERS = new List<string>();
         List<string> ListaConnectados = new List<string>();
 
         string minigame = null;
         bool symbols_checked = false;
         bool maze_checked = false;
         bool tbd_checked = false;
+
+        //SYMBOLS
+        List<int> vectorimatges_host =  new List<int> { 0 };
+        List<int> vectorimatges_jugador = new List<int> { 0 };
 
         //List<string> Invitations = new List<string>();
         public GameWndw()
@@ -37,6 +42,9 @@ namespace WindowsFormsApplication1
 
             //this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             //this.Bounds = Screen.PrimaryScreen.WorkingArea;
+
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.WindowState = FormWindowState.Maximized;
         }
 
         private void GameWndw_Load(object sender, EventArgs e)
@@ -268,7 +276,75 @@ namespace WindowsFormsApplication1
             }
         }
 
+        public void StartGameSymbols(string vectorimatges, int destinat)
+        {
+            if (destinat == 0)  //destinat al host
+            {
+                vectorimatges = vectorimatges + " ";
+                int j = 0;
+                int separador;
+                string intermid = null;
 
+                while (j < vectorimatges.Length)
+                {
+                    separador = vectorimatges.IndexOf(" ", j);
+                    while (j < separador)
+                    {
+                        intermid += vectorimatges[j];
+                        j++;
+                    }
+                    if (intermid != null)
+                    {
+                        this.vectorimatges_host.Add(Convert.ToInt32(intermid));
+                    }
+                    intermid = null;
+                    j++;
+                }
+            }
+            else if (destinat == 1)
+            {
+                //de la llista de totes les imatges de la partida, assignem al jugador en concret només les que li pertoquen
+                //per exemple, si son 4 players (1 host i 3 jugadors), el host tindra 3 imatges que hauran de buscar els jugaodors, mentre
+                //que els jugadors tindran 5 * 3 = 15 imatges en total del vectorimatges (5 per cada un) -> els jugadors sempre tindran 5 imatges cadascu,
+                //pero depenent del numero de jugadors que siguin, el host en tindrà equivalentment el mateix nombre (si son 3 jugadors, el host tindra 3 imatges)
+                //per a desxifrar
+
+                vectorimatges = vectorimatges + " ";
+                int position_index = PLAYERS.IndexOf(USER); //o 1 o 2 o 3 o 4 (el 0 es el host)
+
+                List<int> imatges_cpy = new List<int>();  //contindra totes les imatges que s'hauran de repartir entre jugadors
+
+                int j = 0;
+                int separador;
+                string intermid = null;
+
+                while (j < vectorimatges.Length)
+                {
+                    separador = vectorimatges.IndexOf(" ", j);
+                    while (j < separador)
+                    {
+                        intermid += vectorimatges[j];
+                        j++;
+                    }
+                    if (intermid != null)
+                    {
+                        imatges_cpy.Add(Convert.ToInt32(intermid));
+                    }
+                    intermid = null;
+                    j++;
+                }
+
+                //un cop tenim tots els numeros d'imatge en el vector, busquem els que corresponen al jugador
+                j = 5 * position_index - 1;
+                while (j < j + 5)
+                {
+                    this.vectorimatges_jugador.Add(imatges_cpy[j]);
+                    j++;
+                }
+
+            }
+
+        }
 
 
 
@@ -284,10 +360,14 @@ namespace WindowsFormsApplication1
         delegate void DelegateSETCREATOR(string creator);
         public void SETCREATOR(string creator)
         {
-            player1_lbl.Text = creator;
             if (creator != null)    //es null quan no es el host qui modifica el seu valor
             {
+                player1_lbl.Text = creator;
                 this.PLAYERS.Add(creator);  //afegim el creador (host) a la seva propia llista de jugadors
+            }
+            else if (creator == null)
+            {
+                minigameBox.Enabled = false;    //NOMES EL HOST POT SELECCIONAR EL JOC
             }
         }
 
@@ -319,11 +399,11 @@ namespace WindowsFormsApplication1
         {
             int i = 0;
             //primer resetegem els valors dels labels
-            player1_lbl.Text = null;
-            player2_lbl.Text = null;
-            player3_lbl.Text = null;
-            player4_lbl.Text = null;
-            player5_lbl.Text = null;
+            player1_lbl.Text = "<<<<>>>>";
+            player2_lbl.Text = "<<<<>>>>";
+            player3_lbl.Text = "<<<<>>>>";
+            player4_lbl.Text = "<<<<>>>>";
+            player5_lbl.Text = "<<<<>>>>";
 
             if (i < this.PLAYERS.Count)
             {
