@@ -27,12 +27,12 @@ namespace WindowsFormsApplication1
         List<string> Invitations = new List<string>();
         Dictionary<string, string> GameInvitations = new Dictionary<string, string>();  //utilitzat per unir-se a partides
         Dictionary<string, int> FormInvitations = new Dictionary<string, int>();  //utilitzat per unir-se a partides
-        List<GameWndw> GameWndwForms = new List<GameWndw>();
+        List<GameWindow> GameWndwForms = new List<GameWindow>();
 
         //private static IPAddress direc = IPAddress.Parse("10.4.119.5");
         //private static IPEndPoint ipep = new IPEndPoint(direc, 50080);
         private static IPAddress direc = IPAddress.Parse("192.168.56.102");
-        private static IPEndPoint ipep = new IPEndPoint(direc, 9074);
+        private static IPEndPoint ipep = new IPEndPoint(direc, 9075);
 
         public Client()
         {
@@ -224,32 +224,6 @@ namespace WindowsFormsApplication1
                                     j++;
                                 }
 
-                                
-                                /*
-                                int type_operation = Convert.ToInt32(parts[1].Split(',')[0]);
-                                
-                                if (type_operation == 0)    //USER S'HA CONECTAT
-                                {
-
-                                    response = parts[2].Split(',')[0];
-
-                                    user_conn = response.Split('\n')[0];
-                                    list = response.Split('\n')[1];     //conté la llista de connectats (Name Name Name...)
-
-                                    MessageBox.Show(user_conn + "\nUsers Online: " + list, "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                }
-                                else if (type_operation == 1) //USER S'HA DESCONNECTAT
-                                {
-                                    response = parts[2].Split(',')[0];
-
-                                    user_conn = response.Split('\n')[0];
-
-                                    list = response.Split('\n')[1];     //conté la llista de connectats (|Name|Name|Name|...)
-
-                                    MessageBox.Show(user_conn + "\nUsers Online: " + list, "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                                }
-                                */
-
                                 //Actualitzar llista connectats del JOC i al MENU
 
                                 int i = 0;
@@ -380,6 +354,10 @@ namespace WindowsFormsApplication1
                                 {
                                     MessageBox.Show("The game you are trying to join has already ended or doesn't exist", "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                                 }
+                                else if (result == -3)  //la partida ja ha començat
+                                {
+                                    MessageBox.Show("The game you are trying to join has already begun. Wait for another invitation", "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                                }
 
                                 break;
                             }
@@ -406,9 +384,10 @@ namespace WindowsFormsApplication1
                                 }
                                 break;
                             }
-                        case 94:
+                        case 94:    //START GAME
                             {
                                 int game = Convert.ToInt32(parts[1]);
+
                                 if(game == 0)   //SYMBOLS
                                 {
                                     int destination = Convert.ToInt32(parts[2]);
@@ -419,16 +398,17 @@ namespace WindowsFormsApplication1
                                         string vectorimatges_host = parts[3];
                                         NForm = Convert.ToInt32(parts[4].Split(',')[0]);
 
-                                        GameWndwForms[NForm].StartGameSymbols(vectorimatges_host, destination);
+                                        GameWndwForms[NForm].StartGameSymbols(vectorimatges_host, null, destination);
                                     }
                                     else if (destination == 1)  //destinat als altres jugadors
                                     {
-                                        //  "94#0#1#%s#%d,", vectorimagenes_others, NForm);
+                                        //   "94#0#1#%s#%s#%d,", vectorimagenes_others, vectorposiciones, NForm);
 
                                         string vectorimatges_jugadors = parts[3];
-                                        NForm = Convert.ToInt32(parts[4].Split(',')[0]);
+                                        string vector_posicions = parts[4];
+                                        NForm = Convert.ToInt32(parts[5].Split(',')[0]);
 
-                                        GameWndwForms[NForm].StartGameSymbols(vectorimatges_jugadors, destination);
+                                        GameWndwForms[NForm].StartGameSymbols(vectorimatges_jugadors, vector_posicions, destination);
                                     }
                                 }
                                 else if (game == 1) //MAZE
@@ -443,10 +423,34 @@ namespace WindowsFormsApplication1
 
                                 break;
                             }
+
+                        case 50:    //SEND MESSAGE IN GAME
+                            {
+                                //  "50#%s: %s#%d,", sender, message, NForm
+                                string message = parts[1];
+                                NForm = Convert.ToInt32(parts[2].Split(',')[0]);
+
+                                GameWndwForms[NForm].ReceiveMessage(message);
+                                break;
+                            }
+                        case 51:
+                            {
+                                // "51#%s#%s#%d,", expresion, sender, NForm
+
+                                string expresion = parts[1];
+                                string sender = parts[2];
+                                NForm = Convert.ToInt32(parts[3].Split(',')[0]);
+
+                                GameWndwForms[NForm].UpdateClickExpression(expresion, sender);
+
+                                break;
+                            }
                     }
                 }
             }
         }
+
+        ////////////////////////////////////////////////////    LOAD / CLOSE SERVER     /////////////////////////////////////////////////////////////////////////
         private void Form1_Load(object sender, EventArgs e)
         {
             //Creamos un IPEndPoint con el ip del servidor y puerto del servidor 
@@ -460,6 +464,33 @@ namespace WindowsFormsApplication1
                 server.Connect(ipep);//Intentamos conectar el socket
                 //this.BackColor = Color.Green;
                 MessageBox.Show("CONNECTED TO SERVER");
+                ServerState = "UP";
+                DelegateOFFLINEnot del = new DelegateOFFLINEnot(OFFLINEnot);
+                offlinelbl.Invoke(del);
+            }
+            catch (SocketException ex)
+            {
+                //Si hay excepcion imprimimos error y salimos del programa con return 
+                MessageBox.Show("SERVER NOT CONNECTED");
+                ServerState = "DOWN";
+                DelegateOFFLINE del = new DelegateOFFLINE(OFFLINE);
+                offlinelbl.Invoke(del);
+                return;
+            }
+            //creem i inicialitzem el thread corresponent a aquest client
+            ThreadStart thMain = delegate { Main(); };
+            client = new Thread(thMain);
+            client.Start();
+        }
+
+        private void conectserver_Click(object sender, EventArgs e)
+        {
+            server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            try
+            {
+                server.Connect(ipep);//Intentamos conectar el socket
+                //this.BackColor = Color.Green;
+                MessageBox.Show("CONNECTION ESTABLISHED");
                 ServerState = "UP";
                 DelegateOFFLINEnot del = new DelegateOFFLINEnot(OFFLINEnot);
                 offlinelbl.Invoke(del);
@@ -510,33 +541,7 @@ namespace WindowsFormsApplication1
             //this.Close();
         }
 
-        private void conectserver_Click(object sender, EventArgs e)
-        {
-            server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            try
-            {
-                server.Connect(ipep);//Intentamos conectar el socket
-                //this.BackColor = Color.Green;
-                MessageBox.Show("CONNECTION ESTABLISHED");
-                ServerState = "UP";
-                DelegateOFFLINEnot del = new DelegateOFFLINEnot(OFFLINEnot);
-                offlinelbl.Invoke(del);
-            }
-            catch (SocketException ex)
-            {
-                //Si hay excepcion imprimimos error y salimos del programa con return 
-                MessageBox.Show("SERVER NOT CONNECTED");
-                ServerState = "DOWN";
-                DelegateOFFLINE del = new DelegateOFFLINE(OFFLINE);
-                offlinelbl.Invoke(del);
-                return;
-            }
-            //creem i inicialitzem el thread corresponent a aquest client
-            ThreadStart thMain = delegate { Main(); };
-            client = new Thread(thMain);
-            client.Start();
-        }
-
+        ////////////////////////////////////////////////////    LOGIN, LOGOUT, REGISTER     ////////////////////////////////////////////////////////////////////////
         private void logout_Click(object sender, EventArgs e)
         {
             string mensaje = "0/1/" + USER;
@@ -580,6 +585,7 @@ namespace WindowsFormsApplication1
             }
         }
 
+        ////////////////////////////////////////////////////    PETICIONS STATS     //////////////////////////////////////////////////////////////////////////////
         private void Enviar_nombre_Click(object sender, EventArgs e)
         {
             string name = name_txt.Text;
@@ -631,6 +637,7 @@ namespace WindowsFormsApplication1
             }
         }
 
+        ////////////////////////////////////////////////////    DATABASE     //////////////////////////////////////////////////////////////////////////////////
         private void database_Click(object sender, EventArgs e)
         {
             string mensaje_usuario = "100/";
@@ -640,6 +647,7 @@ namespace WindowsFormsApplication1
         }
 
 
+        ////////////////////////////////////////////////////    CREATE GAME & THREAD     ///////////////////////////////////////////////////////////////////////
         private void createGAME_Click(object sender, EventArgs e)
         {
             string mensaje = "98/" + USER;
@@ -656,7 +664,7 @@ namespace WindowsFormsApplication1
         //THREAD DE createGAME
         private void STARTGAME(int numform)
         {
-            GameWndw G = new GameWndw();
+            GameWindow G = new GameWindow();
             GameWndwForms.Add(G);
             //REFRESCAR LA LLISTA DE CONNECTATS PER PODER CONVIDAR
             //G.RefreshConnectedList(ListaConectados);
@@ -682,6 +690,7 @@ namespace WindowsFormsApplication1
             GameWndwForms.RemoveAt(numform);
         }
 
+        ////////////////////////////////////////////////////    JOIN GAME     ////////////////////////////////////////////////////////////////////////////////
         private void joinGame_Click(object sender, EventArgs e)
         {
             string game = GameInvitations[invitation];
@@ -723,6 +732,8 @@ namespace WindowsFormsApplication1
             }
         }
 
+        ////////////////////////////////////////////////////    VARIED BUTTONS     /////////////////////////////////////////////////////////////////////////////////
+
         private void DEV_closebtn_Click(object sender, EventArgs e)
         {
             string mensaje = "-1/" + USER;
@@ -748,7 +759,10 @@ namespace WindowsFormsApplication1
             statsBox.Invoke(del);
         }
 
-        //DELEGATES
+
+
+        ////////////////////////////////////////////////////    DELEGATES     //////////////////////////////////////////////////
+
 
         delegate void DelegateUSERCONNECTED(string name);
         public void USERCONNECTED(string name)
@@ -1021,5 +1035,33 @@ namespace WindowsFormsApplication1
             client.Abort(); //tanquem el thread d'aquest client
         }
         */
+
+        //NOTIS
+
+        /*
+        int type_operation = Convert.ToInt32(parts[1].Split(',')[0]);
+                                
+        if (type_operation == 0)    //USER S'HA CONECTAT
+        {
+
+            response = parts[2].Split(',')[0];
+
+            user_conn = response.Split('\n')[0];
+            list = response.Split('\n')[1];     //conté la llista de connectats (Name Name Name...)
+
+            MessageBox.Show(user_conn + "\nUsers Online: " + list, "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        else if (type_operation == 1) //USER S'HA DESCONNECTAT
+        {
+            response = parts[2].Split(',')[0];
+
+            user_conn = response.Split('\n')[0];
+
+            list = response.Split('\n')[1];     //conté la llista de connectats (|Name|Name|Name|...)
+
+            MessageBox.Show(user_conn + "\nUsers Online: " + list, "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        }
+        */
+        
     }
 }

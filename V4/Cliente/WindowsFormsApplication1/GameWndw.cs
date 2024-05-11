@@ -11,10 +11,11 @@ using System.Net.Sockets;
 using System.ComponentModel.Design.Serialization;
 using Microsoft.Win32;
 using System.Runtime.CompilerServices;
+using System.Linq.Expressions;
 
 namespace WindowsFormsApplication1
 {
-    public partial class GameWndw : Form
+    public partial class GameWindow : Form
     {
         Socket SERVER;
         string USER;
@@ -25,18 +26,29 @@ namespace WindowsFormsApplication1
         
         List<string> PLAYERS = new List<string>();
         List<string> ListaConnectados = new List<string>();
+        
+        const int chatcount = 18;
+        List<string> Chat = new List<string>();
+        bool resettext = true;
 
         string minigame = null;
         bool symbols_checked = false;
         bool maze_checked = false;
         bool tbd_checked = false;
 
+        bool gamestarted = false;
+
         //SYMBOLS
-        List<int> vectorimatges_host =  new List<int> { 0 };
-        List<int> vectorimatges_jugador = new List<int> { 0 };
+        List<int> vectorimatges_host = new List<int>();
+        List<int> vectorposicions = new List<int>();
+        List<int> vectorimatges_jugador = new List<int>();
+        List<int> posicions_picturebox = new List<int>();
+        int contador_errors = 3;
+        int contador_found = 0;
+        int round = 0;
 
         //List<string> Invitations = new List<string>();
-        public GameWndw()
+        public GameWindow()
         {
             InitializeComponent();
 
@@ -45,18 +57,26 @@ namespace WindowsFormsApplication1
 
             this.FormBorderStyle = FormBorderStyle.None;
             this.WindowState = FormWindowState.Maximized;
+            
+            for (int j = 0; j < chatcount; j++)
+            {
+                Chat.Add(null);
+            }
+
+            this.symbolsBox.Visible = false;
+            this.endgamebtn.Visible = false;
+            this.roundlbl.Visible = false;
         }
 
+        //
+        //
+        ////////////////////////////////////////////////////    LOADERS     ///////////////////////////////////////////////////////////////////////////////////
+        //
+        //
         private void GameWndw_Load(object sender, EventArgs e)
         {
 
         }
-
-        //
-        //
-        //  LOADERS DEL FORM
-        //
-        //
         public void SetLobby(int numForm, Socket serv, string user, List<string> listaconn)
         {
             this.Nform = numForm;
@@ -133,6 +153,8 @@ namespace WindowsFormsApplication1
         //
         //
 
+
+        ////////////////////////////////////////////////////    INVITATIONS     ///////////////////////////////////////////////////////////////////////////////////
         //INVITE PLAYER
         private void playersonlineGrid_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -149,29 +171,27 @@ namespace WindowsFormsApplication1
                 }
             }
         }
-
-        //POTS TENIR UNA LLISTA D'INVITACIONS REBUDES (List<string>) PERO NOMES POTS FER UNA INVITACIO A LA VEGADA (string)
-
         //REBEM SI LA NOSTRA INVITACIÓ HA ANAT BÉ O NO
         public void InvitationSent(string invited)
         {
             if(invited != "ERROR")
             {
-                MessageBox.Show("Invitaion to " + invited + " received correctly", "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Invitaion to " + invited + " received correctly", "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
-                MessageBox.Show("Invitaion to " + invited + " not received", "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("Invitaion to " + invited + " not received", "Game", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
         //REBEM UNA INVITACIO 
         public void InvitationReceived(string inviting)
         {
 
-            MessageBox.Show("Invitaion from " + inviting + " added to your client hub", "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Invitaion from " + inviting + " added to your client hub", "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
         }
 
+        ////////////////////////////////////////////////////    JOIN / LEAVE GAME     /////////////////////////////////////////////////////////////////////////////
         public void PlayerJoined(string playerjoined, int position)
         {
             DelegatePLAYERJOINED del = new DelegatePLAYERJOINED(PLAYERJOINED);
@@ -206,84 +226,122 @@ namespace WindowsFormsApplication1
                 SERVER.Send(msg);
             }
 
-            PLAYERS.Clear();    //netegem la llista de jugadors del jugador que marxa
-            this.Close();
+            DelegateCLOSE del = new DelegateCLOSE(CLOSE);
+            this.Invoke(del);
         }
 
         public void PlayerLeft(int result, string disconnected)
         {
             if (result == 1)    //tanca partida el creador (informem als altres usuaris)
             {
-                MessageBox.Show("Host " + disconnected + " has exited to lobby. Game closing", "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Host " + disconnected + " has exited to lobby. Game closing", "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 DelegateCLOSE del = new DelegateCLOSE(CLOSE);
                 this.Invoke(del);
             }
             else if (result == 0)   //marxa de la partida un altre usuari (informem als altres usuaris i al host)
             {
-                MessageBox.Show("Player " + disconnected + " disconnected. Waiting for additional player", "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Player " + disconnected + " disconnected. Waiting for additional player", "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 //la llista de jugadors ja s'ha actualitzat al crear el missatge al servidor, nomes queda actualitzar-la visualment
 
                 this.PLAYERS.Remove(disconnected);  //treiem el jugador desconnectat de la llista
                 DelegateINSERTPLAYERSINGAME del = new DelegateINSERTPLAYERSINGAME(INSERTPLAYERSINGAME);
                 player1_lbl.Invoke(del);
+
+                RoundManagement(1);  //actualitzacio de canvi de ronda quan algu marxa
             }
         }
 
-        private void checkSymbols_CheckedChanged(object sender, EventArgs e)
+        ////////////////////////////////////////////////////    CHAT MSG     ////////////////////////////////////////////////////////////////////////////////////////
+        private void sendmsgbtn_Click(object sender, EventArgs e)
         {
-            symbols_checked = true;
-            maze_checked = false;
-            tbd_checked = false;
-            minigame = "SYMBOLS";
-        }
-
-        private void checkMaze_CheckedChanged(object sender, EventArgs e)
-        {
-            symbols_checked = false;
-            maze_checked = true;
-            tbd_checked = false;
-            minigame = "MAZE";
-        }
-
-        private void checkTBD_CheckedChanged(object sender, EventArgs e)
-        {
-            symbols_checked = false;
-            maze_checked = false;
-            tbd_checked = true;
-            minigame = "TBD";
-        }
-
-        private void startgamebtn_Click(object sender, EventArgs e)
-        {
-            if ((minigame != null) && (creator != null) && (minigame != "TBD") && (minigame != "MAZE")) 
+            if ((messageTxt.Text != "Message:") && (messageTxt.Text != null) && (messageTxt.Text != ""))
             {
                 string listplayers = null;
                 int playerscount = PLAYERS.Count;
 
                 foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (inclou host, altres i el user)
                 {
-                    listplayers += player + " ";
+                    if (player != USER)
+                        listplayers += player + " ";
                 }
-                string mensaje = "94/" + Nform + "/" + USER + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + minigame;
+
+                string mensaje = "50/" + messageTxt.Text +"/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount;
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 SERVER.Send(msg);
+
+                DelegateSETTEXT del = new DelegateSETTEXT(SETTEXT);
+                messageTxt.Invoke(del);
+            }
+
+        }
+        private void messageTxt_Click(object sender, EventArgs e)
+        {
+            DelegateRESETTEXT del = new DelegateRESETTEXT(RESETTEXT);
+            messageTxt.Invoke(del);
+        }
+        public void ReceiveMessage(string message)
+        {
+            DelegateSETCHAT del = new DelegateSETCHAT(SETCHAT);
+            messageTxt.Invoke(del, new object[] { message });
+        }
+
+        ////////////////////////////////////////////////////    START GAME     /////////////////////////////////////////////////////////////////////////////////////
+        private void checkSymbols_CheckedChanged(object sender, EventArgs e)
+        {
+            symbols_checked = true;
+            minigame = "SYMBOLS";
+        }
+
+        private void startgamebtn_Click(object sender, EventArgs e)
+        {
+            if ((minigame != null) && (creator != null))
+            {
+                string listplayers = null;
+                int playerscount = PLAYERS.Count;
+
+                foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (inclou host, altres i el user)
+                {
+                    if (player != USER)
+                        listplayers += player + " ";
+                }
+                string mensaje = "94/" + Nform + "/" + USER + "/" + datos_partida + "/" + listplayers + "/" + playerscount;
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                SERVER.Send(msg);
+                gamestarted = true;
             }
             else
             {
-                MessageBox.Show("Select a minigame before starting", "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Select the minigame before starting", "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
-        public void StartGameSymbols(string vectorimatges, int destinat)
+
+        ////////////////////////////////////////////////////    GAME: SYMBOLS    /////////////////////////////////////////////////////////////////////////////////////
+
+        public void StartGameSymbols(string vectorimatges, string vectorposicions, int destinat)
         {
+            picture1.Show();
+            picture2.Show();
+            picture3.Show();
+            picture4.Show();
+            picture5.Show();
+
+            int k = 0;
+            List<Image> vecimag = new List<Image>();
+            for (k = 0; k < 40; k++)
+            {
+                vecimag.Add(Image.FromFile(@"imagenes/" + (k + 1) + ".png"));
+            }
+
             if (destinat == 0)  //destinat al host
             {
                 vectorimatges = vectorimatges + " ";
                 int j = 0;
                 int separador;
                 string intermid = null;
+                int numpics = PLAYERS.Count - 1;
 
                 while (j < vectorimatges.Length)
                 {
@@ -293,13 +351,16 @@ namespace WindowsFormsApplication1
                         intermid += vectorimatges[j];
                         j++;
                     }
-                    if (intermid != null)
+                    if (intermid != "0".ToString())
                     {
                         this.vectorimatges_host.Add(Convert.ToInt32(intermid));
                     }
                     intermid = null;
                     j++;
                 }
+
+                DelegateSYMBOLS_PICTUREBOX_HOST del = new DelegateSYMBOLS_PICTUREBOX_HOST(SYMBOLS_PICTUREBOX_HOST);
+                picture1.Invoke(del, new object[] { vecimag });
             }
             else if (destinat == 1)
             {
@@ -310,6 +371,7 @@ namespace WindowsFormsApplication1
                 //per a desxifrar
 
                 vectorimatges = vectorimatges + " ";
+                vectorposicions = vectorposicions + " ";
                 int position_index = PLAYERS.IndexOf(USER); //o 1 o 2 o 3 o 4 (el 0 es el host)
 
                 List<int> imatges_cpy = new List<int>();  //contindra totes les imatges que s'hauran de repartir entre jugadors
@@ -318,6 +380,27 @@ namespace WindowsFormsApplication1
                 int separador;
                 string intermid = null;
 
+                //primer guardem el vector de les posicions bones de les imatges
+                while (j < vectorposicions.Length)
+                {
+                    separador = vectorposicions.IndexOf(" ", j);
+                    while (j < separador)
+                    {
+                        intermid += vectorposicions[j];
+                        j++;
+                    }
+                    if ((intermid != null) && (Convert.ToInt32(intermid) != 0))
+                    {
+                        this.vectorposicions.Add(Convert.ToInt32(intermid));
+                    }
+                    intermid = null;
+                    j++;
+                }
+
+                j = 0;
+                intermid = null;
+
+                //busquem les imatges destinades a aquest jugador
                 while (j < vectorimatges.Length)
                 {
                     separador = vectorimatges.IndexOf(" ", j);
@@ -335,20 +418,345 @@ namespace WindowsFormsApplication1
                 }
 
                 //un cop tenim tots els numeros d'imatge en el vector, busquem els que corresponen al jugador
-                j = 5 * position_index - 1;
-                while (j < j + 5)
+                j = 5 * position_index;
+                int num = j;
+                k = 0;
+                while (j < num + 5)
                 {
                     this.vectorimatges_jugador.Add(imatges_cpy[j]);
+                    this.posicions_picturebox.Add(j);
                     j++;
+                    k++;
                 }
 
+                DelegateSYMBOLS_PICTUREBOX_GUEST del = new DelegateSYMBOLS_PICTUREBOX_GUEST(SYMBOLS_PICTUREBOX_GUEST);
+                picture1.Invoke(del, new object[] { vecimag });
             }
+
+            MessageBox.Show("The game has started!\nWatch out, you have " + contador_errors + " lives.", "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            DelegateSYMBOLSBOX del1 = new DelegateSYMBOLSBOX(SYMBOLSBOX);
+            symbolsBox.Invoke(del1);
+        }
+
+        private void picture1_Click(object sender, EventArgs e)
+        {
+            string expresion;
+            int j = 1;
+            bool found = false;
+            while (j < PLAYERS.Count)
+            {
+                if (PLAYERS[j] == this.USER)
+                {
+                    for (int k = 0; k < PLAYERS.Count; k++)
+                    {
+                        if (vectorimatges_jugador[5 * (j - 1)] == vectorimatges_host[k])
+                        {
+                            found = true;
+                        }
+                    }
+                }
+            }
+            if (found)
+            {
+                contador_found++;
+                expresion = "Nice!";
+                MessageBox.Show(expresion + "\nYou have found " + contador_found + " out of " + PLAYERS.Count, "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                contador_errors++;
+                expresion = "Oh!";
+                MessageBox.Show(expresion + " You missed it\nYou have " + contador_errors + " remaining lives", "Game", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+
+            string listplayers = null;
+            int playerscount = PLAYERS.Count;
+
+            foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (altres i el user)
+            {
+                if (player != USER)
+                    listplayers += player + " ";
+            }
+
+            string mensaje = "51/" + expresion + "/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount;
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+            SERVER.Send(msg);
+
+            RoundManagement(0);
+        }
+
+        private void picture2_Click(object sender, EventArgs e)
+        {
+            string expresion;
+            int j = 1;
+            bool found = false;
+            while (j < PLAYERS.Count)
+            {
+                if (PLAYERS[j] == this.USER)
+                {
+                    for (int k = 0; k < PLAYERS.Count; k++)
+                    {
+                        if (vectorimatges_jugador[(5 * (j - 1)) + 1] == vectorimatges_host[k])
+                        {
+                            found = true;
+                        }
+                    }
+                }
+            }
+            if (found)
+            {
+                contador_found++;
+                expresion = "Nice!";
+                MessageBox.Show(expresion + "\nYou have found " + contador_found + " out of " + PLAYERS.Count, "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                contador_errors++;
+                expresion = "Oh!";
+                MessageBox.Show(expresion + " You missed it\nYou have " + contador_errors + " remaining lives", "Game", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+
+            string listplayers = null;
+            int playerscount = PLAYERS.Count;
+
+            foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (altres i el user)
+            {
+                if (player != USER)
+                    listplayers += player + " ";
+            }
+
+            string mensaje = "51/" + expresion + "/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount;
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+            SERVER.Send(msg);
+
+            RoundManagement(0);
+        }
+
+        private void picture3_Click(object sender, EventArgs e)
+        {
+            string expresion;
+            int j = 1;
+            bool found = false;
+            while (j < PLAYERS.Count)
+            {
+                if (PLAYERS[j] == this.USER)
+                {
+                    for (int k = 0; k < PLAYERS.Count; k++)
+                    {
+                        if (vectorimatges_jugador[(5 * (j - 1)) + 2] == vectorimatges_host[k])
+                        {
+                            found = true;
+                        }
+                    }
+                }
+            }
+            if (found)
+            {
+                contador_found++;
+                expresion = "Nice!";
+                MessageBox.Show(expresion + "\nYou have found " + contador_found + " out of " + PLAYERS.Count, "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                contador_errors++;
+                expresion = "Oh!";
+                MessageBox.Show(expresion + " You missed it\nYou have " + contador_errors + " remaining lives", "Game", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+
+            string listplayers = null;
+            int playerscount = PLAYERS.Count;
+
+            foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (altres i el user)
+            {
+                if (player != USER)
+                    listplayers += player + " ";
+            }
+
+            string mensaje = "51/" + expresion + "/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount;
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+            SERVER.Send(msg);
+
+            RoundManagement(0);
+        }
+
+        private void picture4_Click(object sender, EventArgs e)
+        {
+            string expresion;
+            int j = 1;
+            bool found = false;
+            while (j < PLAYERS.Count)
+            {
+                if (PLAYERS[j] == this.USER)
+                {
+                    for (int k = 0; k < PLAYERS.Count; k++)
+                    {
+                        if (vectorimatges_jugador[(5 * (j - 1)) + 3] == vectorimatges_host[k])
+                        {
+                            found = true;
+                        }
+                    }
+                }
+            }
+            if (found)
+            {
+                contador_found++;
+                expresion = "Nice!";
+                MessageBox.Show(expresion + "\nYou have found " + contador_found + " out of " + PLAYERS.Count, "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                contador_errors++;
+                expresion = "Oh!";
+                MessageBox.Show(expresion + " You missed it\nYou have " + contador_errors + " remaining lives", "Game", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+
+            string listplayers = null;
+            int playerscount = PLAYERS.Count;
+
+            foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (altres i el user)
+            {
+                if (player != USER)
+                    listplayers += player + " ";
+            }
+
+            string mensaje = "51/" + expresion + "/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount;
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+            SERVER.Send(msg);
+
+            RoundManagement(0);
+        }
+
+        private void picture5_Click(object sender, EventArgs e)
+        {
+            string expresion;
+            int j = 1;
+            bool found = false;
+            while (j < PLAYERS.Count)
+            {
+                if (PLAYERS[j] == this.USER)
+                {
+                    for (int k = 0; k < PLAYERS.Count; k++)
+                    {
+                        if (vectorimatges_jugador[(5 * (j - 1)) + 4] == vectorimatges_host[k])
+                        {
+                            found = true;
+                        }
+                    }
+                }
+            }
+            if (found)
+            {
+                contador_found++;
+                expresion = "Nice!";
+                MessageBox.Show(expresion + "\nYou have found " + contador_found + " out of " + PLAYERS.Count, "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                contador_errors++;
+                expresion = "Oh!";
+                MessageBox.Show(expresion + " You missed it\nYou have " + contador_errors + " remaining lives", "Game", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+
+            string listplayers = null;
+            int playerscount = PLAYERS.Count;
+
+            foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (altres i el user)
+            {
+                if (player != USER)
+                    listplayers += player + " ";
+            }
+
+            string mensaje = "51/" + expresion + "/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount;
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+            SERVER.Send(msg);
+
+            RoundManagement(0);
+        }
+
+        public void UpdateClickExpression(string expresion, string sender)
+        {
+            if (expresion == "Nice!")
+            {
+                MessageBox.Show(sender + " has found a Symbol!\n" + contador_found + " out of " + PLAYERS.Count, "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else if (expresion == "Oh!")
+            {
+                MessageBox.Show(sender + " has missed...\nYou have " + contador_errors + " remaining lives", "Game", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+        }
+
+        private void RoundManagement(int what)
+        {
+            // what = 1 vol dir que ha marxat algu de la partida (shuffle), si what = 0 no res
+            if (contador_found == PLAYERS.Count)
+            {
+                string listplayers = null;
+                int playerscount = PLAYERS.Count;
+
+                foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (altres i el user)
+                {
+                    if (player != USER)
+                        listplayers += player + " ";
+                }
+                string mensaje = "49/" + "0/" + Nform + "/" + USER + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + round;
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                SERVER.Send(msg);
+
+                //this.round++;
+            }
+            else if (contador_errors == 0)
+            {
+                string listplayers = null;
+                int playerscount = PLAYERS.Count;
+
+                foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (altres i el user)
+                {
+                    if (player != USER)
+                        listplayers += player + " ";
+                }
+                string mensaje = "49/" + "1/" + Nform + "/" + USER + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + round;
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                SERVER.Send(msg);
+
+                //EndGame
+            }
+            else if (what == 1)  //ha marxat algu i s han d actualitzar les rondes
+            {
+                string listplayers = null;
+                int playerscount = PLAYERS.Count;
+
+                foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (altres i el user)
+                {
+                    if (player != USER)
+                        listplayers += player + " ";
+                }
+                if (playerscount != 1)  //mirem si es queda el host sol o no un cop ja ha començat
+                {
+                    string mensaje = "49/" + "2/" + Nform + "/" + USER + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + round;
+                    byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                    SERVER.Send(msg);
+                }
+                else    //si esta el host sol, parem la partida
+                {
+                    EndGame();
+                }
+                
+            }
+        }
+
+        ////////////////////////////////////////////////////    END GAME     /////////////////////////////////////////////////////////////////////////////////
+
+        private void endgamebtn_Click(object sender, EventArgs e)
+        {
 
         }
 
+        private void EndGame()
+        {
 
+        }
 
-        //DELEGATES
+        ////////////////////////////////////////////////////    DELEGATES     /////////////////////////////////////////////////////////////////////////////////
 
         delegate void DelegatePRINTSERVER(string server, int numform);
         public void PRINTSERVER(string server, int numform)
@@ -391,6 +799,54 @@ namespace WindowsFormsApplication1
                     k++;
                 }
                 j++;
+            }
+        }
+
+        delegate void DelegateSETCHAT(string message);
+        public void SETCHAT(string message)
+        {
+            messageTxt.Text = "Message:";
+
+            chatGrid.ColumnCount = 1;
+            chatGrid.Rows.Clear();
+            chatGrid.RowCount = chatcount; //la llista de missatges del chat tambe depen de chatcount (variable global constant)
+            chatGrid.RowHeadersVisible = false;
+            chatGrid.ColumnHeadersVisible = false;
+            chatGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+            List<string> intermidiate = new List<string>();
+
+            int j = 0; //penultima posicio
+            while (j < chatcount - 1)  //posem el nou missatge al final de la llista i borrem el primer
+            {
+                intermidiate.Add(Chat[j + 1]);
+                j++;
+            }
+            intermidiate.Add(message);
+            Chat = intermidiate;
+            j = 0;
+            while (j < chatcount)
+            {
+                chatGrid.Rows[j].Cells[0].Value = Chat[j];
+                j++;
+            }
+        }
+        delegate void DelegateRESETTEXT();
+        public void RESETTEXT()
+        {
+            if (resettext == true)
+            {
+                resettext = false;
+                messageTxt.Text = null;
+            }
+        }
+        delegate void DelegateSETTEXT();
+        public void SETTEXT()
+        {
+            if (resettext == false)
+            {
+                resettext = true;
+                messageTxt.Text = "MESSAGE:";
             }
         }
 
@@ -454,9 +910,97 @@ namespace WindowsFormsApplication1
             }
         }
 
+        delegate void DelegateSYMBOLS_PICTUREBOX_HOST(List<Image> vecimag);
+        public void SYMBOLS_PICTUREBOX_HOST(List<Image> vecimag)
+        {
+            int j = 0;
+            //primer resetegem els valors dels labels
+            this.picture1.Enabled = false;
+            this.picture2.Enabled = false;
+            this.picture3.Enabled = false;
+            this.picture4.Enabled = false;
+            this.picture5.Enabled = false;
+
+            int numpicturebox = PLAYERS.Count - 1;
+
+            if (j < numpicturebox)
+            {
+                picture1.Image = vecimag[vectorimatges_host[j]];
+                j++;
+                if (j < numpicturebox)
+                {
+                    picture2.Image = vecimag[vectorimatges_host[j]];
+                    j++;
+                    if (j < numpicturebox)
+                    {
+                        picture3.Image = vecimag[vectorimatges_host[j]];
+                        j++;
+                        if (j < numpicturebox)
+                        {
+                            picture4.Image = vecimag[vectorimatges_host[j]];
+                            j++;
+                            if (j < numpicturebox)
+                            {
+                                picture5.Image = vecimag[vectorimatges_host[j]];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        delegate void DelegateSYMBOLS_PICTUREBOX_GUEST(List<Image> vecimag);
+        public void SYMBOLS_PICTUREBOX_GUEST(List<Image> vecimag)
+        {
+            //primer resetegem els valors dels labels
+            this.picture1.Enabled = true;
+            this.picture2.Enabled = true;
+            this.picture3.Enabled = true;
+            this.picture4.Enabled = true;
+            this.picture5.Enabled = true;
+
+            picture1.Image = vecimag[vectorimatges_jugador[0]];
+            picture2.Image = vecimag[vectorimatges_jugador[1]];
+            picture3.Image = vecimag[vectorimatges_jugador[2]];
+            picture4.Image = vecimag[vectorimatges_jugador[3]];
+            picture5.Image = vecimag[vectorimatges_jugador[4]];
+        }
+
+        delegate void DelegateSYMBOLSBOX();
+        public void SYMBOLSBOX()
+        {
+            if (gamestarted)
+            {
+                this.symbolsBox.Visible = true;
+                this.roundlbl.Visible = true;
+                if (creator != null)
+                {
+                    endgamebtn.Visible = true;
+                    endgamebtn.Enabled = true;
+                }
+            }
+            else if (!gamestarted)
+            {
+                this.symbolsBox.Visible = false;
+                if (creator != null)
+                {
+                    endgamebtn.Visible = false;
+                    endgamebtn.Enabled = false;
+                }
+            }
+        }
+
+        delegate void DelegateROUNDSLBL(int round);
+        public void ROUNDSLBL(int round)
+        {
+            roundlbl.Text = "Round " + round.ToString();
+        }
+
         delegate void DelegateCLOSE();
         public void CLOSE()
         {
+            PLAYERS.Clear();    //netegem la llista de jugadors del jugador que marxa
+            Chat.Clear();
             this.Close();
         }
     }

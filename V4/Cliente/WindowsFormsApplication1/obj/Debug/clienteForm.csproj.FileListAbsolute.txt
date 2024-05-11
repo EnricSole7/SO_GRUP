@@ -147,9 +147,9 @@ C:\Users\nrcso\OneDrive\Escriptori\ENRIC\UNI\EETAC\2n\Q2\SO\PROJCETE\V5\SO_GRUP\
 C:\Users\nrcso\OneDrive\Escriptori\ENRIC\UNI\EETAC\2n\Q2\SO\PROJCETE\V5\SO_GRUP\V4\Cliente\WindowsFormsApplication1\obj\Debug\clienteForm.csproj.AssemblyReference.cache
 C:\Users\nrcso\OneDrive\Escriptori\ENRIC\UNI\EETAC\2n\Q2\SO\PROJCETE\V5\SO_GRUP\V4\Cliente\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.Client.resources
 C:\Users\nrcso\OneDrive\Escriptori\ENRIC\UNI\EETAC\2n\Q2\SO\PROJCETE\V5\SO_GRUP\V4\Cliente\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.DataBase.resources
-C:\Users\nrcso\OneDrive\Escriptori\ENRIC\UNI\EETAC\2n\Q2\SO\PROJCETE\V5\SO_GRUP\V4\Cliente\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.GameWndw.resources
 C:\Users\nrcso\OneDrive\Escriptori\ENRIC\UNI\EETAC\2n\Q2\SO\PROJCETE\V5\SO_GRUP\V4\Cliente\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.Properties.Resources.resources
 C:\Users\nrcso\OneDrive\Escriptori\ENRIC\UNI\EETAC\2n\Q2\SO\PROJCETE\V5\SO_GRUP\V4\Cliente\WindowsFormsApplication1\obj\Debug\clienteForm.csproj.GenerateResource.cache
 C:\Users\nrcso\OneDrive\Escriptori\ENRIC\UNI\EETAC\2n\Q2\SO\PROJCETE\V5\SO_GRUP\V4\Cliente\WindowsFormsApplication1\obj\Debug\clienteForm.csproj.CoreCompileInputs.cache
 C:\Users\nrcso\OneDrive\Escriptori\ENRIC\UNI\EETAC\2n\Q2\SO\PROJCETE\V5\SO_GRUP\V4\Cliente\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.exe
 C:\Users\nrcso\OneDrive\Escriptori\ENRIC\UNI\EETAC\2n\Q2\SO\PROJCETE\V5\SO_GRUP\V4\Cliente\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.pdb
+C:\Users\nrcso\OneDrive\Escriptori\ENRIC\UNI\EETAC\2n\Q2\SO\PROJCETE\V5\SO_GRUP\V4\Cliente\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.GameWindow.resources
