@@ -398,7 +398,7 @@ namespace WindowsFormsApplication1
                                         string vectorimatges_host = parts[3];
                                         NForm = Convert.ToInt32(parts[4].Split(',')[0]);
 
-                                        GameWndwForms[NForm].StartGameSymbols(vectorimatges_host, null, destination);
+                                        GameWndwForms[NForm].SetSymbols(vectorimatges_host, null, destination);
                                     }
                                     else if (destination == 1)  //destinat als altres jugadors
                                     {
@@ -408,7 +408,7 @@ namespace WindowsFormsApplication1
                                         string vector_posicions = parts[4];
                                         NForm = Convert.ToInt32(parts[5].Split(',')[0]);
 
-                                        GameWndwForms[NForm].StartGameSymbols(vectorimatges_jugadors, vector_posicions, destination);
+                                        GameWndwForms[NForm].SetSymbols(vectorimatges_jugadors, vector_posicions, destination);
                                     }
                                 }
                                 else if (game == 1) //MAZE
@@ -443,6 +443,107 @@ namespace WindowsFormsApplication1
 
                                 GameWndwForms[NForm].UpdateClickExpression(expresion, sender);
 
+                                break;
+                            }
+                        case 49:    //SHUFFLE
+                            {
+                                
+                                int operation = Convert.ToInt32(parts[1]);
+
+                                if (operation == 0) //NEXT ROUND
+                                {
+                                    int destination = Convert.ToInt32(parts[2]);
+                                    
+                                    if (destination == 0)   //new shuffle HOST
+                                    {
+                                        // "49#0#0#%s#%s#%d#%d,", vectorimagenes_host, player, ronda, NForm
+                                        string vectorimatges_host = parts[3];
+                                        string player = parts[4];
+                                        int ronda = Convert.ToInt32(parts[5]);
+                                        NForm = Convert.ToInt32(parts[6].Split(',')[0]);
+                                        GameWndwForms[NForm].SetSymbols(vectorimatges_host, null, destination);
+                                        GameWndwForms[NForm].Round(operation, player, ronda);
+                                    }
+                                    else if (destination == 1)  //new shuffle GUESTS
+                                    {
+                                        // "49#0#1#%s#%s#%s#%d#%d,", vectorimagenes_others, vectorposiciones, player, ronda, NForm)
+                                        string vectorimatges_jugadors = parts[3];
+                                        string vector_posicions = parts[4];
+                                        string player = parts[5];
+                                        int ronda = Convert.ToInt32(parts[6]);
+                                        NForm = Convert.ToInt32(parts[7].Split(',')[0]);
+                                        GameWndwForms[NForm].SetSymbols(vectorimatges_jugadors, vector_posicions, destination);
+                                        GameWndwForms[NForm].Round(operation, player, ronda);
+                                    }
+                                }
+                                /*
+                                else if (operation == 1)    //GAME LOST
+                                {
+                                    // "49#1#%s#%d#%d,", player, ronda, NForm
+                                    //igual per host i per guests
+                                    string player = parts[2];
+                                    int ronda = Convert.ToInt32(parts[3]);
+                                    NForm = Convert.ToInt32(parts[4].Split(',')[0]);
+                                    GameWndwForms[NForm].GameLost(player, ronda);
+                                }
+                                */
+                                else if (operation == 2)    //SHUFFLE un jugador ha marxat
+                                {
+                                    int destination = Convert.ToInt32(parts[2]);
+
+                                    if (destination == 0)   //new shuffle HOST
+                                    {
+                                        // "49#2#0#%s#%s#%d#%d,", vectorimagenes_host, player, ronda, NForm
+                                        string vectorimatges_host = parts[3];
+                                        string player = parts[4];
+                                        int ronda = Convert.ToInt32(parts[5]);
+                                        NForm = Convert.ToInt32(parts[6].Split(',')[0]);
+                                        GameWndwForms[NForm].SetSymbols(vectorimatges_host, null, destination);
+                                        GameWndwForms[NForm].Round(operation, player, ronda);
+                                    }
+                                    else if (destination == 1)  //new shuffle GUESTS
+                                    {
+                                        // "49#2#1#%s#%s#%s#%d#%d,", vectorimagenes_others, vectorposiciones, player, ronda, NForm
+                                        string vectorimatges_jugadors = parts[3];
+                                        string vector_posicions = parts[4];
+                                        string player = parts[5];
+                                        int ronda = Convert.ToInt32(parts[6]);
+                                        NForm = Convert.ToInt32(parts[7].Split(',')[0]);
+                                        GameWndwForms[NForm].SetSymbols(vectorimatges_jugadors, vector_posicions, destination);
+                                        GameWndwForms[NForm].Round(operation, player, ronda);
+                                    }
+                                }
+
+                                break;
+                            }
+                        case 48:
+                            {
+                                int operation = Convert.ToInt32(parts[1]);
+
+                                if (operation == 0) //boto de final de partida clicat
+                                {
+                                    // "48#0#%s#%d#%d,", player, ronda, NForm
+                                    string player = parts[3];
+                                    int ronda = Convert.ToInt32(parts[4]);
+                                    NForm = Convert.ToInt32(parts[5].Split(',')[0]);
+                                    GameWndwForms[NForm].GameLost(operation,player, ronda);
+                                }
+                                if (operation == 1) //nomes queda el host a la partida (no es pot seguir jugant)
+                                {
+                                    // "48#1#%s#%d#%d,", player, ronda, NForm
+                                    string player = parts[2];
+                                    int ronda = Convert.ToInt32(parts[3]);
+                                    NForm = Convert.ToInt32(parts[4].Split(',')[0]);
+                                    GameWndwForms[NForm].GameLost(operation, player, ronda);
+                                }
+                                if (operation == 2) //s ha perdut la ronda (s acaba la partida)
+                                {
+                                    // "48#2#%s#%d#%d,", player, ronda, NForm
+                                    string player = parts[3];
+                                    int ronda = Convert.ToInt32(parts[4]);
+                                    NForm = Convert.ToInt32(parts[5].Split(',')[0]);
+                                    GameWndwForms[NForm].GameLost(operation, player, ronda);
+                                }
                                 break;
                             }
                     }

@@ -521,25 +521,7 @@ void *AtenderCliente (void *socket)
 				sprintf(respuesta, "94#0#0#%s#%d,", vectorimagenes_host, NForm);
 				printf ("CREATEGAME Symbols player HOST: %s\n", respuesta);
 			}
-			/*
-			else if (resp == 1)	//MAZE
-			{
-				while (k < playerscount - 1)	//informamos a cada jugador de la partida
-				{
-					sprintf(respuesta, "95#0#%s#%d,", disconnecting, NForm);
-					printf ("LEAVEGAME player socket %d: %s\n", playersockets[k], respuesta);
-					write (sockets[playersockets[k]],respuesta, strlen(respuesta));
-					k++;
-				}
-				sprintf(respuesta, "95#2#%s#%d,", disconnecting, NForm);
-				printf ("LEAVEGAME player LEAVING: %s\n", respuesta);
-			}
-			else	//TBD
-			{
-				sprintf(respuesta, "95#-1#%s#%d,", disconnecting, NForm);
-				printf ("LEAVEGAME error\n", respuesta);
-			}
-				*/
+			
 			write (socket_conn,respuesta, strlen(respuesta));
 		}
 		
@@ -674,38 +656,122 @@ void *AtenderCliente (void *socket)
 			
 			int k = 0;
 			
-			if (resp == 0) //SYMBOLS
+			if (resp == 0)	//SHUFFLE next ronda
 			{
-				
+				printf ("SHUFFLE Symbols NEXT ROUND\n");
 				while (k < playerscount - 1)	//informamos a cada jugador de la partida
 				{
-					sprintf(respuesta, "94#0#1#%s#%s#%d,", vectorimagenes_others, vectorposiciones, NForm);
-					printf ("CREATEGAME Symbols player socket %d: %s\n", playersockets[k], respuesta);
+					sprintf(respuesta, "49#0#1#%s#%s#%s#%d#%d,", vectorimagenes_others, vectorposiciones, player, ronda, NForm);
+					printf ("SHUFFLE Symbols player socket %d: %s\n", playersockets[k], respuesta);
 					write (sockets[playersockets[k]],respuesta, strlen(respuesta));
 					k++;
 				}
-				sprintf(respuesta, "94#0#0#%s#%d,", vectorimagenes_host, NForm);
-				printf ("CREATEGAME Symbols player HOST: %s\n", respuesta);
+				sprintf(respuesta, "49#0#0#%s#%s#%d#%d,", vectorimagenes_host, player, ronda, NForm);
+				printf ("SHUFFLE Symbols player WON: %s\n", respuesta);
 			}
 			/*
-			else if (resp == 1)	//MAZE
+			else if (resp == 1)	//ROUND LOST
 			{
-			while (k < playerscount - 1)	//informamos a cada jugador de la partida
-			{
-			sprintf(respuesta, "95#0#%s#%d,", disconnecting, NForm);
-			printf ("LEAVEGAME player socket %d: %s\n", playersockets[k], respuesta);
-			write (sockets[playersockets[k]],respuesta, strlen(respuesta));
-			k++;
-			}
-			sprintf(respuesta, "95#2#%s#%d,", disconnecting, NForm);
-			printf ("LEAVEGAME player LEAVING: %s\n", respuesta);
-			}
-			else	//TBD
-			{
-			sprintf(respuesta, "95#-1#%s#%d,", disconnecting, NForm);
-			printf ("LEAVEGAME error\n", respuesta);
+				printf ("SHUFFLE Symbols ROUND LOST\n");
+				while (k < playerscount - 1)	//informamos a cada jugador de la partida
+				{
+					sprintf(respuesta, "49#1#%s#%d#%d,", player, ronda, NForm);
+					printf ("SHUFFLE Symbols player socket %d: %s\n", playersockets[k], respuesta);
+					write (sockets[playersockets[k]],respuesta, strlen(respuesta));
+					k++;
+				}
+				sprintf(respuesta, "49#1#%s#%d#%d,", player, ronda, NForm);
+				printf ("SHUFFLE Symbols player LOST: %s\n", respuesta);
 			}
 			*/
+			else if (resp == 2)	//SHUFFLE alguien se ha ido de la partida
+			{
+				printf ("SHUFFLE Symbols PLAYER LEFT\n");
+				while (k < playerscount - 1)	//informamos a cada jugador de la partida
+				{
+					sprintf(respuesta, "49#2#1#%s#%s#%s#%d#%d,", vectorimagenes_others, vectorposiciones, player, ronda, NForm);
+					printf ("SHUFFLE Symbols player socket %d: %s\n", playersockets[k], respuesta);
+					write (sockets[playersockets[k]],respuesta, strlen(respuesta));
+					k++;
+				}
+				sprintf(respuesta, "49#2#0#%s#%s#%d#%d,", vectorimagenes_host, player, ronda, NForm);
+				printf ("SHUFFLE Symbols player WON: %s\n", respuesta);
+			}
+			
+			write (socket_conn,respuesta, strlen(respuesta));
+		}
+		
+		else if (codigo == 48)	//END GAME
+		{
+			char player[30];
+			char game_info[60];
+			char players[100];
+			int playersockets[4];
+			int playerscount;
+			int operation;
+			int ronda;
+			
+			// "48/" + "0/" + Nform + "/" + guest + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + ronda;
+			
+			p= strtok (NULL,"/");
+			operation = atoi(p);
+			
+			p= strtok (NULL,"/");
+			NForm = atoi(p);
+			
+			p= strtok (NULL,"/");
+			sprintf(player, p);
+			
+			p= strtok (NULL,"/");
+			sprintf(game_info, p);
+			
+			p= strtok (NULL,"/");
+			sprintf(players, p);
+			
+			p= strtok (NULL,"/");
+			playerscount = atoi(p);
+			
+			p= strtok (NULL,"/");
+			ronda = atoi(p);
+			
+			
+			resp = EndGame(player, operation, ronda, game_info, players, playerscount, playersockets, conn);
+			
+			int k = 0;
+			
+			if (resp == 0)	//button clicked 
+			{
+				//player corresponde al host de la partida (el unico que puede clicar el boton)
+				while (k < playerscount - 1)	//informamos a cada jugador de la partida
+				{
+					sprintf(respuesta, "48#0#%s%d#%d,", player, ronda, NForm);
+					printf ("ENDGAME Symbols player socket %d: %s\n", playersockets[k], respuesta);
+					write (sockets[playersockets[k]],respuesta, strlen(respuesta));
+					k++;
+				}
+				sprintf(respuesta, "48#0#%s#%d#%d,", player, ronda, NForm);
+				printf ("ENDGAME Symbols player HOST: %s\n", respuesta);
+			}
+			else if (resp == 1)	//only host remaining
+			{
+				//player es el host
+				sprintf(respuesta, "48#1#%s#%d#%d,", player, ronda, NForm);
+				printf ("ENDGAME Symbols player HOST: %s\n", respuesta);
+			}
+			else if (resp == 2)	//ronda perdida
+			{
+				//player es el jugador que ha cometido el error
+				while (k < playerscount - 1)	//informamos a cada jugador de la partida
+				{
+					sprintf(respuesta, "48#2#%s#%d#%d,", player, ronda, NForm);
+					printf ("ENDGAME Symbols player socket %d: %s\n", playersockets[k], respuesta);
+					write (sockets[playersockets[k]],respuesta, strlen(respuesta));
+					k++;
+				}
+				sprintf(respuesta, "48#2#%s#%d#%d,", player, ronda, NForm);
+				printf ("ENDGAME Symbols player LOST: %s\n", respuesta);
+			}
+			
 			write (socket_conn,respuesta, strlen(respuesta));
 		}
 	 
@@ -1236,90 +1302,6 @@ void borrarnombre(char nombre[60], char newconectados[300], int operacion, MYSQL
 	}
 }
 
-int CreateGame(char nombre[60], char partida[200], MYSQL *conn)
-{
-	printf("J1: %s\n", nombre); 
-	int err;
-	MYSQL_RES *resultado;
-	MYSQL_ROW row;
-	char consulta[500];
-	int contador = 0;
-	char server[20];
-	
-	//DATE
-	time_t t;
-	time(&t);
-	char date[30];
-	
-	sprintf(date, "%s", ctime(&t));
-	//CTIME(&T) acaba amb un \n per defecte que s'ha de treure
-	char *time = strtok(date, "\n");
-	printf("CREATEGAME DATE: %s\n", time);
-	
-	//ID_J1
-	sprintf (consulta, "SELECT id FROM Player WHERE nombre = '%s';", nombre);
-	//El jugador existe, sino no estariamos aqui
-	err = mysql_query(conn, consulta);
-	if(err!=0)
-	{
-		printf("ID_J1 NOT OK\n");
-	}
-	else
-	{
-		printf("ID_J1 OK\n");
-	}	
-	resultado = mysql_store_result(conn);
-	row = mysql_fetch_row(resultado);
-	
-	//printf("ID %s: %s\n",nombre, row[0]); 
-	int id_j1 = atoi(row[0]);
-	printf("ID_J1: %d\n", id_j1); 
-	
-	//ID_S
-	sprintf (consulta, "SELECT id FROM Server;");
-	err = mysql_query(conn, consulta);
-	resultado = mysql_store_result(conn);
-	row = mysql_fetch_row(resultado);
-	
-	while(row != NULL)
-	{
-		contador++;
-		row = mysql_fetch_row (resultado);
-	}
-	printf("Num servers: %d\n", contador); 
-
-	srand(getpid());
-	
-	int id_s = rand() % contador + 1; //SE COGE UN SERVER RANDOM DE LA LISTA
-	sprintf (consulta, "SELECT host_id FROM Server WHERE id ='%d';", id_s);
-	err = mysql_query(conn, consulta);
-	resultado = mysql_store_result(conn);
-	row = mysql_fetch_row(resultado);
-	//printf("SERVER id %d: %s\n", row[0], row[1]); 
-	sprintf(server, row[0]);	//row[1] es el host_id (nombre server)
-	printf("SERVER id %d: %s\n", id_s, server); 
-	
-	//INSERTAMOS EN GAME	(1 ES NEUTRAL - HOST DEVELOPPER)	| 0 indica que el juego aun exite (ended = 0)
-	sprintf (consulta, "INSERT INTO Game VALUES (%d,1,1,1,1,%d,'%s','NULL', 0, 0);", id_j1, id_s, date);
-	//(id_j1, id_j2, id_j3, id_j4, id_j5, id_s, fecha, minijuego)
-	printf("CREATEGAME: %s\n", consulta);
-	
-	err = mysql_query(conn, consulta);
-	resultado = mysql_store_result(conn);
-	if(err!=0)
-	{
-		printf("ADDED NOT OK\n");
-		sprintf(partida, "ERROR");
-		return -1;
-	}
-	else
-	{
-		printf("ADDED OK\n");
-		sprintf(partida, "%s|%d|%s", server, id_j1, date);
-		return 0;
-	}	
-}
-
 int BuscarSocket(char namesocket[30], MYSQL *conn)
 {
 	int err;
@@ -1396,6 +1378,90 @@ void BuscarSockets(char players[100], int playerscount, int playersockets[4], MY
 	}
 	
 	printf("BUSCARSOCKETS sockets: %d %d %d %d \n", playersockets[0], playersockets[1], playersockets[2], playersockets[3]);
+}
+
+int CreateGame(char nombre[60], char partida[200], MYSQL *conn)
+{
+	printf("J1: %s\n", nombre); 
+	int err;
+	MYSQL_RES *resultado;
+	MYSQL_ROW row;
+	char consulta[500];
+	int contador = 0;
+	char server[20];
+	
+	//DATE
+	time_t t;
+	time(&t);
+	char date[30];
+	
+	sprintf(date, "%s", ctime(&t));
+	//CTIME(&T) acaba amb un \n per defecte que s'ha de treure
+	char *time = strtok(date, "\n");
+	printf("CREATEGAME DATE: %s\n", time);
+	
+	//ID_J1
+	sprintf (consulta, "SELECT id FROM Player WHERE nombre = '%s';", nombre);
+	//El jugador existe, sino no estariamos aqui
+	err = mysql_query(conn, consulta);
+	if(err!=0)
+	{
+		printf("ID_J1 NOT OK\n");
+	}
+	else
+	{
+		printf("ID_J1 OK\n");
+	}	
+	resultado = mysql_store_result(conn);
+	row = mysql_fetch_row(resultado);
+	
+	//printf("ID %s: %s\n",nombre, row[0]); 
+	int id_j1 = atoi(row[0]);
+	printf("ID_J1: %d\n", id_j1); 
+	
+	//ID_S
+	sprintf (consulta, "SELECT id FROM Server;");
+	err = mysql_query(conn, consulta);
+	resultado = mysql_store_result(conn);
+	row = mysql_fetch_row(resultado);
+	
+	while(row != NULL)
+	{
+		contador++;
+		row = mysql_fetch_row (resultado);
+	}
+	printf("Num servers: %d\n", contador); 
+	
+	srand(getpid());
+	
+	int id_s = rand() % contador + 1; //SE COGE UN SERVER RANDOM DE LA LISTA
+	sprintf (consulta, "SELECT host_id FROM Server WHERE id ='%d';", id_s);
+	err = mysql_query(conn, consulta);
+	resultado = mysql_store_result(conn);
+	row = mysql_fetch_row(resultado);
+	//printf("SERVER id %d: %s\n", row[0], row[1]); 
+	sprintf(server, row[0]);	//row[1] es el host_id (nombre server)
+	printf("SERVER id %d: %s\n", id_s, server); 
+	
+	//INSERTAMOS EN GAME	(1 ES NEUTRAL - HOST DEVELOPPER)	| 0 indica que el juego aun exite (ended = 0)
+	sprintf (consulta, "INSERT INTO Game VALUES (%d,1,1,1,1,%d,'%s','NULL', 0, 0);", id_j1, id_s, date);
+	//(id_j1, id_j2, id_j3, id_j4, id_j5, id_s, fecha, minijuego)
+	printf("CREATEGAME: %s\n", consulta);
+	
+	err = mysql_query(conn, consulta);
+	resultado = mysql_store_result(conn);
+	if(err!=0)
+	{
+		printf("ADDED NOT OK\n");
+		sprintf(partida, "ERROR");
+		return -1;
+	}
+	else
+	{
+		printf("ADDED OK\n");
+		sprintf(partida, "%s|%d|%s", server, id_j1, date);
+		return 0;
+	}	
 }
 
 int JoinGame(char invited[30], char inviting[30], char partida[60], char otherplayers[100], int othersockets[4], MYSQL *conn)
@@ -1957,7 +2023,6 @@ void SymbolsRandomGeneration(int random_escogidas[5], int random_posiciones[5], 
 
 int Shuffle(char player[30], int operation, int ronda, char partida[30],char players[100], int playerscount, int playersockets[4], char vectorimagenes_host[15], char vectorposiciones[15], char vectorimagenes_others[100], MYSQL *conn)
 {
-	
 	printf("SHUFFLE operation: %d\n", operation);
 	printf("SHUFFLE user: %s\n", player);
 	int err;
@@ -2034,6 +2099,7 @@ int Shuffle(char player[30], int operation, int ronda, char partida[30],char pla
 		printf("SHUFFLE : new round %d \n", ronda);
 		return 0;
 	}
+	/*
 	else if (operation == 1)	//RONDA PERDIDA
 	{
 		sprintf (consulta, "UPDATE Game SET ronda = %d WHERE id_j1 = %d AND id_s = %d AND fecha = '%s';", ronda, idplayerhost, idserver, date);
@@ -2045,10 +2111,11 @@ int Shuffle(char player[30], int operation, int ronda, char partida[30],char pla
 		sprintf (consulta, "UPDATE Game SET started = 0 WHERE id_j1 = %d AND id_s = %d AND fecha = '%s';", idplayerhost, idserver, date);
 		//printf("JOINGAME : %s \n", consulta);
 		err = mysql_query(conn, consulta);
-		printf("SHUFFLE : started 1 \n");
+		printf("SHUFFLE : started to 0 \n");
 		
 		return 1;
 	}
+	*/
 	else if (operation == 2)	//SHUFFLE SIN SUBIR DE RONDA (UN JUGADOR SE HA IDO)
 	{
 		SymbolsRandomGeneration(random_escogidas, random_posiciones, vector_final, playerscount);
@@ -2081,13 +2148,77 @@ int Shuffle(char player[30], int operation, int ronda, char partida[30],char pla
 		//printf("JOINGAME : %s \n", consulta);
 		err = mysql_query(conn, consulta);
 		printf("SHUFFLE : new round %d \n", ronda);
-		return 3;
+		return 2;
 	}
 }
 
-
-
-
+int EndGame(char player[30], int operation, int ronda, char partida[30], char players[100], int playerscount, int playersockets[4], MYSQL *conn)
+{
+	printf("EndGame operation: %d\n", operation);
+	printf("EndGame user: %s\n", player);
+	int err;
+	MYSQL_RES *resultado;
+	MYSQL_ROW row;
+	char consulta[500];
+	char server[20];
+	char partida_cpy[60];
+	char players_cpy[100];
+	char date[30];
+	int idplayerhost;
+	int idserver;
+	
+	
+	//partida del estilo : ("%s|%d|%s", server, id_j1, date)
+	sprintf(partida_cpy, "%s|", partida);
+	
+	//cogemos los valores de la partida
+	char *h = strtok(partida_cpy, "|");
+	sprintf(server, h);
+	h = strtok(NULL, "|");
+	idplayerhost = atoi(h);
+	h = strtok(NULL, "|");
+	sprintf(date, h);
+	
+	//buscamos el id del server
+	
+	sprintf (consulta, "SELECT id FROM Server WHERE host_id = '%s';", server);
+	err = mysql_query(conn, consulta);
+	resultado = mysql_store_result(conn);
+	row = mysql_fetch_row(resultado);
+	
+	//no hace falta pasar por filtros porque si ha llegado hasta aqui es que todo existe i es correcto
+	
+	idserver = atoi(row[0]);
+	
+	BuscarSockets(players, playerscount, playersockets, conn);
+	
+	sprintf (consulta, "UPDATE Game SET ronda = %d WHERE id_j1 = %d AND id_s = %d AND fecha = '%s';", ronda, idplayerhost, idserver, date);
+	//printf("JOINGAME : %s \n", consulta);
+	err = mysql_query(conn, consulta);
+	printf("ENDGAME : round %d \n", ronda);
+	
+	//seteamos que la aprtida ya no esta en curso y que se puede unir gente por lo tanto (si hay espacio)
+	sprintf (consulta, "UPDATE Game SET started = 0 WHERE id_j1 = %d AND id_s = %d AND fecha = '%s';", idplayerhost, idserver, date);
+	//printf("JOINGAME : %s \n", consulta);
+	err = mysql_query(conn, consulta);
+	printf("ENDGAME : started to 0 \n");
+	
+	if (operation == 0)	//Se clica el boton de finalizar partida
+	{
+		printf("ENDGAME : button clicked\n");
+		return 0;
+	}
+	else if (operation == 1)	//Un jugador ha abandonado la partida y solo queda el host
+	{
+		printf("ENDGAME : only host remaining\n");
+		return 1;
+	}
+	else if (operation == 2)	//RONDA PERDIDA
+	{
+		printf("ENDGAME : round lost\n");
+		return 2;
+	}
+}
 
 
 

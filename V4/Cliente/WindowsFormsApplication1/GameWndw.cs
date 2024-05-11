@@ -241,15 +241,20 @@ namespace WindowsFormsApplication1
             }
             else if (result == 0)   //marxa de la partida un altre usuari (informem als altres usuaris i al host)
             {
-                MessageBox.Show("Player " + disconnected + " disconnected. Waiting for additional player", "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
                 //la llista de jugadors ja s'ha actualitzat al crear el missatge al servidor, nomes queda actualitzar-la visualment
 
                 this.PLAYERS.Remove(disconnected);  //treiem el jugador desconnectat de la llista
                 DelegateINSERTPLAYERSINGAME del = new DelegateINSERTPLAYERSINGAME(INSERTPLAYERSINGAME);
                 player1_lbl.Invoke(del);
 
-                RoundManagement(1);  //actualitzacio de canvi de ronda quan algu marxa
+                if (gamestarted == true)    //si la partida ha començat, fem shuffle de la ronda actual
+                {
+                    RoundManagement(disconnected, 1);  //actualitzacio de canvi de ronda quan algu marxa
+                }
+                else if (gamestarted == false)  //sino, nomes informem que ha amrxat un jugador
+                {
+                    MessageBox.Show("Player " + disconnected + " disconnected", "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
             }
         }
 
@@ -320,8 +325,14 @@ namespace WindowsFormsApplication1
 
         ////////////////////////////////////////////////////    GAME: SYMBOLS    /////////////////////////////////////////////////////////////////////////////////////
 
-        public void StartGameSymbols(string vectorimatges, string vectorposicions, int destinat)
+        public void SetSymbols(string vectorimatges, string vectorposicions, int destinat)
         {
+            //vectorimatges varia segons si ets el host o un guest
+
+            this.vectorimatges_host.Clear();
+            this.vectorimatges_jugador.Clear();
+            this.vectorposicions.Clear();
+
             picture1.Show();
             picture2.Show();
             picture3.Show();
@@ -482,7 +493,7 @@ namespace WindowsFormsApplication1
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             SERVER.Send(msg);
 
-            RoundManagement(0);
+            RoundManagement(USER, 0); //es compara aqui si s ha perdut s ha passat de ronda
         }
 
         private void picture2_Click(object sender, EventArgs e)
@@ -529,7 +540,7 @@ namespace WindowsFormsApplication1
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             SERVER.Send(msg);
 
-            RoundManagement(0);
+            RoundManagement(USER, 0); //es compara aqui si s ha perdut s ha passat de ronda
         }
 
         private void picture3_Click(object sender, EventArgs e)
@@ -576,7 +587,7 @@ namespace WindowsFormsApplication1
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             SERVER.Send(msg);
 
-            RoundManagement(0);
+            RoundManagement(USER, 0); //es compara aqui si s ha perdut s ha passat de ronda
         }
 
         private void picture4_Click(object sender, EventArgs e)
@@ -623,7 +634,7 @@ namespace WindowsFormsApplication1
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             SERVER.Send(msg);
 
-            RoundManagement(0);
+            RoundManagement(USER, 0); //es compara aqui si s ha perdut s ha passat de ronda
         }
 
         private void picture5_Click(object sender, EventArgs e)
@@ -670,25 +681,29 @@ namespace WindowsFormsApplication1
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             SERVER.Send(msg);
 
-            RoundManagement(0);
+            RoundManagement(USER, 0); //es compara aqui si s ha perdut s ha passat de ronda
         }
 
         public void UpdateClickExpression(string expresion, string sender)
         {
             if (expresion == "Nice!")
             {
-                MessageBox.Show(sender + " has found a Symbol!\n" + contador_found + " out of " + PLAYERS.Count, "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                if (contador_found != PLAYERS.Count)    //quan siguin iguals, enviarem una alta notificacio de canvi de ronda
+                    MessageBox.Show(sender + " has found a Symbol!\n" + contador_found + " out of " + PLAYERS.Count, "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else if (expresion == "Oh!")
             {
-                MessageBox.Show(sender + " has missed...\nYou have " + contador_errors + " remaining lives", "Game", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                if (contador_errors != 0)   //quan sigui 0, enviarem una altra notificacio que s ha acabat la partida
+                    MessageBox.Show(sender + " has missed...\nYou have " + contador_errors + " remaining lives", "Game", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
 
-        private void RoundManagement(int what)
+        ////////////////////////////////////////////////////    GAME MANAGEMENT    /////////////////////////////////////////////////////////////////////////////////
+
+        private void RoundManagement(string guest, int op)
         {
             // what = 1 vol dir que ha marxat algu de la partida (shuffle), si what = 0 no res
-            if (contador_found == PLAYERS.Count)
+            if (contador_found == PLAYERS.Count)    //op = 0
             {
                 string listplayers = null;
                 int playerscount = PLAYERS.Count;
@@ -698,29 +713,17 @@ namespace WindowsFormsApplication1
                     if (player != USER)
                         listplayers += player + " ";
                 }
-                string mensaje = "49/" + "0/" + Nform + "/" + USER + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + round;
+                string mensaje = "49/" + "0/" + Nform + "/" + guest + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + round;
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 SERVER.Send(msg);
 
                 //this.round++;
             }
-            else if (contador_errors == 0)
+            else if (contador_errors == 0)  //op = 0
             {
-                string listplayers = null;
-                int playerscount = PLAYERS.Count;
-
-                foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (altres i el user)
-                {
-                    if (player != USER)
-                        listplayers += player + " ";
-                }
-                string mensaje = "49/" + "1/" + Nform + "/" + USER + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + round;
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-                SERVER.Send(msg);
-
-                //EndGame
+                EndGame(2, guest, this.round);
             }
-            else if (what == 1)  //ha marxat algu i s han d actualitzar les rondes
+            else if (op == 1)  //ha marxat algu i s han d actualitzar les rondes
             {
                 string listplayers = null;
                 int playerscount = PLAYERS.Count;
@@ -730,17 +733,35 @@ namespace WindowsFormsApplication1
                     if (player != USER)
                         listplayers += player + " ";
                 }
-                if (playerscount != 1)  //mirem si es queda el host sol o no un cop ja ha començat
+                if (playerscount != 1)  //mirem si es queda el host sol o no un cop ja ha començat. Si hi ha mes de 1 persona a la partida, es fa shuffle
                 {
-                    string mensaje = "49/" + "2/" + Nform + "/" + USER + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + round;
+                    string mensaje = "49/" + "2/" + Nform + "/" + guest + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + round;
                     byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                     SERVER.Send(msg);
                 }
                 else    //si esta el host sol, parem la partida
                 {
-                    EndGame();
+                    EndGame(1, guest, this.round);
                 }
                 
+            }
+        }
+
+        public void Round(int operation, string player, int ronda)  //rebem resposta del server de la funcio RoundManagement
+        {
+            if (operation == 0) //next round
+            {
+                this.round = ronda; //pugem de ronda (al server ja s'ha sumat el valor)
+                MessageBox.Show(player + " has found the last Symbol!\nRound " + ronda + " starting!", "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                //actualitzem el contador de rondes
+                DelegateROUNDSLBL del = new DelegateROUNDSLBL(ROUNDSLBL);
+                roundlbl.Invoke(del);
+            }
+            if (operation == 2) //shuffle jugador ha abandonat
+            {
+                this.round = ronda; //mateix valor de ronda que el que hi havia
+                MessageBox.Show(player + " disconnected\nRestarting round " + ronda , "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -748,12 +769,74 @@ namespace WindowsFormsApplication1
 
         private void endgamebtn_Click(object sender, EventArgs e)
         {
-
+            EndGame(0, this.USER, this.round);
         }
 
-        private void EndGame()
+        private void EndGame(int op, string guest, int ronda)
         {
+            string listplayers = null;
+            int playerscount = PLAYERS.Count;
 
+            foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (altres i el user)
+            {
+                if (player != USER)
+                    listplayers += player + " ";
+            }
+
+            if (op == 0)    //clica el boto el USER del form i informa a la resta que l'ha apretat i que ha acabat la partida
+            {
+                string mensaje = "48/" + "0/" + Nform + "/" + guest + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + ronda;
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                SERVER.Send(msg);
+            }
+            else if (op == 1)   //un jugador ha abandonat la partida i nomes queda el host (per tant no es pot seguir jugant)
+            {
+                string mensaje = "48/" + "1/" + Nform + "/" + guest + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + ronda;
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                SERVER.Send(msg);
+            }
+            else if (op == 2)   //es perd la partida per haver arribat al maxim numero d errors
+            {
+                string mensaje = "48/" + "2/" + Nform + "/" + guest + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + ronda;
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                SERVER.Send(msg);
+            }
+
+            //ara toca reiniciar la interficie i els parametres
+
+            gamestarted = false;
+            DelegateSYMBOLSBOX del = new DelegateSYMBOLSBOX(SYMBOLSBOX);
+            symbolsBox.Invoke(del);
+
+            this.contador_errors = 3;
+            this.contador_found = 0;
+            this.round = 0;
+            this.vectorimatges_host.Clear();
+            this.vectorimatges_jugador.Clear();
+            this.vectorposicions.Clear();
+        }
+
+        public void GameLost(int operation, string player, int ronda)        //resposta del servidor a la funcio EndGame
+        {
+            if (operation == 0) //clica el boto el USER del form i informa a la resta que l'ha apretat i que ha acabat la partida
+            {
+                //player conte el nom del host
+                if (USER != player) //missatge per als que no son host, ja que al clicar el boto no cal que rebi el missatge (el que si que se li reiniciara la partida)
+                { 
+                    MessageBox.Show(player + " host has ended the game on round " + ronda, "Game", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
+            }
+            if (operation == 1) //un jugador ha abandonat la partida i nomes queda el host (per tant no es pot seguir jugant)
+            {
+                //el missatge nomes arribara al host (player es el nom del jugador desconnectat)
+                MessageBox.Show(player + " has disconnected. Ending game at round " + ronda + "\nYou need more players to play the game!", "Game", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+            if (operation == 2) //es perd la partida per haver arribat al maxim numero d errors
+            {
+                //el missatge arribara a tots els usuaris per igual
+                //player conte el nom del jugador que ha comes l error
+                MessageBox.Show("Game lost. No more lifes remaining!\n" + player + " has commited the last error. Ending game at round " + ronda, "Game", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
         }
 
         ////////////////////////////////////////////////////    DELEGATES     /////////////////////////////////////////////////////////////////////////////////
@@ -973,6 +1056,7 @@ namespace WindowsFormsApplication1
             {
                 this.symbolsBox.Visible = true;
                 this.roundlbl.Visible = true;
+                this.roundlbl.Text = "Round 1";
                 if (creator != null)
                 {
                     endgamebtn.Visible = true;
@@ -994,6 +1078,13 @@ namespace WindowsFormsApplication1
         public void ROUNDSLBL(int round)
         {
             roundlbl.Text = "Round " + round.ToString();
+        }
+
+
+        delegate void DelegateRESET();
+        public void RESET()
+        {
+
         }
 
         delegate void DelegateCLOSE();
