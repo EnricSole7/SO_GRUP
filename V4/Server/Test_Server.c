@@ -14,6 +14,8 @@ int contador_servicios;
 char conectados[200];
 int numconectados;
 bool LogOut = false;
+int randomvec[200];
+int y;
 
 int i;
 int sockets[100];	//vector de sockets
@@ -513,13 +515,13 @@ void *AtenderCliente (void *socket)
 				
 				while (k < playerscount - 1)	//informamos a cada jugador de la partida
 				{
-					sprintf(respuesta, "94#0#1#%s#%s#%d,", vectorimagenes_others, vectorposiciones, NForm);
-					printf ("CREATEGAME Symbols player socket %d: %s\n", playersockets[k], respuesta);
+					sprintf(respuesta, "94#0#1#%s#%s#%s#%d,", vectorimagenes_host, vectorimagenes_others, vectorposiciones, NForm);
+					printf ("STARTGAME Symbols player socket %d: %s\n", playersockets[k], respuesta);
 					write (sockets[playersockets[k]],respuesta, strlen(respuesta));
 					k++;
 				}
 				sprintf(respuesta, "94#0#0#%s#%d,", vectorimagenes_host, NForm);
-				printf ("CREATEGAME Symbols player HOST: %s\n", respuesta);
+				printf ("STARTGAME Symbols player HOST: %s\n", respuesta);
 			}
 			
 			write (socket_conn,respuesta, strlen(respuesta));
@@ -574,16 +576,20 @@ void *AtenderCliente (void *socket)
 		{
 			char sender[30];
 			char expresion[80];
+			int numimagen;
 			char game_info[60];
 			char players[100];
 			int playersockets[4];
 			int playerscount;
 			char minigame[30];
 			
-			// "51/" + expresion + "/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount;
+			// "51/" + expresion + "/" + vectorimatges_host[x] + "/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount
 			
 			p= strtok (NULL,"/");
 			sprintf(expresion, p);
+			
+			p= strtok (NULL,"/");
+			numimagen = atoi(p);
 			
 			p= strtok (NULL,"/");
 			NForm = atoi(p);
@@ -605,12 +611,12 @@ void *AtenderCliente (void *socket)
 			
 			while (k < playerscount - 1)	//informamos a cada jugador de la partida
 			{
-				sprintf(respuesta, "51#%s#%s#%d,", expresion, sender, NForm);
+				sprintf(respuesta, "51#%s#%s#%d#%d,", expresion, sender, numimagen, NForm);
 				printf ("PICTUREMESSAGE player socket %d: %s\n", playersockets[k], respuesta);
 				write (sockets[playersockets[k]],respuesta, strlen(respuesta));
 				k++;
 			}
-			sprintf(respuesta, "51#%s#%s#%d,", expresion, sender, NForm);
+			sprintf(respuesta, "51#%s#%s#%d#%d,", expresion, sender, numimagen, NForm);
 			printf ("PICTUREMESSAGE player SENDER: %s\n", respuesta);
 			write (socket_conn,respuesta, strlen(respuesta));
 		}
@@ -625,7 +631,7 @@ void *AtenderCliente (void *socket)
 			int operation;
 			int ronda;
 			
-			// "49/" + "0/" + Nform + "/" + USER + "/" + datos_partida + "/" + listplayers + "/" + playerscount;
+			// "49/" + "0/" + Nform + "/" + USER + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + ronda;
 			
 			p= strtok (NULL,"/");
 			operation = atoi(p);
@@ -648,9 +654,9 @@ void *AtenderCliente (void *socket)
 			p= strtok (NULL,"/");
 			ronda = atoi(p);
 			
-			char vectorimagenes_host[15];
-			char vectorposiciones[15];
-			char vectorimagenes_others[100];
+			char vectorimagenes_host[15] = "";
+			char vectorposiciones[15] = "";
+			char vectorimagenes_others[100] = "";
 			
 			resp = Shuffle(player, operation, ronda, game_info, players, playerscount, playersockets, vectorimagenes_host, vectorposiciones, vectorimagenes_others, conn);
 			
@@ -661,7 +667,7 @@ void *AtenderCliente (void *socket)
 				printf ("SHUFFLE Symbols NEXT ROUND\n");
 				while (k < playerscount - 1)	//informamos a cada jugador de la partida
 				{
-					sprintf(respuesta, "49#0#1#%s#%s#%s#%d#%d,", vectorimagenes_others, vectorposiciones, player, ronda, NForm);
+					sprintf(respuesta, "49#0#1#%s#%s#%s#%s#%d#%d,", vectorimagenes_host, vectorimagenes_others, vectorposiciones, player, ronda, NForm);
 					printf ("SHUFFLE Symbols player socket %d: %s\n", playersockets[k], respuesta);
 					write (sockets[playersockets[k]],respuesta, strlen(respuesta));
 					k++;
@@ -669,27 +675,12 @@ void *AtenderCliente (void *socket)
 				sprintf(respuesta, "49#0#0#%s#%s#%d#%d,", vectorimagenes_host, player, ronda, NForm);
 				printf ("SHUFFLE Symbols player WON: %s\n", respuesta);
 			}
-			/*
-			else if (resp == 1)	//ROUND LOST
-			{
-				printf ("SHUFFLE Symbols ROUND LOST\n");
-				while (k < playerscount - 1)	//informamos a cada jugador de la partida
-				{
-					sprintf(respuesta, "49#1#%s#%d#%d,", player, ronda, NForm);
-					printf ("SHUFFLE Symbols player socket %d: %s\n", playersockets[k], respuesta);
-					write (sockets[playersockets[k]],respuesta, strlen(respuesta));
-					k++;
-				}
-				sprintf(respuesta, "49#1#%s#%d#%d,", player, ronda, NForm);
-				printf ("SHUFFLE Symbols player LOST: %s\n", respuesta);
-			}
-			*/
 			else if (resp == 2)	//SHUFFLE alguien se ha ido de la partida
 			{
 				printf ("SHUFFLE Symbols PLAYER LEFT\n");
 				while (k < playerscount - 1)	//informamos a cada jugador de la partida
 				{
-					sprintf(respuesta, "49#2#1#%s#%s#%s#%d#%d,", vectorimagenes_others, vectorposiciones, player, ronda, NForm);
+					sprintf(respuesta, "49#2#1#%s#%s#%s#%s#%d#%d,", vectorimagenes_host, vectorimagenes_others, vectorposiciones, player, ronda, NForm);
 					printf ("SHUFFLE Symbols player socket %d: %s\n", playersockets[k], respuesta);
 					write (sockets[playersockets[k]],respuesta, strlen(respuesta));
 					k++;
@@ -744,7 +735,7 @@ void *AtenderCliente (void *socket)
 				//player corresponde al host de la partida (el unico que puede clicar el boton)
 				while (k < playerscount - 1)	//informamos a cada jugador de la partida
 				{
-					sprintf(respuesta, "48#0#%s%d#%d,", player, ronda, NForm);
+					sprintf(respuesta, "48#0#%s#%d#%d,", player, ronda, NForm);
 					printf ("ENDGAME Symbols player socket %d: %s\n", playersockets[k], respuesta);
 					write (sockets[playersockets[k]],respuesta, strlen(respuesta));
 					k++;
@@ -827,7 +818,7 @@ int main(int argc, char *argv[])
 	serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);
 	// escucharemos en el port 9050
 	int port = 50080;
-	serv_adr.sin_port = htons(9075);
+	serv_adr.sin_port = htons(9086);
 	if (bind(socket_listen, (struct sockaddr *) &serv_adr, sizeof(serv_adr)) < 0)
 		printf ("Error al bind\n");
 	//La cola de peticiones pendientes no podr? ser superior a 4
@@ -838,7 +829,15 @@ int main(int argc, char *argv[])
 	conectados[200] = "";
 	
 	numconectados = 0;
-
+	/*
+	y = 0;
+	int f = 0;
+	while (f < 200)
+	{
+		randomvec[f] = 0;
+		f++;
+	}
+	*/
 	pthread_t thread;	//estructura de thread
 	i = 0;
 	// Bucle per atendre peticions
@@ -1390,6 +1389,8 @@ int CreateGame(char nombre[60], char partida[200], MYSQL *conn)
 	int contador = 0;
 	char server[20];
 	
+	srand(getpid());
+	
 	//DATE
 	time_t t;
 	time(&t);
@@ -1444,7 +1445,7 @@ int CreateGame(char nombre[60], char partida[200], MYSQL *conn)
 	printf("SERVER id %d: %s\n", id_s, server); 
 	
 	//INSERTAMOS EN GAME	(1 ES NEUTRAL - HOST DEVELOPPER)	| 0 indica que el juego aun exite (ended = 0)
-	sprintf (consulta, "INSERT INTO Game VALUES (%d,1,1,1,1,%d,'%s','NULL', 0, 0);", id_j1, id_s, date);
+	sprintf (consulta, "INSERT INTO Game VALUES (%d,1,1,1,1,%d,'%s',0, 0, 0);", id_j1, id_s, date);
 	//(id_j1, id_j2, id_j3, id_j4, id_j5, id_s, fecha, minijuego)
 	printf("CREATEGAME: %s\n", consulta);
 	
@@ -1870,7 +1871,17 @@ int StartGame(char host[30], char partida[30],char players[100], int playerscoun
 		sprintf(vectorimagenes_others, "%s %d", vectorimagenes_others, vector_final[j]);
 		j++;
 	}
-	
+	/*
+	srand(getpid());
+	j = 0;
+	int ran;
+	while (j < 1000)
+	{
+		ran = rand() % 1000;
+		randomvec[j] = ran;
+		j++;
+	}
+	*/
 	sprintf (consulta, "UPDATE Game SET started = 1 WHERE id_j1 = %d AND id_s = %d AND fecha = '%s';", idplayerhost, idserver, date);
 	//printf("JOINGAME : %s \n", consulta);
 	err = mysql_query(conn, consulta);
@@ -1888,7 +1899,16 @@ void SymbolsRandomGeneration(int random_escogidas[5], int random_posiciones[5], 
 	int num = numplayers - 1;
 	
 	srand(getpid());
-	
+	srand(time(NULL));
+	/*
+	srand(time(randomvec[y]));
+	printf("RANDOMGENERATION seed : %d\n", randomvec[y]);
+	y++;
+	if (y == 199)
+	{
+		y = 0;
+	}
+	*/
 	int random;
 	bool equal = false;
 	
@@ -1917,7 +1937,7 @@ void SymbolsRandomGeneration(int random_escogidas[5], int random_posiciones[5], 
 		k = 0;
 	}
 	 
-	printf("STARTGAME vector escogido : %d %d %d %d %d \n", random_escogidas[0], random_escogidas[1], random_escogidas[2], random_escogidas[3], random_escogidas[4]);
+	printf("RANDOMGENERATION vector escogido : %d %d %d %d %d \n", random_escogidas[0], random_escogidas[1], random_escogidas[2], random_escogidas[3], random_escogidas[4]);
 	
 	j = 0;
 	k = 0;
@@ -1946,7 +1966,7 @@ void SymbolsRandomGeneration(int random_escogidas[5], int random_posiciones[5], 
 		equal = false;
 		k = 0;
 	}
-	printf("STARTGAME vector posicion : %d %d %d %d %d \n", random_posiciones[0], random_posiciones[1], random_posiciones[2], random_posiciones[3], random_posiciones[4]);
+	printf("RANDOMGENERATION vector posicion : %d %d %d %d %d \n", random_posiciones[0], random_posiciones[1], random_posiciones[2], random_posiciones[3], random_posiciones[4]);
 	
 	
 	j = 0;
@@ -1965,7 +1985,7 @@ void SymbolsRandomGeneration(int random_escogidas[5], int random_posiciones[5], 
 				posicion_taken = true;
 				//si laa posicion yaa estta eescogida por el vectoor randomm_posiciones, añadimos la que hemos cogido en random_escogidas
 				vector_final[j] = random_escogidas[l];
-				printf("STARTGAME final vector %d : %d\n", j, random_escogidas[l]);
+				printf("RANDOMGENERATION final vector %d : %d\n", j, random_escogidas[l]);
 			}
 			else
 			{
@@ -2007,7 +2027,7 @@ void SymbolsRandomGeneration(int random_escogidas[5], int random_posiciones[5], 
 				if (!image_taken)
 				{
 					vector_final[j] = random;
-					printf("STARTGAME final vector %d : %d\n", j, random);
+					printf("RANDOMGENERATION final vector %d : %d\n", j, random);
 					j++;
 				}
 				equal = false;
@@ -2039,6 +2059,7 @@ int Shuffle(char player[30], int operation, int ronda, char partida[30],char pla
 	int random_escogidas[5] = {-1};
 	int random_posiciones[5] = {-1};
 	int vector_final[20] = {-1};
+	
 	
 	//partida del estilo : ("%s|%d|%s", server, id_j1, date)
 	sprintf(partida_cpy, "%s|", partida);

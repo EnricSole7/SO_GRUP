@@ -45,7 +45,7 @@ namespace WindowsFormsApplication1
         List<int> posicions_picturebox = new List<int>();
         int contador_errors = 3;
         int contador_found = 0;
-        int round = 0;
+        int round = 1;
 
         //List<string> Invitations = new List<string>();
         public GameWindow()
@@ -272,9 +272,16 @@ namespace WindowsFormsApplication1
                         listplayers += player + " ";
                 }
 
-                string mensaje = "50/" + messageTxt.Text +"/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount;
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-                SERVER.Send(msg);
+                if (listplayers != null)
+                {
+                    string mensaje = "50/" + messageTxt.Text + "/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount;
+                    byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                    SERVER.Send(msg);
+                }
+                else if (listplayers == null)
+                {
+                    ReceiveMessage(USER + ": " + messageTxt.Text);
+                }
 
                 DelegateSETTEXT del = new DelegateSETTEXT(SETTEXT);
                 messageTxt.Invoke(del);
@@ -314,7 +321,7 @@ namespace WindowsFormsApplication1
                 string mensaje = "94/" + Nform + "/" + USER + "/" + datos_partida + "/" + listplayers + "/" + playerscount;
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 SERVER.Send(msg);
-                gamestarted = true;
+                
             }
             else
             {
@@ -325,7 +332,7 @@ namespace WindowsFormsApplication1
 
         ////////////////////////////////////////////////////    GAME: SYMBOLS    /////////////////////////////////////////////////////////////////////////////////////
 
-        public void SetSymbols(string vectorimatges, string vectorposicions, int destinat)
+        public void SetSymbols(string vectorimatges_bones, string vectorimatges_guests, string vectorposicions, int destinat)
         {
             //vectorimatges varia segons si ets el host o un guest
 
@@ -333,11 +340,8 @@ namespace WindowsFormsApplication1
             this.vectorimatges_jugador.Clear();
             this.vectorposicions.Clear();
 
-            picture1.Show();
-            picture2.Show();
-            picture3.Show();
-            picture4.Show();
-            picture5.Show();
+            DelegateSHOWPICTUREBOX del = new DelegateSHOWPICTUREBOX(SHOWPICTUREBOX);
+            picture1.Invoke(del);
 
             int k = 0;
             List<Image> vecimag = new List<Image>();
@@ -346,32 +350,32 @@ namespace WindowsFormsApplication1
                 vecimag.Add(Image.FromFile(@"imagenes/" + (k + 1) + ".png"));
             }
 
-            if (destinat == 0)  //destinat al host
-            {
-                vectorimatges = vectorimatges + " ";
-                int j = 0;
-                int separador;
-                string intermid = null;
-                int numpics = PLAYERS.Count - 1;
+            vectorimatges_bones = vectorimatges_bones + " ";
+            int j = 0;
+            int separador;
+            string intermid = null;
+            int numpics = PLAYERS.Count - 1;
 
-                while (j < vectorimatges.Length)
+            while (j < vectorimatges_bones.Length)
+            {
+                separador = vectorimatges_bones.IndexOf(" ", j);
+                while (j < separador)
                 {
-                    separador = vectorimatges.IndexOf(" ", j);
-                    while (j < separador)
-                    {
-                        intermid += vectorimatges[j];
-                        j++;
-                    }
-                    if (intermid != "0".ToString())
-                    {
-                        this.vectorimatges_host.Add(Convert.ToInt32(intermid));
-                    }
-                    intermid = null;
+                    intermid += vectorimatges_bones[j];
                     j++;
                 }
+                if (intermid != "0".ToString())
+                {
+                    this.vectorimatges_host.Add(Convert.ToInt32(intermid));
+                }
+                intermid = null;
+                j++;
+            }
 
-                DelegateSYMBOLS_PICTUREBOX_HOST del = new DelegateSYMBOLS_PICTUREBOX_HOST(SYMBOLS_PICTUREBOX_HOST);
-                picture1.Invoke(del, new object[] { vecimag });
+            if (destinat == 0)  //destinat al host
+            { 
+                DelegateSYMBOLS_PICTUREBOX_HOST del2 = new DelegateSYMBOLS_PICTUREBOX_HOST(SYMBOLS_PICTUREBOX_HOST);
+                picture1.Invoke(del2, new object[] { vecimag });
             }
             else if (destinat == 1)
             {
@@ -381,15 +385,14 @@ namespace WindowsFormsApplication1
                 //pero depenent del numero de jugadors que siguin, el host en tindrà equivalentment el mateix nombre (si son 3 jugadors, el host tindra 3 imatges)
                 //per a desxifrar
 
-                vectorimatges = vectorimatges + " ";
+                vectorimatges_guests = vectorimatges_guests + " ";
                 vectorposicions = vectorposicions + " ";
                 int position_index = PLAYERS.IndexOf(USER); //o 1 o 2 o 3 o 4 (el 0 es el host)
 
                 List<int> imatges_cpy = new List<int>();  //contindra totes les imatges que s'hauran de repartir entre jugadors
 
-                int j = 0;
-                int separador;
-                string intermid = null;
+                j = 0;
+                intermid = null;
 
                 //primer guardem el vector de les posicions bones de les imatges
                 while (j < vectorposicions.Length)
@@ -412,12 +415,12 @@ namespace WindowsFormsApplication1
                 intermid = null;
 
                 //busquem les imatges destinades a aquest jugador
-                while (j < vectorimatges.Length)
+                while (j < vectorimatges_guests.Length)
                 {
-                    separador = vectorimatges.IndexOf(" ", j);
+                    separador = vectorimatges_guests.IndexOf(" ", j);
                     while (j < separador)
                     {
-                        intermid += vectorimatges[j];
+                        intermid += vectorimatges_guests[j];
                         j++;
                     }
                     if (intermid != null)
@@ -429,7 +432,7 @@ namespace WindowsFormsApplication1
                 }
 
                 //un cop tenim tots els numeros d'imatge en el vector, busquem els que corresponen al jugador
-                j = 5 * position_index;
+                j = 5 * (position_index - 1);
                 int num = j;
                 k = 0;
                 while (j < num + 5)
@@ -440,13 +443,18 @@ namespace WindowsFormsApplication1
                     k++;
                 }
 
-                DelegateSYMBOLS_PICTUREBOX_GUEST del = new DelegateSYMBOLS_PICTUREBOX_GUEST(SYMBOLS_PICTUREBOX_GUEST);
-                picture1.Invoke(del, new object[] { vecimag });
+                DelegateSYMBOLS_PICTUREBOX_GUEST del2 = new DelegateSYMBOLS_PICTUREBOX_GUEST(SYMBOLS_PICTUREBOX_GUEST);
+                picture1.Invoke(del2, new object[] { vecimag });
             }
 
-            MessageBox.Show("The game has started!\nWatch out, you have " + contador_errors + " lives.", "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            DelegateSYMBOLSBOX del1 = new DelegateSYMBOLSBOX(SYMBOLSBOX);
-            symbolsBox.Invoke(del1);
+            if (this.round == 1)
+            {
+                gamestarted = true;
+                MessageBox.Show("The game has started!\nWatch out, you have " + contador_errors + " lives.", "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                DelegateSYMBOLSBOX del3 = new DelegateSYMBOLSBOX(SYMBOLSBOX);
+                symbolsBox.Invoke(del3);
+            }
+            
         }
 
         private void picture1_Click(object sender, EventArgs e)
@@ -460,24 +468,23 @@ namespace WindowsFormsApplication1
                 {
                     for (int k = 0; k < PLAYERS.Count; k++)
                     {
-                        if (vectorimatges_jugador[5 * (j - 1)] == vectorimatges_host[k])
+                        if (vectorimatges_jugador[0] == vectorimatges_host[k])
                         {
                             found = true;
+                            DelegateHIDEPICTUREBOX del = new DelegateHIDEPICTUREBOX(HIDEPICTUREBOX);
+                            picture1.Invoke(del, new object[] { 1 });
                         }
                     }
                 }
+                j++;
             }
             if (found)
             {
-                contador_found++;
                 expresion = "Nice!";
-                MessageBox.Show(expresion + "\nYou have found " + contador_found + " out of " + PLAYERS.Count, "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
-                contador_errors++;
                 expresion = "Oh!";
-                MessageBox.Show(expresion + " You missed it\nYou have " + contador_errors + " remaining lives", "Game", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
 
             string listplayers = null;
@@ -489,11 +496,9 @@ namespace WindowsFormsApplication1
                     listplayers += player + " ";
             }
 
-            string mensaje = "51/" + expresion + "/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount;
+            string mensaje = "51/" + expresion + "/" + vectorimatges_jugador[0] + "/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount;
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-            SERVER.Send(msg);
-
-            RoundManagement(USER, 0); //es compara aqui si s ha perdut s ha passat de ronda
+            SERVER.Send(msg); //es compara aqui si s ha perdut s ha passat de ronda
         }
 
         private void picture2_Click(object sender, EventArgs e)
@@ -507,24 +512,23 @@ namespace WindowsFormsApplication1
                 {
                     for (int k = 0; k < PLAYERS.Count; k++)
                     {
-                        if (vectorimatges_jugador[(5 * (j - 1)) + 1] == vectorimatges_host[k])
+                        if (vectorimatges_jugador[1] == vectorimatges_host[k])
                         {
                             found = true;
+                            DelegateHIDEPICTUREBOX del = new DelegateHIDEPICTUREBOX(HIDEPICTUREBOX);
+                            picture1.Invoke(del, new object[] { 2 });
                         }
                     }
                 }
+                j++;
             }
             if (found)
             {
-                contador_found++;
                 expresion = "Nice!";
-                MessageBox.Show(expresion + "\nYou have found " + contador_found + " out of " + PLAYERS.Count, "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
-                contador_errors++;
                 expresion = "Oh!";
-                MessageBox.Show(expresion + " You missed it\nYou have " + contador_errors + " remaining lives", "Game", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
 
             string listplayers = null;
@@ -536,11 +540,9 @@ namespace WindowsFormsApplication1
                     listplayers += player + " ";
             }
 
-            string mensaje = "51/" + expresion + "/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount;
+            string mensaje = "51/" + expresion + "/" + vectorimatges_jugador[1] + "/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount;
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-            SERVER.Send(msg);
-
-            RoundManagement(USER, 0); //es compara aqui si s ha perdut s ha passat de ronda
+            SERVER.Send(msg); //es compara aqui si s ha perdut s ha passat de ronda
         }
 
         private void picture3_Click(object sender, EventArgs e)
@@ -554,24 +556,23 @@ namespace WindowsFormsApplication1
                 {
                     for (int k = 0; k < PLAYERS.Count; k++)
                     {
-                        if (vectorimatges_jugador[(5 * (j - 1)) + 2] == vectorimatges_host[k])
+                        if (vectorimatges_jugador[2] == vectorimatges_host[k])
                         {
                             found = true;
+                            DelegateHIDEPICTUREBOX del = new DelegateHIDEPICTUREBOX(HIDEPICTUREBOX);
+                            picture1.Invoke(del, new object[] { 3 });
                         }
                     }
                 }
+                j++;
             }
             if (found)
             {
-                contador_found++;
                 expresion = "Nice!";
-                MessageBox.Show(expresion + "\nYou have found " + contador_found + " out of " + PLAYERS.Count, "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
-                contador_errors++;
                 expresion = "Oh!";
-                MessageBox.Show(expresion + " You missed it\nYou have " + contador_errors + " remaining lives", "Game", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
 
             string listplayers = null;
@@ -583,11 +584,9 @@ namespace WindowsFormsApplication1
                     listplayers += player + " ";
             }
 
-            string mensaje = "51/" + expresion + "/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount;
+            string mensaje = "51/" + expresion + "/" + vectorimatges_jugador[2] + "/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount;
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             SERVER.Send(msg);
-
-            RoundManagement(USER, 0); //es compara aqui si s ha perdut s ha passat de ronda
         }
 
         private void picture4_Click(object sender, EventArgs e)
@@ -601,24 +600,23 @@ namespace WindowsFormsApplication1
                 {
                     for (int k = 0; k < PLAYERS.Count; k++)
                     {
-                        if (vectorimatges_jugador[(5 * (j - 1)) + 3] == vectorimatges_host[k])
+                        if (vectorimatges_jugador[3] == vectorimatges_host[k])
                         {
                             found = true;
+                            DelegateHIDEPICTUREBOX del = new DelegateHIDEPICTUREBOX(HIDEPICTUREBOX);
+                            picture1.Invoke(del, new object[] { 4 });
                         }
                     }
                 }
+                j++;
             }
             if (found)
             {
-                contador_found++;
                 expresion = "Nice!";
-                MessageBox.Show(expresion + "\nYou have found " + contador_found + " out of " + PLAYERS.Count, "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
-                contador_errors++;
                 expresion = "Oh!";
-                MessageBox.Show(expresion + " You missed it\nYou have " + contador_errors + " remaining lives", "Game", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
 
             string listplayers = null;
@@ -630,11 +628,9 @@ namespace WindowsFormsApplication1
                     listplayers += player + " ";
             }
 
-            string mensaje = "51/" + expresion + "/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount;
+            string mensaje = "51/" + expresion + "/" + vectorimatges_jugador[3] + "/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount;
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             SERVER.Send(msg);
-
-            RoundManagement(USER, 0); //es compara aqui si s ha perdut s ha passat de ronda
         }
 
         private void picture5_Click(object sender, EventArgs e)
@@ -648,24 +644,23 @@ namespace WindowsFormsApplication1
                 {
                     for (int k = 0; k < PLAYERS.Count; k++)
                     {
-                        if (vectorimatges_jugador[(5 * (j - 1)) + 4] == vectorimatges_host[k])
+                        if (vectorimatges_jugador[4] == vectorimatges_host[k])
                         {
                             found = true;
+                            DelegateHIDEPICTUREBOX del = new DelegateHIDEPICTUREBOX(HIDEPICTUREBOX);
+                            picture1.Invoke(del, new object[] { 5 });
                         }
                     }
                 }
+                j++;
             }
             if (found)
             {
-                contador_found++;
                 expresion = "Nice!";
-                MessageBox.Show(expresion + "\nYou have found " + contador_found + " out of " + PLAYERS.Count, "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
-                contador_errors++;
                 expresion = "Oh!";
-                MessageBox.Show(expresion + " You missed it\nYou have " + contador_errors + " remaining lives", "Game", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
 
             string listplayers = null;
@@ -677,25 +672,48 @@ namespace WindowsFormsApplication1
                     listplayers += player + " ";
             }
 
-            string mensaje = "51/" + expresion + "/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount;
+            string mensaje = "51/" + expresion + "/" + vectorimatges_jugador[4] + "/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount;
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             SERVER.Send(msg);
-
-            RoundManagement(USER, 0); //es compara aqui si s ha perdut s ha passat de ronda
         }
 
-        public void UpdateClickExpression(string expresion, string sender)
+        public void UpdateClickExpression(string expresion, string sender, int numimatge)
         {
             if (expresion == "Nice!")
             {
+                contador_found++;
                 if (contador_found != PLAYERS.Count)    //quan siguin iguals, enviarem una alta notificacio de canvi de ronda
+                {
                     MessageBox.Show(sender + " has found a Symbol!\n" + contador_found + " out of " + PLAYERS.Count, "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    if (USER == PLAYERS[0])
+                    {
+                        int k = 0;
+                        bool found = false;
+                        while ((k < vectorimatges_host.Count) && (!found))
+                        {
+                            if (vectorimatges_host[k] == numimatge)
+                            {
+                                found = true;
+                                DelegateHIDEPICTUREBOX del = new DelegateHIDEPICTUREBOX(HIDEPICTUREBOX);
+                                this.Invoke(del, new object[] { k + 1 });
+                            }
+                            else
+                                k++;
+                        }
+                    }
+                }
+                    
             }
             else if (expresion == "Oh!")
             {
+                contador_errors--;
                 if (contador_errors != 0)   //quan sigui 0, enviarem una altra notificacio que s ha acabat la partida
                     MessageBox.Show(sender + " has missed...\nYou have " + contador_errors + " remaining lives", "Game", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
+
+             if (USER == PLAYERS[0]) //NOMES EL HOST DEMANA EL CHECK DE LA RONDA
+                RoundManagement(USER, 0); //es compara aqui si s ha perdut s ha passat de ronda
         }
 
         ////////////////////////////////////////////////////    GAME MANAGEMENT    /////////////////////////////////////////////////////////////////////////////////
@@ -756,7 +774,7 @@ namespace WindowsFormsApplication1
 
                 //actualitzem el contador de rondes
                 DelegateROUNDSLBL del = new DelegateROUNDSLBL(ROUNDSLBL);
-                roundlbl.Invoke(del);
+                roundlbl.Invoke(del, new object[] { ronda });
             }
             if (operation == 2) //shuffle jugador ha abandonat
             {
@@ -783,7 +801,7 @@ namespace WindowsFormsApplication1
                     listplayers += player + " ";
             }
 
-            if (op == 0)    //clica el boto el USER del form i informa a la resta que l'ha apretat i que ha acabat la partida
+            if (op == 0)    //clica el boto el USER (host nomes) del form i informa a la resta que l'ha apretat i que ha acabat la partida
             {
                 string mensaje = "48/" + "0/" + Nform + "/" + guest + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + ronda;
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
@@ -801,19 +819,6 @@ namespace WindowsFormsApplication1
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 SERVER.Send(msg);
             }
-
-            //ara toca reiniciar la interficie i els parametres
-
-            gamestarted = false;
-            DelegateSYMBOLSBOX del = new DelegateSYMBOLSBOX(SYMBOLSBOX);
-            symbolsBox.Invoke(del);
-
-            this.contador_errors = 3;
-            this.contador_found = 0;
-            this.round = 0;
-            this.vectorimatges_host.Clear();
-            this.vectorimatges_jugador.Clear();
-            this.vectorposicions.Clear();
         }
 
         public void GameLost(int operation, string player, int ronda)        //resposta del servidor a la funcio EndGame
@@ -837,6 +842,16 @@ namespace WindowsFormsApplication1
                 //player conte el nom del jugador que ha comes l error
                 MessageBox.Show("Game lost. No more lifes remaining!\n" + player + " has commited the last error. Ending game at round " + ronda, "Game", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
+            gamestarted = false;
+            DelegateSYMBOLSBOX del = new DelegateSYMBOLSBOX(SYMBOLSBOX);
+            symbolsBox.Invoke(del);
+
+            this.contador_errors = 3;
+            this.contador_found = 0;
+            this.round = 1;
+            this.vectorimatges_host.Clear();
+            this.vectorimatges_jugador.Clear();
+            this.vectorposicions.Clear();
         }
 
         ////////////////////////////////////////////////////    DELEGATES     /////////////////////////////////////////////////////////////////////////////////
@@ -1004,7 +1019,7 @@ namespace WindowsFormsApplication1
             this.picture4.Enabled = false;
             this.picture5.Enabled = false;
 
-            int numpicturebox = PLAYERS.Count - 1;
+            int numpicturebox = PLAYERS.Count;
 
             if (j < numpicturebox)
             {
@@ -1054,6 +1069,7 @@ namespace WindowsFormsApplication1
         {
             if (gamestarted)
             {
+                startgamebtn.Enabled = false;
                 this.symbolsBox.Visible = true;
                 this.roundlbl.Visible = true;
                 this.roundlbl.Text = "Round 1";
@@ -1065,6 +1081,7 @@ namespace WindowsFormsApplication1
             }
             else if (!gamestarted)
             {
+                this.startgamebtn.Enabled = true; 
                 this.symbolsBox.Visible = false;
                 if (creator != null)
                 {
@@ -1081,10 +1098,39 @@ namespace WindowsFormsApplication1
         }
 
 
-        delegate void DelegateRESET();
-        public void RESET()
+        delegate void DelegateSHOWPICTUREBOX();
+        public void SHOWPICTUREBOX()
         {
+            picture1.Show();
+            picture2.Show();
+            picture3.Show();
+            picture4.Show();
+            picture5.Show();
+        }
 
+        delegate void DelegateHIDEPICTUREBOX(int num);
+        public void HIDEPICTUREBOX(int num)
+        {
+            if (num == 1)
+            {
+                picture1.Hide();
+            }
+            else if (num == 2)
+            {
+                picture2.Hide();
+            }
+            else if (num == 3)
+            {
+                picture3.Hide();
+            }
+            else if (num == 4)
+            {
+                picture4.Hide();
+            }
+            else if (num == 5)
+            {
+                picture5.Hide();
+            }
         }
 
         delegate void DelegateCLOSE();
