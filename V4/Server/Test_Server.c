@@ -14,8 +14,6 @@ int contador_servicios;
 char conectados[200];
 int numconectados;
 bool LogOut = false;
-int randomvec[200];
-int y;
 
 int i;
 int sockets[100];	//vector de sockets
@@ -384,15 +382,15 @@ void *AtenderCliente (void *socket)
 			
 			if (resp == -1)	//el juego esta lleno
 			{
-				sprintf(respuesta, "96#-1,");
+				sprintf(respuesta, "96#-1#,");
 			}
 			else if (resp == -2)	//el juego ya no existe o ha terminado
 			{
-				sprintf(respuesta, "96#-2,");
+				sprintf(respuesta, "96#-2#,");
 			}
 			else if (resp == -3)	//el juego ya ha empezado
 			{
-				sprintf(respuesta, "96#-3,");
+				sprintf(respuesta, "96#-3#,");
 			}
 			else
 			{
@@ -686,7 +684,7 @@ void *AtenderCliente (void *socket)
 					k++;
 				}
 				sprintf(respuesta, "49#2#0#%s#%s#%d#%d,", vectorimagenes_host, player, ronda, NForm);
-				printf ("SHUFFLE Symbols player WON: %s\n", respuesta);
+				printf ("SHUFFLE Symbols player LEFT: %s\n", respuesta);
 			}
 			
 			write (socket_conn,respuesta, strlen(respuesta));
@@ -818,7 +816,7 @@ int main(int argc, char *argv[])
 	serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);
 	// escucharemos en el port 9050
 	int port = 50080;
-	serv_adr.sin_port = htons(9086);
+	serv_adr.sin_port = htons(9091);
 	if (bind(socket_listen, (struct sockaddr *) &serv_adr, sizeof(serv_adr)) < 0)
 		printf ("Error al bind\n");
 	//La cola de peticiones pendientes no podr? ser superior a 4
@@ -829,15 +827,7 @@ int main(int argc, char *argv[])
 	conectados[200] = "";
 	
 	numconectados = 0;
-	/*
-	y = 0;
-	int f = 0;
-	while (f < 200)
-	{
-		randomvec[f] = 0;
-		f++;
-	}
-	*/
+
 	pthread_t thread;	//estructura de thread
 	i = 0;
 	// Bucle per atendre peticions
@@ -1389,7 +1379,11 @@ int CreateGame(char nombre[60], char partida[200], MYSQL *conn)
 	int contador = 0;
 	char server[20];
 	
-	srand(getpid());
+	int seed;
+	FILE *f = fopen("/dev/urandom", "r");
+	fread(&seed, sizeof(int), 1, f);
+	srand(seed);
+	fclose(f);
 	
 	//DATE
 	time_t t;
@@ -1432,8 +1426,6 @@ int CreateGame(char nombre[60], char partida[200], MYSQL *conn)
 		row = mysql_fetch_row (resultado);
 	}
 	printf("Num servers: %d\n", contador); 
-	
-	srand(getpid());
 	
 	int id_s = rand() % contador + 1; //SE COGE UN SERVER RANDOM DE LA LISTA
 	sprintf (consulta, "SELECT host_id FROM Server WHERE id ='%d';", id_s);
@@ -1871,17 +1863,7 @@ int StartGame(char host[30], char partida[30],char players[100], int playerscoun
 		sprintf(vectorimagenes_others, "%s %d", vectorimagenes_others, vector_final[j]);
 		j++;
 	}
-	/*
-	srand(getpid());
-	j = 0;
-	int ran;
-	while (j < 1000)
-	{
-		ran = rand() % 1000;
-		randomvec[j] = ran;
-		j++;
-	}
-	*/
+
 	sprintf (consulta, "UPDATE Game SET started = 1 WHERE id_j1 = %d AND id_s = %d AND fecha = '%s';", idplayerhost, idserver, date);
 	//printf("JOINGAME : %s \n", consulta);
 	err = mysql_query(conn, consulta);
@@ -1898,17 +1880,12 @@ void SymbolsRandomGeneration(int random_escogidas[5], int random_posiciones[5], 
 
 	int num = numplayers - 1;
 	
-	srand(getpid());
-	srand(time(NULL));
-	/*
-	srand(time(randomvec[y]));
-	printf("RANDOMGENERATION seed : %d\n", randomvec[y]);
-	y++;
-	if (y == 199)
-	{
-		y = 0;
-	}
-	*/
+	int seed;
+	FILE *f = fopen("/dev/urandom", "r");
+	fread(&seed, sizeof(int), 1, f);
+	srand(seed);
+	fclose(f);
+	
 	int random;
 	bool equal = false;
 	
@@ -2113,30 +2090,13 @@ int Shuffle(char player[30], int operation, int ronda, char partida[30],char pla
 			sprintf(vectorimagenes_others, "%s %d", vectorimagenes_others, vector_final[j]);
 			j++;
 		}
-		ronda++;
+		//el valor de ronda ya se ha sumado en el C#
 		sprintf (consulta, "UPDATE Game SET ronda = %d WHERE id_j1 = %d AND id_s = %d AND fecha = '%s';", ronda, idplayerhost, idserver, date);
 		//printf("JOINGAME : %s \n", consulta);
 		err = mysql_query(conn, consulta);
 		printf("SHUFFLE : new round %d \n", ronda);
 		return 0;
 	}
-	/*
-	else if (operation == 1)	//RONDA PERDIDA
-	{
-		sprintf (consulta, "UPDATE Game SET ronda = %d WHERE id_j1 = %d AND id_s = %d AND fecha = '%s';", ronda, idplayerhost, idserver, date);
-		//printf("JOINGAME : %s \n", consulta);
-		err = mysql_query(conn, consulta);
-		printf("SHUFFLE : new round %d \n", ronda);
-		
-		//seteamos que la aprtida ya no esta en curso y que se puede unir gente por lo tanto (si hay espacio)
-		sprintf (consulta, "UPDATE Game SET started = 0 WHERE id_j1 = %d AND id_s = %d AND fecha = '%s';", idplayerhost, idserver, date);
-		//printf("JOINGAME : %s \n", consulta);
-		err = mysql_query(conn, consulta);
-		printf("SHUFFLE : started to 0 \n");
-		
-		return 1;
-	}
-	*/
 	else if (operation == 2)	//SHUFFLE SIN SUBIR DE RONDA (UN JUGADOR SE HA IDO)
 	{
 		SymbolsRandomGeneration(random_escogidas, random_posiciones, vector_final, playerscount);
@@ -2211,8 +2171,6 @@ int EndGame(char player[30], int operation, int ronda, char partida[30], char pl
 	
 	idserver = atoi(row[0]);
 	
-	BuscarSockets(players, playerscount, playersockets, conn);
-	
 	sprintf (consulta, "UPDATE Game SET ronda = %d WHERE id_j1 = %d AND id_s = %d AND fecha = '%s';", ronda, idplayerhost, idserver, date);
 	//printf("JOINGAME : %s \n", consulta);
 	err = mysql_query(conn, consulta);
@@ -2223,16 +2181,19 @@ int EndGame(char player[30], int operation, int ronda, char partida[30], char pl
 	//printf("JOINGAME : %s \n", consulta);
 	err = mysql_query(conn, consulta);
 	printf("ENDGAME : started to 0 \n");
+
+	if (operation == 1)	//Un jugador ha abandonado la partida y solo queda el host (no hace falta informar a otros sockets)
+	{
+		printf("ENDGAME : only host remaining\n");
+		return 1;
+	}
 	
+	BuscarSockets(players, playerscount, playersockets, conn);
+
 	if (operation == 0)	//Se clica el boton de finalizar partida
 	{
 		printf("ENDGAME : button clicked\n");
 		return 0;
-	}
-	else if (operation == 1)	//Un jugador ha abandonado la partida y solo queda el host
-	{
-		printf("ENDGAME : only host remaining\n");
-		return 1;
 	}
 	else if (operation == 2)	//RONDA PERDIDA
 	{

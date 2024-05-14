@@ -32,7 +32,7 @@ namespace WindowsFormsApplication1
         //private static IPAddress direc = IPAddress.Parse("10.4.119.5");
         //private static IPEndPoint ipep = new IPEndPoint(direc, 50080);
         private static IPAddress direc = IPAddress.Parse("192.168.56.102");
-        private static IPEndPoint ipep = new IPEndPoint(direc, 9090);
+        private static IPEndPoint ipep = new IPEndPoint(direc, 9091);
 
         public Client()
         {
