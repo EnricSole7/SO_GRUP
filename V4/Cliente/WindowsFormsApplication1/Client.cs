@@ -32,7 +32,7 @@ namespace WindowsFormsApplication1
         //private static IPAddress direc = IPAddress.Parse("10.4.119.5");
         //private static IPEndPoint ipep = new IPEndPoint(direc, 50080);
         private static IPAddress direc = IPAddress.Parse("192.168.56.102");
-        private static IPEndPoint ipep = new IPEndPoint(direc, 9086);
+        private static IPEndPoint ipep = new IPEndPoint(direc, 9090);
 
         public Client()
         {
@@ -463,8 +463,8 @@ namespace WindowsFormsApplication1
                                         string player = parts[4];
                                         int ronda = Convert.ToInt32(parts[5]);
                                         NForm = Convert.ToInt32(parts[6].Split(',')[0]);
-                                        GameWndwForms[NForm].SetSymbols(vectorimatges_host, null, null, destination);
                                         GameWndwForms[NForm].Round(operation, player, ronda);
+                                        GameWndwForms[NForm].SetSymbols(vectorimatges_host, null, null, destination);
                                     }
                                     else if (destination == 1)  //new shuffle GUESTS
                                     {
@@ -475,21 +475,10 @@ namespace WindowsFormsApplication1
                                         string player = parts[6];
                                         int ronda = Convert.ToInt32(parts[7]);
                                         NForm = Convert.ToInt32(parts[8].Split(',')[0]);
-                                        GameWndwForms[NForm].SetSymbols(vectorimatges_host, vectorimatges_jugadors, vector_posicions, destination);
                                         GameWndwForms[NForm].Round(operation, player, ronda);
+                                        GameWndwForms[NForm].SetSymbols(vectorimatges_host, vectorimatges_jugadors, vector_posicions, destination);
                                     }
                                 }
-                                /*
-                                else if (operation == 1)    //GAME LOST
-                                {
-                                    // "49#1#%s#%d#%d,", player, ronda, NForm
-                                    //igual per host i per guests
-                                    string player = parts[2];
-                                    int ronda = Convert.ToInt32(parts[3]);
-                                    NForm = Convert.ToInt32(parts[4].Split(',')[0]);
-                                    GameWndwForms[NForm].GameLost(player, ronda);
-                                }
-                                */
                                 else if (operation == 2)    //SHUFFLE un jugador ha marxat
                                 {
                                     int destination = Convert.ToInt32(parts[2]);
@@ -501,8 +490,8 @@ namespace WindowsFormsApplication1
                                         string player = parts[4];
                                         int ronda = Convert.ToInt32(parts[5]);
                                         NForm = Convert.ToInt32(parts[6].Split(',')[0]);
-                                        GameWndwForms[NForm].SetSymbols(vectorimatges_host, null, null, destination);
                                         GameWndwForms[NForm].Round(operation, player, ronda);
+                                        GameWndwForms[NForm].SetSymbols(vectorimatges_host, null, null, destination);  
                                     }
                                     else if (destination == 1)  //new shuffle GUESTS
                                     {
@@ -513,8 +502,8 @@ namespace WindowsFormsApplication1
                                         string player = parts[6];
                                         int ronda = Convert.ToInt32(parts[7]);
                                         NForm = Convert.ToInt32(parts[8].Split(',')[0]);
-                                        GameWndwForms[NForm].SetSymbols(vectorimatges_host, vectorimatges_jugadors, vector_posicions, destination);
                                         GameWndwForms[NForm].Round(operation, player, ronda);
+                                        GameWndwForms[NForm].SetSymbols(vectorimatges_host, vectorimatges_jugadors, vector_posicions, destination);
                                     }
                                 }
 
@@ -652,6 +641,8 @@ namespace WindowsFormsApplication1
             string mensaje = "0/1/" + USER;
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
+
+            Invitations.Clear();
         }
 
         private void login_Click(object sender, EventArgs e)

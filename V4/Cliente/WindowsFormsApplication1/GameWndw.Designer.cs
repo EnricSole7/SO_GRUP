@@ -28,18 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
             this.exitbtn = new System.Windows.Forms.Button();
             this.minigameBox = new System.Windows.Forms.GroupBox();
-            this.checkTBD = new System.Windows.Forms.RadioButton();
-            this.checkMaze = new System.Windows.Forms.RadioButton();
-            this.checkSymbols = new System.Windows.Forms.RadioButton();
-            this.label5 = new System.Windows.Forms.Label();
-            this.maze_lbl = new System.Windows.Forms.Label();
-            this.symbols_lbl = new System.Windows.Forms.Label();
+            this.startgamebtn = new System.Windows.Forms.Button();
             this.playersonlineGrid = new System.Windows.Forms.DataGridView();
             this.server_lbl = new System.Windows.Forms.Label();
             this.server_value = new System.Windows.Forms.Label();
@@ -53,12 +50,20 @@
             this.label1 = new System.Windows.Forms.Label();
             this.form_value = new System.Windows.Forms.Label();
             this.form_lbl = new System.Windows.Forms.Label();
-            this.startgamebtn = new System.Windows.Forms.Button();
             this.backscreenBox = new System.Windows.Forms.GroupBox();
+            this.endgameBox = new System.Windows.Forms.GroupBox();
+            this.endgamelbl3 = new System.Windows.Forms.Label();
+            this.endgamelbl4 = new System.Windows.Forms.Label();
+            this.endgamelbl2 = new System.Windows.Forms.Label();
+            this.endgamelbl1 = new System.Windows.Forms.Label();
             this.pictureBox74 = new System.Windows.Forms.PictureBox();
             this.pictureBox64 = new System.Windows.Forms.PictureBox();
             this.pictureBox73 = new System.Windows.Forms.PictureBox();
             this.symbolsBox = new System.Windows.Forms.GroupBox();
+            this.nextroundBox = new System.Windows.Forms.GroupBox();
+            this.nextroundlbl3 = new System.Windows.Forms.Label();
+            this.nextroundlbl2 = new System.Windows.Forms.Label();
+            this.nextroundlbl1 = new System.Windows.Forms.Label();
             this.picture5 = new System.Windows.Forms.PictureBox();
             this.picture4 = new System.Windows.Forms.PictureBox();
             this.picture3 = new System.Windows.Forms.PictureBox();
@@ -140,19 +145,24 @@
             this.chatGrid = new System.Windows.Forms.DataGridView();
             this.minigameslbl = new System.Windows.Forms.Label();
             this.optionsBox = new System.Windows.Forms.GroupBox();
+            this.pictureBox75 = new System.Windows.Forms.PictureBox();
             this.chatlbl = new System.Windows.Forms.Label();
             this.sendmsgbtn = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.endgamebtn = new System.Windows.Forms.Button();
             this.roundlbl = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.timerManager = new System.Windows.Forms.Timer(this.components);
             this.minigameBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.playersonlineGrid)).BeginInit();
             this.playersBox.SuspendLayout();
             this.backscreenBox.SuspendLayout();
+            this.endgameBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox74)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox64)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox73)).BeginInit();
             this.symbolsBox.SuspendLayout();
+            this.nextroundBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picture5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picture4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picture3)).BeginInit();
@@ -232,6 +242,7 @@
             this.chatBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chatGrid)).BeginInit();
             this.optionsBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox75)).BeginInit();
             this.SuspendLayout();
             // 
             // exitbtn
@@ -239,7 +250,7 @@
             this.exitbtn.BackColor = System.Drawing.Color.Bisque;
             this.exitbtn.Font = new System.Drawing.Font("Barlow Condensed", 19.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.exitbtn.ForeColor = System.Drawing.Color.OrangeRed;
-            this.exitbtn.Location = new System.Drawing.Point(45, 671);
+            this.exitbtn.Location = new System.Drawing.Point(47, 656);
             this.exitbtn.Margin = new System.Windows.Forms.Padding(4);
             this.exitbtn.Name = "exitbtn";
             this.exitbtn.Size = new System.Drawing.Size(201, 59);
@@ -251,86 +262,30 @@
             // minigameBox
             // 
             this.minigameBox.BackColor = System.Drawing.Color.Coral;
-            this.minigameBox.Controls.Add(this.checkTBD);
-            this.minigameBox.Controls.Add(this.checkMaze);
-            this.minigameBox.Controls.Add(this.checkSymbols);
-            this.minigameBox.Controls.Add(this.label5);
-            this.minigameBox.Controls.Add(this.maze_lbl);
-            this.minigameBox.Controls.Add(this.symbols_lbl);
+            this.minigameBox.Controls.Add(this.startgamebtn);
             this.minigameBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.minigameBox.Location = new System.Drawing.Point(45, 114);
+            this.minigameBox.Location = new System.Drawing.Point(17, 147);
             this.minigameBox.Margin = new System.Windows.Forms.Padding(4);
             this.minigameBox.Name = "minigameBox";
             this.minigameBox.Padding = new System.Windows.Forms.Padding(4);
-            this.minigameBox.Size = new System.Drawing.Size(201, 193);
+            this.minigameBox.Size = new System.Drawing.Size(260, 107);
             this.minigameBox.TabIndex = 19;
             this.minigameBox.TabStop = false;
             // 
-            // checkTBD
+            // startgamebtn
             // 
-            this.checkTBD.AutoSize = true;
-            this.checkTBD.Location = new System.Drawing.Point(42, 142);
-            this.checkTBD.Name = "checkTBD";
-            this.checkTBD.Size = new System.Drawing.Size(17, 16);
-            this.checkTBD.TabIndex = 16;
-            this.checkTBD.TabStop = true;
-            this.checkTBD.UseVisualStyleBackColor = true;
-            // 
-            // checkMaze
-            // 
-            this.checkMaze.AutoSize = true;
-            this.checkMaze.Location = new System.Drawing.Point(42, 87);
-            this.checkMaze.Name = "checkMaze";
-            this.checkMaze.Size = new System.Drawing.Size(17, 16);
-            this.checkMaze.TabIndex = 15;
-            this.checkMaze.TabStop = true;
-            this.checkMaze.UseVisualStyleBackColor = true;
-            // 
-            // checkSymbols
-            // 
-            this.checkSymbols.AutoSize = true;
-            this.checkSymbols.BackColor = System.Drawing.Color.Coral;
-            this.checkSymbols.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.checkSymbols.Location = new System.Drawing.Point(42, 35);
-            this.checkSymbols.Name = "checkSymbols";
-            this.checkSymbols.Size = new System.Drawing.Size(17, 16);
-            this.checkSymbols.TabIndex = 14;
-            this.checkSymbols.TabStop = true;
-            this.checkSymbols.UseVisualStyleBackColor = false;
-            this.checkSymbols.CheckedChanged += new System.EventHandler(this.checkSymbols_CheckedChanged);
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Barlow Condensed", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(66, 129);
-            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(51, 36);
-            this.label5.TabIndex = 13;
-            this.label5.Text = "TBD";
-            // 
-            // maze_lbl
-            // 
-            this.maze_lbl.AutoSize = true;
-            this.maze_lbl.Font = new System.Drawing.Font("Barlow Condensed", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.maze_lbl.Location = new System.Drawing.Point(66, 74);
-            this.maze_lbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.maze_lbl.Name = "maze_lbl";
-            this.maze_lbl.Size = new System.Drawing.Size(63, 36);
-            this.maze_lbl.TabIndex = 11;
-            this.maze_lbl.Text = "MAZE";
-            // 
-            // symbols_lbl
-            // 
-            this.symbols_lbl.AutoSize = true;
-            this.symbols_lbl.Font = new System.Drawing.Font("Barlow Condensed", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.symbols_lbl.Location = new System.Drawing.Point(63, 22);
-            this.symbols_lbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.symbols_lbl.Name = "symbols_lbl";
-            this.symbols_lbl.Size = new System.Drawing.Size(96, 36);
-            this.symbols_lbl.TabIndex = 1;
-            this.symbols_lbl.Text = "SYMBOLS";
+            this.startgamebtn.BackColor = System.Drawing.Color.Bisque;
+            this.startgamebtn.FlatAppearance.BorderColor = System.Drawing.Color.OrangeRed;
+            this.startgamebtn.Font = new System.Drawing.Font("Barlow Condensed", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.startgamebtn.ForeColor = System.Drawing.Color.OrangeRed;
+            this.startgamebtn.Location = new System.Drawing.Point(30, 29);
+            this.startgamebtn.Margin = new System.Windows.Forms.Padding(4);
+            this.startgamebtn.Name = "startgamebtn";
+            this.startgamebtn.Size = new System.Drawing.Size(201, 59);
+            this.startgamebtn.TabIndex = 29;
+            this.startgamebtn.Text = "START GAME";
+            this.startgamebtn.UseVisualStyleBackColor = false;
+            this.startgamebtn.Click += new System.EventHandler(this.startgamebtn_Click);
             // 
             // playersonlineGrid
             // 
@@ -340,11 +295,19 @@
             this.playersonlineGrid.AllowUserToResizeRows = false;
             this.playersonlineGrid.BackgroundColor = System.Drawing.Color.Coral;
             this.playersonlineGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.playersonlineGrid.Location = new System.Drawing.Point(45, 445);
+            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.Color.NavajoWhite;
+            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.Color.OrangeRed;
+            dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.playersonlineGrid.DefaultCellStyle = dataGridViewCellStyle11;
+            this.playersonlineGrid.Location = new System.Drawing.Point(47, 353);
             this.playersonlineGrid.Name = "playersonlineGrid";
             this.playersonlineGrid.RowHeadersWidth = 51;
             this.playersonlineGrid.RowTemplate.Height = 24;
-            this.playersonlineGrid.Size = new System.Drawing.Size(201, 204);
+            this.playersonlineGrid.Size = new System.Drawing.Size(201, 245);
             this.playersonlineGrid.TabIndex = 20;
             this.playersonlineGrid.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.playersonlineGrid_CellContentDoubleClick);
             // 
@@ -456,7 +419,7 @@
             this.label1.AutoSize = true;
             this.label1.BackColor = System.Drawing.Color.Transparent;
             this.label1.Font = new System.Drawing.Font("Harlow Solid Italic", 20F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(32, 389);
+            this.label1.Location = new System.Drawing.Point(34, 307);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(224, 43);
             this.label1.TabIndex = 26;
@@ -480,21 +443,6 @@
             this.form_lbl.Size = new System.Drawing.Size(65, 33);
             this.form_lbl.TabIndex = 27;
             this.form_lbl.Text = "FORM:";
-            // 
-            // startgamebtn
-            // 
-            this.startgamebtn.BackColor = System.Drawing.Color.Bisque;
-            this.startgamebtn.FlatAppearance.BorderColor = System.Drawing.Color.OrangeRed;
-            this.startgamebtn.Font = new System.Drawing.Font("Barlow Condensed", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.startgamebtn.ForeColor = System.Drawing.Color.OrangeRed;
-            this.startgamebtn.Location = new System.Drawing.Point(45, 315);
-            this.startgamebtn.Margin = new System.Windows.Forms.Padding(4);
-            this.startgamebtn.Name = "startgamebtn";
-            this.startgamebtn.Size = new System.Drawing.Size(201, 59);
-            this.startgamebtn.TabIndex = 29;
-            this.startgamebtn.Text = "START GAME";
-            this.startgamebtn.UseVisualStyleBackColor = false;
-            this.startgamebtn.Click += new System.EventHandler(this.startgamebtn_Click);
             // 
             // backscreenBox
             // 
@@ -580,6 +528,60 @@
             this.backscreenBox.TabIndex = 30;
             this.backscreenBox.TabStop = false;
             // 
+            // endgameBox
+            // 
+            this.endgameBox.BackColor = System.Drawing.Color.Black;
+            this.endgameBox.Controls.Add(this.endgamelbl3);
+            this.endgameBox.Controls.Add(this.endgamelbl4);
+            this.endgameBox.Controls.Add(this.endgamelbl2);
+            this.endgameBox.Controls.Add(this.endgamelbl1);
+            this.endgameBox.ForeColor = System.Drawing.Color.Transparent;
+            this.endgameBox.Location = new System.Drawing.Point(317, 0);
+            this.endgameBox.Name = "endgameBox";
+            this.endgameBox.Size = new System.Drawing.Size(377, 358);
+            this.endgameBox.TabIndex = 71;
+            this.endgameBox.TabStop = false;
+            // 
+            // endgamelbl3
+            // 
+            this.endgamelbl3.AutoSize = true;
+            this.endgamelbl3.Font = new System.Drawing.Font("Barlow Condensed", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.endgamelbl3.Location = new System.Drawing.Point(37, 182);
+            this.endgamelbl3.Name = "endgamelbl3";
+            this.endgamelbl3.Size = new System.Drawing.Size(47, 40);
+            this.endgamelbl3.TabIndex = 32;
+            this.endgamelbl3.Text = ".....";
+            // 
+            // endgamelbl4
+            // 
+            this.endgamelbl4.AutoSize = true;
+            this.endgamelbl4.Font = new System.Drawing.Font("Barlow Condensed", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.endgamelbl4.Location = new System.Drawing.Point(51, 265);
+            this.endgamelbl4.Name = "endgamelbl4";
+            this.endgamelbl4.Size = new System.Drawing.Size(240, 40);
+            this.endgamelbl4.TabIndex = 30;
+            this.endgamelbl4.Text = "Ending game at round";
+            // 
+            // endgamelbl2
+            // 
+            this.endgamelbl2.AutoSize = true;
+            this.endgamelbl2.Font = new System.Drawing.Font("Barlow Condensed", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.endgamelbl2.Location = new System.Drawing.Point(63, 129);
+            this.endgamelbl2.Name = "endgamelbl2";
+            this.endgamelbl2.Size = new System.Drawing.Size(47, 40);
+            this.endgamelbl2.TabIndex = 29;
+            this.endgamelbl2.Text = ".....";
+            // 
+            // endgamelbl1
+            // 
+            this.endgamelbl1.AutoSize = true;
+            this.endgamelbl1.Font = new System.Drawing.Font("Barlow Condensed", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.endgamelbl1.Location = new System.Drawing.Point(38, 66);
+            this.endgamelbl1.Name = "endgamelbl1";
+            this.endgamelbl1.Size = new System.Drawing.Size(73, 40);
+            this.endgamelbl1.TabIndex = 28;
+            this.endgamelbl1.Text = "name";
+            // 
             // pictureBox74
             // 
             this.pictureBox74.BackColor = System.Drawing.Color.PeachPuff;
@@ -610,6 +612,8 @@
             // symbolsBox
             // 
             this.symbolsBox.BackColor = System.Drawing.Color.Black;
+            this.symbolsBox.Controls.Add(this.endgameBox);
+            this.symbolsBox.Controls.Add(this.nextroundBox);
             this.symbolsBox.Controls.Add(this.picture5);
             this.symbolsBox.Controls.Add(this.picture4);
             this.symbolsBox.Controls.Add(this.picture3);
@@ -621,6 +625,49 @@
             this.symbolsBox.Size = new System.Drawing.Size(1039, 358);
             this.symbolsBox.TabIndex = 63;
             this.symbolsBox.TabStop = false;
+            // 
+            // nextroundBox
+            // 
+            this.nextroundBox.BackColor = System.Drawing.Color.Black;
+            this.nextroundBox.Controls.Add(this.nextroundlbl3);
+            this.nextroundBox.Controls.Add(this.nextroundlbl2);
+            this.nextroundBox.Controls.Add(this.nextroundlbl1);
+            this.nextroundBox.ForeColor = System.Drawing.Color.Transparent;
+            this.nextroundBox.Location = new System.Drawing.Point(324, 0);
+            this.nextroundBox.Name = "nextroundBox";
+            this.nextroundBox.Size = new System.Drawing.Size(377, 358);
+            this.nextroundBox.TabIndex = 70;
+            this.nextroundBox.TabStop = false;
+            // 
+            // nextroundlbl3
+            // 
+            this.nextroundlbl3.AutoSize = true;
+            this.nextroundlbl3.Font = new System.Drawing.Font("Barlow Condensed", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.nextroundlbl3.Location = new System.Drawing.Point(78, 221);
+            this.nextroundlbl3.Name = "nextroundlbl3";
+            this.nextroundlbl3.Size = new System.Drawing.Size(222, 40);
+            this.nextroundlbl3.TabIndex = 30;
+            this.nextroundlbl3.Text = "Next round starting!";
+            // 
+            // nextroundlbl2
+            // 
+            this.nextroundlbl2.AutoSize = true;
+            this.nextroundlbl2.Font = new System.Drawing.Font("Barlow Condensed", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.nextroundlbl2.Location = new System.Drawing.Point(58, 151);
+            this.nextroundlbl2.Name = "nextroundlbl2";
+            this.nextroundlbl2.Size = new System.Drawing.Size(277, 40);
+            this.nextroundlbl2.TabIndex = 29;
+            this.nextroundlbl2.Text = "has found the las Symbol!";
+            // 
+            // nextroundlbl1
+            // 
+            this.nextroundlbl1.AutoSize = true;
+            this.nextroundlbl1.Font = new System.Drawing.Font("Barlow Condensed", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.nextroundlbl1.Location = new System.Drawing.Point(140, 82);
+            this.nextroundlbl1.Name = "nextroundlbl1";
+            this.nextroundlbl1.Size = new System.Drawing.Size(73, 40);
+            this.nextroundlbl1.TabIndex = 28;
+            this.nextroundlbl1.Text = "name";
             // 
             // picture5
             // 
@@ -636,7 +683,7 @@
             // picture4
             // 
             this.picture4.BackColor = System.Drawing.Color.SandyBrown;
-            this.picture4.Location = new System.Drawing.Point(629, 154);
+            this.picture4.Location = new System.Drawing.Point(628, 145);
             this.picture4.Name = "picture4";
             this.picture4.Size = new System.Drawing.Size(193, 185);
             this.picture4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1346,39 +1393,39 @@
             // 
             this.chatGrid.AllowUserToAddRows = false;
             this.chatGrid.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.White;
-            this.chatGrid.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle12.BackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle12.ForeColor = System.Drawing.Color.White;
+            this.chatGrid.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle12;
             this.chatGrid.BackgroundColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.chatGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle13.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle13.BackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle13.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle13.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle13.SelectionBackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle13.SelectionForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle13.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.chatGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle13;
             this.chatGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Barlow Condensed", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.chatGrid.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle14.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle14.BackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle14.Font = new System.Drawing.Font("Barlow Condensed", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle14.ForeColor = System.Drawing.Color.Transparent;
+            dataGridViewCellStyle14.SelectionBackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle14.SelectionForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle14.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.chatGrid.DefaultCellStyle = dataGridViewCellStyle14;
             this.chatGrid.GridColor = System.Drawing.Color.Black;
             this.chatGrid.Location = new System.Drawing.Point(13, 21);
             this.chatGrid.Name = "chatGrid";
             this.chatGrid.ReadOnly = true;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.chatGrid.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle15.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle15.BackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle15.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle15.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle15.SelectionBackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle15.SelectionForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle15.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.chatGrid.RowHeadersDefaultCellStyle = dataGridViewCellStyle15;
             this.chatGrid.RowHeadersWidth = 51;
             this.chatGrid.RowTemplate.Height = 24;
             this.chatGrid.Size = new System.Drawing.Size(328, 553);
@@ -1388,16 +1435,17 @@
             // 
             this.minigameslbl.AutoSize = true;
             this.minigameslbl.BackColor = System.Drawing.Color.Transparent;
-            this.minigameslbl.Font = new System.Drawing.Font("Harlow Solid Italic", 20F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.minigameslbl.Location = new System.Drawing.Point(56, 82);
+            this.minigameslbl.Font = new System.Drawing.Font("Harlow Solid Italic", 26F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.minigameslbl.Location = new System.Drawing.Point(58, 104);
             this.minigameslbl.Name = "minigameslbl";
-            this.minigameslbl.Size = new System.Drawing.Size(172, 43);
+            this.minigameslbl.Size = new System.Drawing.Size(168, 55);
             this.minigameslbl.TabIndex = 31;
-            this.minigameslbl.Text = "Minigames";
+            this.minigameslbl.Text = "Symbols";
             // 
             // optionsBox
             // 
             this.optionsBox.BackColor = System.Drawing.Color.NavajoWhite;
+            this.optionsBox.Controls.Add(this.playersonlineGrid);
             this.optionsBox.Controls.Add(this.minigameslbl);
             this.optionsBox.Controls.Add(this.form_value);
             this.optionsBox.Controls.Add(this.label1);
@@ -1405,14 +1453,22 @@
             this.optionsBox.Controls.Add(this.exitbtn);
             this.optionsBox.Controls.Add(this.minigameBox);
             this.optionsBox.Controls.Add(this.server_value);
-            this.optionsBox.Controls.Add(this.startgamebtn);
             this.optionsBox.Controls.Add(this.server_lbl);
-            this.optionsBox.Controls.Add(this.playersonlineGrid);
+            this.optionsBox.Controls.Add(this.pictureBox75);
             this.optionsBox.Location = new System.Drawing.Point(36, 32);
             this.optionsBox.Name = "optionsBox";
             this.optionsBox.Size = new System.Drawing.Size(300, 771);
             this.optionsBox.TabIndex = 34;
             this.optionsBox.TabStop = false;
+            // 
+            // pictureBox75
+            // 
+            this.pictureBox75.BackColor = System.Drawing.Color.DarkSalmon;
+            this.pictureBox75.Location = new System.Drawing.Point(34, 288);
+            this.pictureBox75.Name = "pictureBox75";
+            this.pictureBox75.Size = new System.Drawing.Size(224, 329);
+            this.pictureBox75.TabIndex = 38;
+            this.pictureBox75.TabStop = false;
             // 
             // chatlbl
             // 
@@ -1444,7 +1500,7 @@
             this.button1.BackColor = System.Drawing.Color.Bisque;
             this.button1.Font = new System.Drawing.Font("Barlow Condensed", 19.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button1.ForeColor = System.Drawing.Color.OrangeRed;
-            this.button1.Location = new System.Drawing.Point(56, 860);
+            this.button1.Location = new System.Drawing.Point(469, 925);
             this.button1.Margin = new System.Windows.Forms.Padding(4);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(262, 59);
@@ -1476,12 +1532,27 @@
             this.roundlbl.TabIndex = 68;
             this.roundlbl.Text = "Round";
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Barlow Condensed", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(368, 877);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(66, 33);
+            this.label2.TabIndex = 69;
+            this.label2.Text = "LIVES:";
+            // 
+            // timerManager
+            // 
+            this.timerManager.Tick += new System.EventHandler(this.timerManager_Tick);
+            // 
             // GameWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.SeaShell;
             this.ClientSize = new System.Drawing.Size(1924, 1055);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.roundlbl);
             this.Controls.Add(this.endgamebtn);
             this.Controls.Add(this.button1);
@@ -1497,15 +1568,18 @@
             this.Load += new System.EventHandler(this.GameWndw_Load);
             this.Shown += new System.EventHandler(this.GameWndw_Shown);
             this.minigameBox.ResumeLayout(false);
-            this.minigameBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.playersonlineGrid)).EndInit();
             this.playersBox.ResumeLayout(false);
             this.playersBox.PerformLayout();
             this.backscreenBox.ResumeLayout(false);
+            this.endgameBox.ResumeLayout(false);
+            this.endgameBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox74)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox64)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox73)).EndInit();
             this.symbolsBox.ResumeLayout(false);
+            this.nextroundBox.ResumeLayout(false);
+            this.nextroundBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picture5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picture4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picture3)).EndInit();
@@ -1587,6 +1661,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.chatGrid)).EndInit();
             this.optionsBox.ResumeLayout(false);
             this.optionsBox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox75)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1595,12 +1670,6 @@
         #endregion
         private System.Windows.Forms.Button exitbtn;
         private System.Windows.Forms.GroupBox minigameBox;
-        private System.Windows.Forms.RadioButton checkTBD;
-        private System.Windows.Forms.RadioButton checkMaze;
-        private System.Windows.Forms.RadioButton checkSymbols;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label maze_lbl;
-        private System.Windows.Forms.Label symbols_lbl;
         private System.Windows.Forms.DataGridView playersonlineGrid;
         private System.Windows.Forms.Label server_lbl;
         private System.Windows.Forms.Label server_value;
@@ -1706,5 +1775,17 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button endgamebtn;
         private System.Windows.Forms.Label roundlbl;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.GroupBox nextroundBox;
+        private System.Windows.Forms.Label nextroundlbl1;
+        private System.Windows.Forms.Label nextroundlbl3;
+        private System.Windows.Forms.Label nextroundlbl2;
+        private System.Windows.Forms.Timer timerManager;
+        private System.Windows.Forms.PictureBox pictureBox75;
+        private System.Windows.Forms.GroupBox endgameBox;
+        private System.Windows.Forms.Label endgamelbl4;
+        private System.Windows.Forms.Label endgamelbl2;
+        private System.Windows.Forms.Label endgamelbl1;
+        private System.Windows.Forms.Label endgamelbl3;
     }
 }
