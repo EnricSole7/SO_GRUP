@@ -22,8 +22,14 @@ id_j4 INTEGER NOT NULL,
 id_j5 INTEGER NOT NULL,
 id_s  INTEGER NOT NULL,
 fecha VARCHAR(30),
-minijuego VARCHAR(30),
+ronda INTEGER,
 ended INTEGER,
+started INTEGER,
+form_j1 INTEGER,
+form_j2 INTEGER,
+form_j3 INTEGER,
+form_j4 INTEGER,
+form_j5 INTEGER,
 FOREIGN KEY (id_j1) REFERENCES Player(id),
 FOREIGN KEY (id_j2) REFERENCES Player(id),
 FOREIGN KEY (id_j3) REFERENCES Player(id),
@@ -49,7 +55,7 @@ INSERT INTO Server VALUES (3, 'Sevilla');
 INSERT INTO Server VALUES (4, 'Tarragona');
 
 
-INSERT INTO Game  VALUES (1,1,1,1,1,1, '10/11/2023','TBD',1);
+INSERT INTO Game  VALUES (1,1,1,1,1,1, '10/11/2023',100,1,1,-1,-1,-1,-1,-1);
 /*
 INSERT INTO Game  VALUES (1,2,2, '04/12/2023','SYMBOLS');
 INSERT INTO Game  VALUES (1,4,4, '12/01/2024','SYMBOLS');

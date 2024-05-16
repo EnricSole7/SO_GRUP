@@ -63,6 +63,11 @@ namespace WindowsFormsApplication1
             this.roundlbl.Visible = false;
             this.nextroundBox.Visible = false;
             this.endgameBox.Visible = false;
+
+            //
+            this.setlifesTxt.Visible = false;
+            this.SetLifes.Visible = false;
+            //
         }
 
         //
@@ -199,26 +204,35 @@ namespace WindowsFormsApplication1
         {
             string listplayers = null;
             int playerscount = PLAYERS.Count;
+            int position_leaving = 0;   //ho utilitzem per trobar la posicio del forms del jugador que tanca la partida a la BD Game
+            int j = 0;
 
             foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (inclou host, altres i el user)
             {
                 if (player != USER)
+                {
                     listplayers += player + " ";
+                }
+                if (player == USER)
+                {
+                    position_leaving = j;
+                }
+                j++;
             }
 
             if (creator != null)    //si tanca la partida el creador (host)
             {
-                if (listplayers == null) //vol dir que nomes hi ha el host a la partida i que la tanca
+                if (listplayers == null) //si nomes hi ha el host a la partida i que la tanca
                 {
                     listplayers = "-";
                 }
-                string mensaje = "95/" + "1/" + Nform + "/" + USER + "/" + datos_partida + "/" + listplayers + "/" + playerscount;
+                string mensaje = "95/" + "1/" + Nform + "/" + USER + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + position_leaving;
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 SERVER.Send(msg);
             }
             else    //si tanca la partida un altre jugador 
             {
-                string mensaje = "95/" + "0/" + Nform + "/" + USER + "/" + datos_partida + "/" + listplayers + "/" + playerscount;
+                string mensaje = "95/" + "0/" + Nform + "/" + USER + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + position_leaving;
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 SERVER.Send(msg);
             }
@@ -263,16 +277,25 @@ namespace WindowsFormsApplication1
             {
                 string listplayers = null;
                 int playerscount = PLAYERS.Count;
+                int position_sender = 0;   //ho utilitzem per trobar la posicio del forms del jugador que tanca la partida a la BD Game
+                int j = 0;
 
                 foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (inclou host, altres i el user)
                 {
                     if (player != USER)
+                    {
                         listplayers += player + " ";
+                    }
+                    if (player == USER)
+                    {
+                        position_sender = j;
+                    }
+                    j++;
                 }
 
                 if (listplayers != null)
                 {
-                    string mensaje = "50/" + messageTxt.Text + "/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount;
+                    string mensaje = "50/" + messageTxt.Text + "/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount + "/" + datos_partida + "/" + position_sender;
                     byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                     SERVER.Send(msg);
                 }
@@ -309,6 +332,7 @@ namespace WindowsFormsApplication1
                 foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (inclou host, altres i el user)
                 {
                     if (player != USER)
+
                         listplayers += player + " ";
                 }
                 string mensaje = "94/" + Nform + "/" + USER + "/" + datos_partida + "/" + listplayers + "/" + playerscount;
@@ -318,7 +342,7 @@ namespace WindowsFormsApplication1
             }
             else
             {
-                MessageBox.Show("Select the minigame before starting", "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("You need at least one more player!", "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -482,14 +506,23 @@ namespace WindowsFormsApplication1
 
             string listplayers = null;
             int playerscount = PLAYERS.Count;
+            int position_sender = 0;   //ho utilitzem per trobar la posicio del forms del jugador que clica a la BD Game
+            j = 0;
 
-            foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (altres i el user)
+            foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (inclou host, altres i el user)
             {
                 if (player != USER)
+                {
                     listplayers += player + " ";
+                }
+                if (player == USER)
+                {
+                    position_sender = j;
+                }
+                j++;
             }
 
-            string mensaje = "51/" + expresion + "/" + vectorimatges_jugador[0] + "/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount;
+            string mensaje = "51/" + expresion + "/" + vectorimatges_jugador[0] + "/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount + "/" + datos_partida + "/" + position_sender;
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             SERVER.Send(msg); //es compara aqui si s ha perdut s ha passat de ronda
         }
@@ -526,14 +559,23 @@ namespace WindowsFormsApplication1
 
             string listplayers = null;
             int playerscount = PLAYERS.Count;
+            int position_sender = 0;   //ho utilitzem per trobar la posicio del forms del jugador que clica a la BD Game
+            j = 0;
 
-            foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (altres i el user)
+            foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (inclou host, altres i el user)
             {
                 if (player != USER)
+                {
                     listplayers += player + " ";
+                }
+                if (player == USER)
+                {
+                    position_sender = j;
+                }
+                j++;
             }
 
-            string mensaje = "51/" + expresion + "/" + vectorimatges_jugador[1] + "/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount;
+            string mensaje = "51/" + expresion + "/" + vectorimatges_jugador[1] + "/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount + "/" + datos_partida + "/" + position_sender;
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             SERVER.Send(msg); //es compara aqui si s ha perdut s ha passat de ronda
         }
@@ -570,14 +612,23 @@ namespace WindowsFormsApplication1
 
             string listplayers = null;
             int playerscount = PLAYERS.Count;
+            int position_sender = 0;   //ho utilitzem per trobar la posicio del forms del jugador que clica a la BD Game
+            j = 0;
 
-            foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (altres i el user)
+            foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (inclou host, altres i el user)
             {
                 if (player != USER)
+                {
                     listplayers += player + " ";
+                }
+                if (player == USER)
+                {
+                    position_sender = j;
+                }
+                j++;
             }
 
-            string mensaje = "51/" + expresion + "/" + vectorimatges_jugador[2] + "/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount;
+            string mensaje = "51/" + expresion + "/" + vectorimatges_jugador[2] + "/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount + "/" + datos_partida + "/" + position_sender;
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             SERVER.Send(msg);
         }
@@ -614,14 +665,23 @@ namespace WindowsFormsApplication1
 
             string listplayers = null;
             int playerscount = PLAYERS.Count;
+            int position_sender = 0;   //ho utilitzem per trobar la posicio del forms del jugador que clica a la BD Game
+            j = 0;
 
-            foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (altres i el user)
+            foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (inclou host, altres i el user)
             {
                 if (player != USER)
+                {
                     listplayers += player + " ";
+                }
+                if (player == USER)
+                {
+                    position_sender = j;
+                }
+                j++;
             }
 
-            string mensaje = "51/" + expresion + "/" + vectorimatges_jugador[3] + "/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount;
+            string mensaje = "51/" + expresion + "/" + vectorimatges_jugador[3] + "/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount + "/" + datos_partida + "/" + position_sender;
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             SERVER.Send(msg);
         }
@@ -658,14 +718,23 @@ namespace WindowsFormsApplication1
 
             string listplayers = null;
             int playerscount = PLAYERS.Count;
+            int position_sender = 0;   //ho utilitzem per trobar la posicio del forms del jugador que clica a la BD Game
+            j = 0;
 
-            foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (altres i el user)
+            foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (inclou host, altres i el user)
             {
                 if (player != USER)
+                {
                     listplayers += player + " ";
+                }
+                if (player == USER)
+                {
+                    position_sender = j;
+                }
+                j++;
             }
 
-            string mensaje = "51/" + expresion + "/" + vectorimatges_jugador[4] + "/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount;
+            string mensaje = "51/" + expresion + "/" + vectorimatges_jugador[4] + "/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount + "/" + datos_partida + "/" + position_sender;
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             SERVER.Send(msg);
         }
@@ -719,14 +788,23 @@ namespace WindowsFormsApplication1
             {
                 string listplayers = null;
                 int playerscount = PLAYERS.Count;
+                int position_sender = 0;   //ho utilitzem per trobar la posicio del forms del jugador que tanca la partida a la BD Game
+                int j = 0;
 
-                foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (altres i el user)
+                foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (inclou host, altres i el user)
                 {
                     if (player != USER)
+                    {
                         listplayers += player + " ";
+                    }
+                    if (player == USER)
+                    {
+                        position_sender = j;
+                    }
+                    j++;
                 }
                 this.round++;
-                string mensaje = "49/" + "0/" + Nform + "/" + guest + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + round;
+                string mensaje = "49/" + "0/" + Nform + "/" + guest + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + round + "/" + position_sender;
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 SERVER.Send(msg);
             }
@@ -738,15 +816,24 @@ namespace WindowsFormsApplication1
             {
                 string listplayers = null;
                 int playerscount = PLAYERS.Count;
+                int position_sender = 0;   //ho utilitzem per trobar la posicio del forms del jugador que tanca la partida a la BD Game
+                int j = 0;
 
-                foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (altres i el user)
+                foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (inclou host, altres i el user)
                 {
                     if (player != USER)
+                    {
                         listplayers += player + " ";
+                    }
+                    if (player == USER)
+                    {
+                        position_sender = j;
+                    }
+                    j++;
                 }
                 if (playerscount != 1)  //mirem si es queda el host sol o no un cop ja ha començat. Si hi ha mes de 1 persona a la partida, es fa shuffle
                 {
-                    string mensaje = "49/" + "2/" + Nform + "/" + guest + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + round;
+                    string mensaje = "49/" + "2/" + Nform + "/" + guest + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + round + "/" + position_sender;
                     byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                     SERVER.Send(msg);
                     //MessageBox.Show(guest + " disconnected\nRestarting round " + this.round, "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -783,6 +870,14 @@ namespace WindowsFormsApplication1
             }
         }
 
+        private void SetLifes_Click(object sender, EventArgs e)
+        {
+            if ((setlifesTxt.Text != null) && (setlifesTxt.Text != "") && (setlifesTxt.Text != 0.ToString()))
+            {
+                //to be continued...
+            }
+        }
+
         ////////////////////////////////////////////////////    END GAME     /////////////////////////////////////////////////////////////////////////////////
 
         private void endgamebtn_Click(object sender, EventArgs e)
@@ -794,16 +889,25 @@ namespace WindowsFormsApplication1
         {
             string listplayers = null;
             int playerscount = PLAYERS.Count;
+            int position_sender = 0;   //ho utilitzem per trobar la posicio del forms del jugador que tanca la partida a la BD Game
+            int j = 0;
 
-            foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (altres i el user)
+            foreach (string player in PLAYERS)  //guardem la llista de jugadors de la partida en un string parametre pel servidor (inclou host, altres i el user)
             {
                 if (player != USER)
+                {
                     listplayers += player + " ";
+                }
+                if (player == USER)
+                {
+                    position_sender = j;
+                }
+                j++;
             }
 
             if (op == 0)    //clica el boto el USER (host nomes) del form i informa a la resta que l'ha apretat i que ha acabat la partida
             {
-                string mensaje = "48/" + "0/" + Nform + "/" + guest + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + ronda;
+                string mensaje = "48/" + "0/" + Nform + "/" + guest + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + ronda + "/" + position_sender;
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 SERVER.Send(msg);
             }
@@ -811,13 +915,13 @@ namespace WindowsFormsApplication1
             {
                 listplayers = " ";
                 playerscount = 1;
-                string mensaje = "48/" + "1/" + Nform + "/" + guest + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + ronda;
+                string mensaje = "48/" + "1/" + Nform + "/" + guest + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + ronda + "/" + position_sender;
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 SERVER.Send(msg);
             }
             else if (op == 2)   //es perd la partida per haver arribat al maxim numero d errors
             {
-                string mensaje = "48/" + "2/" + Nform + "/" + guest + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + ronda;
+                string mensaje = "48/" + "2/" + Nform + "/" + guest + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + ronda + "/" + position_sender;
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 SERVER.Send(msg);
             }
@@ -832,7 +936,7 @@ namespace WindowsFormsApplication1
                 {
                     string msgs = player + "/ host has ended the game / ";
                     DelegateENDGAME del1 = new DelegateENDGAME(ENDGAME);
-                    endgameBox.Invoke(del1, new object[] { msgs });
+                    endgamelbl1.Invoke(del1, new object[] { msgs });
                 }
             }
             if (operation == 1) //un jugador ha abandonat la partida i nomes queda el host (per tant no es pot seguir jugant)
@@ -840,7 +944,7 @@ namespace WindowsFormsApplication1
                 //el missatge nomes arribara al host (player es el nom del jugador desconnectat)
                 string msgs = player + "/ has disconnected / You need more players to play";
                 DelegateENDGAME del1 = new DelegateENDGAME(ENDGAME);
-                endgameBox.Invoke(del1, new object[] { msgs });
+                endgamelbl1.Invoke(del1, new object[] { msgs });
             }
             if (operation == 2) //es perd la partida per haver arribat al maxim numero d errors
             {
@@ -848,7 +952,7 @@ namespace WindowsFormsApplication1
                 //player conte el nom del jugador que ha comes l error
                 string msgs = player + "/ has lost your last life! / No more lifes remaining";
                 DelegateENDGAME del1 = new DelegateENDGAME(ENDGAME);
-                endgameBox.Invoke(del1, new object[] { msgs });
+                endgamelbl1.Invoke(del1, new object[] { msgs });
             }
             gamestarted = false;
             DelegateSYMBOLSBOX del = new DelegateSYMBOLSBOX(SYMBOLSBOX);

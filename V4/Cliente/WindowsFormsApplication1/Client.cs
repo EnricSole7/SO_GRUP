@@ -6,28 +6,38 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Diagnostics;
 
 namespace WindowsFormsApplication1
 {
     public partial class Client : Form
     {
+        //GLOBAL VARIABLES
         Socket server;
         Thread client;
         Thread game;
+
         string USER;
+        string GAME;
+        string OTHERPLAYERS;
+
+        int NForm;
+
+        string invitation;
+
+        //STATE CHECKS
         string ServerState;
         bool JoinClick = false;
         bool Joining = false;
-        string invitation;
         bool alreadyclosing = false;
-        string GAME;
-        string OTHERPLAYERS;
-        int NForm;
+        string invite_mod = null;   //formalitat per permetre varies invitations del mateix usuari
+
+        //LISTS
         List<string> ListaConectados = new List<string>();
         List<string> Invitations = new List<string>();
-        Dictionary<string, string> GameInvitations = new Dictionary<string, string>();  //utilitzat per unir-se a partides
-        Dictionary<string, int> FormInvitations = new Dictionary<string, int>();  //utilitzat per unir-se a partides
         List<GameWindow> GameWndwForms = new List<GameWindow>();
+        Dictionary<string, string> GameInvitations = new Dictionary<string, string>();  //utilitzat per unir-se a partides
+
 
         //private static IPAddress direc = IPAddress.Parse("10.4.119.5");
         //private static IPEndPoint ipep = new IPEndPoint(direc, 50080);
@@ -285,15 +295,30 @@ namespace WindowsFormsApplication1
                                     inviting = parts[2];
                                     string datos_partida = parts[3].Split(',')[0];
                                     NumForm = Convert.ToInt32(parts[4].Split(',')[0]);
-                                    Invitations.Add(inviting);
-                                    GameInvitations.Add(inviting, datos_partida);
-                                    FormInvitations.Add(inviting, NumForm);
+                                    int cont = 0;
+                                    while (j < Invitations.Count)   //mirem si ja hem rebut una invitacio d'aquell jugador
+                                    {
+                                        if (Invitations[j] == inviting)
+                                        {
+                                            cont++;
+                                            string invit_mod = inviting + "#" + cont.ToString();
+                                            Invitations.Add(invit_mod);
+                                            GameInvitations.Add(invit_mod, datos_partida);
+                                        }
+                                        j++;
+                                    }
+                                    if (cont == 0)  //si es la primera invitacio que rebem del jugador
+                                    {
+                                        Invitations.Add(inviting);
+                                        GameInvitations.Add(inviting, datos_partida);
+                                    }
                                     
                                     DelegateREFRESHINVITATIONS del = new DelegateREFRESHINVITATIONS(REFRESHINVITATIONS);
                                     invitationsGrid.Invoke(del);
                                     //MessageBox.Show("Invitaion from " + inviting + " received. Added to your invitation log in game", "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                    
-                                    if (GameWndwForms.Count != 0)    //SI ESTA IN GAME, ENVIEM LA INVITACIO A TOTS ELS FORMS OBERTS
+
+                                    j = 0;
+                                    if (GameWndwForms.Count != 0)    //si esta in game, l avisem que ha rebut una invitacio
                                     {
                                         while (j < GameWndwForms.Count)
                                         {
@@ -575,6 +600,9 @@ namespace WindowsFormsApplication1
             ThreadStart thMain = delegate { Main(); };
             client = new Thread(thMain);
             client.Start();
+
+            DelegateREFRESHnumCONNECTED del1 = new DelegateREFRESHnumCONNECTED(REFRESHnumCONNECTED);
+            numplayerslbl.Invoke(del1);
         }
 
         private void conectserver_Click(object sender, EventArgs e)
@@ -742,11 +770,11 @@ namespace WindowsFormsApplication1
             server.Send(msg);
         }
 
-
         ////////////////////////////////////////////////////    CREATE GAME & THREAD     ///////////////////////////////////////////////////////////////////////
         private void createGAME_Click(object sender, EventArgs e)
         {
-            string mensaje = "98/" + USER;
+            int numForm = this.GameWndwForms.Count;     //nou form index es el count de forms
+            string mensaje = "98/" + USER + "/" + numForm;
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
 
@@ -762,11 +790,7 @@ namespace WindowsFormsApplication1
         {
             GameWindow G = new GameWindow();
             GameWndwForms.Add(G);
-            //REFRESCAR LA LLISTA DE CONNECTATS PER PODER CONVIDAR
-            //G.RefreshConnectedList(ListaConectados);
-            //PARAMETRES ESTETICS DEL LOBBY (HUD)
             G.SetLobby(numform, server, USER, ListaConectados);
-            //PARAMETRES DE LA PARTIDA CREADA A MYSQL
             G.SetGame(GAME);
 
             if (!Joining)   //no s'uneix ningu (la funcio es crida pel creador de la partida per primer cop)
@@ -789,18 +813,29 @@ namespace WindowsFormsApplication1
         ////////////////////////////////////////////////////    JOIN GAME     ////////////////////////////////////////////////////////////////////////////////
         private void joinGame_Click(object sender, EventArgs e)
         {
+            //el valor de invitation ve de la funció de sota "invitationsGrid_CellContentClick"
             string game = GameInvitations[invitation];
-            int form = FormInvitations[invitation];
+            int form = this.GameWndwForms.Count;
 
-            //el valor de invitation ve de la funcio de invitationsGrid_CellContentClick
-            string mensaje_usuario = "96/" + USER + "/" + invitation + "/" + game + "/" + form;
+            string inviting_person; //els formats dels strings seran diferents segons si t'ha convidat el mateix jugador varios cops o no. es una simple comprovacio
+            if (invite_mod != null) //s ha modificat el valor de invitation per arreglar el string
+            {
+                inviting_person = invite_mod;
+                invite_mod = null;
+            }
+            else    //no s ha modificat, tot normal
+            {
+                inviting_person = invitation;
+            }
+
+            string mensaje_usuario = "96/" + USER + "/" + inviting_person + "/" + game + "/" + form;
             // Enviamos al servidor el nombre i contraseña introducidos
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje_usuario);
             server.Send(msg);
 
+
             Invitations.Remove(invitation);
             GameInvitations.Remove(invitation);
-            FormInvitations.Remove(invitation);
 
             invitation = null;
 
@@ -819,6 +854,12 @@ namespace WindowsFormsApplication1
                 if (invitationsGrid.Rows[e.RowIndex].Cells[e.ColumnIndex].Value != null)
                 {
                     invitation = invitationsGrid.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
+
+                    //si hi ha un # afegit (es a dir, que t'ha convidat el mateix jugador varios cops) s ha de modificar el string per parlar amb el server
+                    if (invitation.IndexOf('#', 0) != -1)   
+                    {
+                        invite_mod = invitation.Split('#')[0]; ;  //avisem que hem modificat la invitació
+                    }
                 }
             }
             else if (JoinClick)

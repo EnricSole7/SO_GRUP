@@ -152,3 +152,4 @@ C:\Users\nrcso\OneDrive\Escriptori\ENRIC\UNI\EETAC\2n\Q2\SO\PROJCETE\V5\SO_GRUP\
 C:\Users\nrcso\OneDrive\Escriptori\ENRIC\UNI\EETAC\2n\Q2\SO\PROJCETE\V5\SO_GRUP\V4\Cliente\WindowsFormsApplication1\obj\Debug\clienteForm.csproj.CoreCompileInputs.cache
 C:\Users\nrcso\OneDrive\Escriptori\ENRIC\UNI\EETAC\2n\Q2\SO\PROJCETE\V5\SO_GRUP\V4\Cliente\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.exe
 C:\Users\nrcso\OneDrive\Escriptori\ENRIC\UNI\EETAC\2n\Q2\SO\PROJCETE\V5\SO_GRUP\V4\Cliente\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.pdb
+C:\Users\nrcso\OneDrive\Escriptori\ENRIC\UNI\EETAC\2n\Q2\SO\PROJCETE\V5\SO_GRUP\V4\Cliente\WindowsFormsApplication1\bin\Debug\WindowsFormsApplication1.pdb

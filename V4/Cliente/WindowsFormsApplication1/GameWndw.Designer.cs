@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
             this.exitbtn = new System.Windows.Forms.Button();
             this.minigameBox = new System.Windows.Forms.GroupBox();
             this.startgamebtn = new System.Windows.Forms.Button();
@@ -148,11 +148,11 @@
             this.pictureBox75 = new System.Windows.Forms.PictureBox();
             this.chatlbl = new System.Windows.Forms.Label();
             this.sendmsgbtn = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.SetLifes = new System.Windows.Forms.Button();
             this.endgamebtn = new System.Windows.Forms.Button();
             this.roundlbl = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.timerManager = new System.Windows.Forms.Timer(this.components);
+            this.setlifesTxt = new System.Windows.Forms.TextBox();
             this.minigameBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.playersonlineGrid)).BeginInit();
             this.playersBox.SuspendLayout();
@@ -295,14 +295,14 @@
             this.playersonlineGrid.AllowUserToResizeRows = false;
             this.playersonlineGrid.BackgroundColor = System.Drawing.Color.Coral;
             this.playersonlineGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.Color.NavajoWhite;
-            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.Color.OrangeRed;
-            dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.playersonlineGrid.DefaultCellStyle = dataGridViewCellStyle11;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.NavajoWhite;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.Color.OrangeRed;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.playersonlineGrid.DefaultCellStyle = dataGridViewCellStyle6;
             this.playersonlineGrid.Location = new System.Drawing.Point(47, 353);
             this.playersonlineGrid.Name = "playersonlineGrid";
             this.playersonlineGrid.RowHeadersWidth = 51;
@@ -447,6 +447,7 @@
             // backscreenBox
             // 
             this.backscreenBox.BackColor = System.Drawing.Color.NavajoWhite;
+            this.backscreenBox.Controls.Add(this.endgameBox);
             this.backscreenBox.Controls.Add(this.pictureBox74);
             this.backscreenBox.Controls.Add(this.pictureBox64);
             this.backscreenBox.Controls.Add(this.pictureBox73);
@@ -536,7 +537,7 @@
             this.endgameBox.Controls.Add(this.endgamelbl2);
             this.endgameBox.Controls.Add(this.endgamelbl1);
             this.endgameBox.ForeColor = System.Drawing.Color.Transparent;
-            this.endgameBox.Location = new System.Drawing.Point(317, 0);
+            this.endgameBox.Location = new System.Drawing.Point(391, 145);
             this.endgameBox.Name = "endgameBox";
             this.endgameBox.Size = new System.Drawing.Size(377, 358);
             this.endgameBox.TabIndex = 71;
@@ -612,7 +613,6 @@
             // symbolsBox
             // 
             this.symbolsBox.BackColor = System.Drawing.Color.Black;
-            this.symbolsBox.Controls.Add(this.endgameBox);
             this.symbolsBox.Controls.Add(this.nextroundBox);
             this.symbolsBox.Controls.Add(this.picture5);
             this.symbolsBox.Controls.Add(this.picture4);
@@ -1393,39 +1393,39 @@
             // 
             this.chatGrid.AllowUserToAddRows = false;
             this.chatGrid.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle12.BackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle12.ForeColor = System.Drawing.Color.White;
-            this.chatGrid.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle12;
+            dataGridViewCellStyle7.BackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle7.ForeColor = System.Drawing.Color.White;
+            this.chatGrid.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle7;
             this.chatGrid.BackgroundColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle13.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle13.BackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle13.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle13.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle13.SelectionBackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle13.SelectionForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle13.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.chatGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle13;
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle8.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.chatGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle8;
             this.chatGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle14.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle14.BackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle14.Font = new System.Drawing.Font("Barlow Condensed", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle14.ForeColor = System.Drawing.Color.Transparent;
-            dataGridViewCellStyle14.SelectionBackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle14.SelectionForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle14.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.chatGrid.DefaultCellStyle = dataGridViewCellStyle14;
+            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle9.BackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle9.Font = new System.Drawing.Font("Barlow Condensed", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle9.ForeColor = System.Drawing.Color.Transparent;
+            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.chatGrid.DefaultCellStyle = dataGridViewCellStyle9;
             this.chatGrid.GridColor = System.Drawing.Color.Black;
             this.chatGrid.Location = new System.Drawing.Point(13, 21);
             this.chatGrid.Name = "chatGrid";
             this.chatGrid.ReadOnly = true;
-            dataGridViewCellStyle15.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle15.BackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle15.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle15.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle15.SelectionBackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle15.SelectionForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle15.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.chatGrid.RowHeadersDefaultCellStyle = dataGridViewCellStyle15;
+            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle10.BackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle10.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.chatGrid.RowHeadersDefaultCellStyle = dataGridViewCellStyle10;
             this.chatGrid.RowHeadersWidth = 51;
             this.chatGrid.RowTemplate.Height = 24;
             this.chatGrid.Size = new System.Drawing.Size(328, 553);
@@ -1495,18 +1495,19 @@
             this.sendmsgbtn.UseVisualStyleBackColor = false;
             this.sendmsgbtn.Click += new System.EventHandler(this.sendmsgbtn_Click);
             // 
-            // button1
+            // SetLifes
             // 
-            this.button1.BackColor = System.Drawing.Color.Bisque;
-            this.button1.Font = new System.Drawing.Font("Barlow Condensed", 19.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.ForeColor = System.Drawing.Color.OrangeRed;
-            this.button1.Location = new System.Drawing.Point(469, 925);
-            this.button1.Margin = new System.Windows.Forms.Padding(4);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(262, 59);
-            this.button1.TabIndex = 66;
-            this.button1.Text = "Num vidas to do";
-            this.button1.UseVisualStyleBackColor = false;
+            this.SetLifes.BackColor = System.Drawing.Color.Bisque;
+            this.SetLifes.Font = new System.Drawing.Font("Barlow Condensed", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SetLifes.ForeColor = System.Drawing.Color.OrangeRed;
+            this.SetLifes.Location = new System.Drawing.Point(190, 851);
+            this.SetLifes.Margin = new System.Windows.Forms.Padding(4);
+            this.SetLifes.Name = "SetLifes";
+            this.SetLifes.Size = new System.Drawing.Size(146, 59);
+            this.SetLifes.TabIndex = 66;
+            this.SetLifes.Text = "Set Lifes";
+            this.SetLifes.UseVisualStyleBackColor = false;
+            this.SetLifes.Click += new System.EventHandler(this.SetLifes_Click);
             // 
             // endgamebtn
             // 
@@ -1532,19 +1533,21 @@
             this.roundlbl.TabIndex = 68;
             this.roundlbl.Text = "Round";
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Barlow Condensed", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(368, 877);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(66, 33);
-            this.label2.TabIndex = 69;
-            this.label2.Text = "LIVES:";
-            // 
             // timerManager
             // 
             this.timerManager.Tick += new System.EventHandler(this.timerManager_Tick);
+            // 
+            // setlifesTxt
+            // 
+            this.setlifesTxt.BackColor = System.Drawing.Color.SandyBrown;
+            this.setlifesTxt.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.setlifesTxt.Font = new System.Drawing.Font("Barlow Condensed", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.setlifesTxt.ForeColor = System.Drawing.Color.White;
+            this.setlifesTxt.Location = new System.Drawing.Point(36, 863);
+            this.setlifesTxt.Multiline = true;
+            this.setlifesTxt.Name = "setlifesTxt";
+            this.setlifesTxt.Size = new System.Drawing.Size(147, 34);
+            this.setlifesTxt.TabIndex = 69;
             // 
             // GameWindow
             // 
@@ -1552,10 +1555,10 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.SeaShell;
             this.ClientSize = new System.Drawing.Size(1924, 1055);
-            this.Controls.Add(this.label2);
+            this.Controls.Add(this.setlifesTxt);
             this.Controls.Add(this.roundlbl);
             this.Controls.Add(this.endgamebtn);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.SetLifes);
             this.Controls.Add(this.sendmsgbtn);
             this.Controls.Add(this.chatlbl);
             this.Controls.Add(this.chatBox);
@@ -1772,10 +1775,9 @@
         private System.Windows.Forms.PictureBox picture2;
         private System.Windows.Forms.PictureBox picture1;
         private System.Windows.Forms.PictureBox picture5;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button SetLifes;
         private System.Windows.Forms.Button endgamebtn;
         private System.Windows.Forms.Label roundlbl;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.GroupBox nextroundBox;
         private System.Windows.Forms.Label nextroundlbl1;
         private System.Windows.Forms.Label nextroundlbl3;
@@ -1787,5 +1789,6 @@
         private System.Windows.Forms.Label endgamelbl2;
         private System.Windows.Forms.Label endgamelbl1;
         private System.Windows.Forms.Label endgamelbl3;
+        private System.Windows.Forms.TextBox setlifesTxt;
     }
 }

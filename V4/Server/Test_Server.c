@@ -288,12 +288,15 @@ void *AtenderCliente (void *socket)
 		else if (codigo == 98)	//CREATE GAME
 		{
 			char host[30];
-			p= strtok (NULL,"/");
-			strcpy(host,p);		//nombre
-			
 			char partida[200];
 			
-			resp = CreateGame(host, partida, conn);
+			p= strtok (NULL,"/");
+			strcpy(host,p);		
+			
+			p= strtok (NULL,"/");
+			NForm = atoi(p);
+			
+			resp = CreateGame(host, partida, NForm, conn);
 			
 			if(resp==0)
 			{
@@ -362,6 +365,7 @@ void *AtenderCliente (void *socket)
 			char game_info[60];
 			char otherplayers[100] = "";
 			int othersockets[4];
+			int otherforms[4];
 			
 			p= strtok (NULL,"/");
 			sprintf(invited, p);
@@ -378,7 +382,7 @@ void *AtenderCliente (void *socket)
 			//retorna -1 si esta llena la partida
 			//retorna -2 si no existe o ya ha terminado
 			//retorna sino el numero de jugadores de la partida
-			resp = JoinGame(invited, inviting, game_info, otherplayers, othersockets, conn);
+			resp = JoinGame(invited, inviting, game_info, otherplayers, othersockets, otherforms, NForm, conn);
 			
 			if (resp == -1)	//el juego esta lleno
 			{
@@ -395,9 +399,11 @@ void *AtenderCliente (void *socket)
 			else
 			{
 				int k = 0;
+				int numForm;
 				while (k < resp)	//resp es el numero de sockets a los que informar
-				{
-					sprintf(respuesta, "96#1#%s#%d#%d,", invited , resp, NForm);
+				{	//othersockets i otherforms tienen el mismo index
+					numForm = otherforms[k];
+					sprintf(respuesta, "96#1#%s#%d#%d,", invited , resp, numForm);
 					printf ("JOINGAME otherplayer socket %d: %s\n", othersockets[k], respuesta);
 					write (sockets[othersockets[k]],respuesta, strlen(respuesta));
 					k++;
@@ -415,9 +421,11 @@ void *AtenderCliente (void *socket)
 			char game_info[60];
 			char players[100];
 			int playersockets[4];
+			int playerforms[4];
 			int playerscount;
+			int position_leaving;
 			
-			//"95/" + "1" + Nform + "/" + USER + "/" + datos_partida + "/" + listplayers + "/" + playerscount;
+			//"95/" + "1" + Nform + "/" + USER + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + position_leaving;
 			
 			p= strtok (NULL,"/");
 			creator = atoi(p);
@@ -437,16 +445,20 @@ void *AtenderCliente (void *socket)
 			p= strtok (NULL,"/");
 			playerscount = atoi(p);
 			
-			resp = LeaveGame(creator, disconnecting, game_info, players, playerscount, playersockets, conn);
+			p= strtok (NULL,"/");
+			position_leaving = atoi(p);
+			
+			resp = LeaveGame(creator, disconnecting, game_info, players, playerscount, playersockets, playerforms, position_leaving, conn);
 			
 			int k = 0;
+			int numForm;
 			
 			if (resp == 1) //el host cierra partida
 			{
-
 				while (k < playerscount - 1)	//informamos al numero de jugadores de la partida (menos al host -> -1)
 				{
-					sprintf(respuesta, "95#1#%s#%d,", disconnecting, NForm);
+					numForm = playerforms[k];
+					sprintf(respuesta, "95#1#%s#%d,", disconnecting, numForm);
 					printf ("LEAVEGAME player socket %d: %s\n", playersockets[k], respuesta);
 					write (sockets[playersockets[k]],respuesta, strlen(respuesta));
 					k++;
@@ -458,7 +470,8 @@ void *AtenderCliente (void *socket)
 			{
 				while (k < playerscount - 1)	//informamos al numero de jugadores de la partida (menos al usuario -> -1)
 				{
-					sprintf(respuesta, "95#0#%s#%d,", disconnecting, NForm);
+					numForm = playerforms[k];
+					sprintf(respuesta, "95#0#%s#%d,", disconnecting, numForm);
 					printf ("LEAVEGAME player socket %d: %s\n", playersockets[k], respuesta);
 					write (sockets[playersockets[k]],respuesta, strlen(respuesta));
 					k++;
@@ -480,6 +493,7 @@ void *AtenderCliente (void *socket)
 			char game_info[60];
 			char players[100];
 			int playersockets[4];
+			int playerforms[4];
 			int playerscount;
 			
 			// "94/" + Nform + "/" + USER + "/" + datos_partida + "/" + listplayers + "/" + playerscount;
@@ -504,16 +518,17 @@ void *AtenderCliente (void *socket)
 			char vectorposiciones[15];
 			char vectorimagenes_others[100];
 			
-			resp = StartGame(host, game_info, players, playerscount, playersockets, vectorimagenes_host, vectorposiciones, vectorimagenes_others, conn);
+			resp = StartGame(host, game_info, players, playerscount, playersockets, vectorimagenes_host, vectorposiciones, vectorimagenes_others, playerforms, conn);
 			
 			int k = 0;
 			
 			if (resp == 0) //SYMBOLS
 			{
-				
+				int numForm;
 				while (k < playerscount - 1)	//informamos a cada jugador de la partida
 				{
-					sprintf(respuesta, "94#0#1#%s#%s#%s#%d,", vectorimagenes_host, vectorimagenes_others, vectorposiciones, NForm);
+					numForm = playerforms[k];
+					sprintf(respuesta, "94#0#1#%s#%s#%s#%d,", vectorimagenes_host, vectorimagenes_others, vectorposiciones, numForm);
 					printf ("STARTGAME Symbols player socket %d: %s\n", playersockets[k], respuesta);
 					write (sockets[playersockets[k]],respuesta, strlen(respuesta));
 					k++;
@@ -532,10 +547,11 @@ void *AtenderCliente (void *socket)
 			char game_info[60];
 			char players[100];
 			int playersockets[4];
+			int playerforms[4];
 			int playerscount;
-			char minigame[30];
+			int position_sender;
 			
-			// "50/" + messageTxt.Text + Nform + "/" + USER + "/" + listplayers + "/" + playerscount;
+			// "50/" + messageTxt.Text + Nform + "/" + USER + "/" + listplayers + "/" + playerscount + "/" + partida + "/" + position_sender;
 			
 			p= strtok (NULL,"/");
 			sprintf(message, p);
@@ -552,15 +568,26 @@ void *AtenderCliente (void *socket)
 			p= strtok (NULL,"/");
 			playerscount = atoi(p);
 			
+			p= strtok (NULL,"/");
+			sprintf(game_info, p);
+		
+			p= strtok (NULL,"/");
+			position_sender = atoi(p);
+			
 			printf("CHATMESSAGE %s message: %s\n", sender, message);
+			
+			//BUSCAMOS LOS FORMS:
+			BuscarForms(game_info, playerforms, position_sender, conn);
 			
 			BuscarSockets(players, playerscount, playersockets, conn);
 			
 			int k = 0;
+			int numForm;
 			
 			while (k < playerscount - 1)	//informamos a cada jugador de la partida
 			{
-				sprintf(respuesta, "50#%s: %s#%d,", sender, message, NForm);
+				numForm = playerforms[k];
+				sprintf(respuesta, "50#%s: %s#%d,", sender, message, numForm);
 				printf ("CHATMESSAGE player socket %d: %s\n", playersockets[k], respuesta);
 				write (sockets[playersockets[k]],respuesta, strlen(respuesta));
 				k++;
@@ -579,9 +606,10 @@ void *AtenderCliente (void *socket)
 			char players[100];
 			int playersockets[4];
 			int playerscount;
-			char minigame[30];
+			int playerforms[4];
+			int position_sender;
 			
-			// "51/" + expresion + "/" + vectorimatges_host[x] + "/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount
+			// "51/" + expresion + "/" + vectorimatges_host[x] + "/" + Nform + "/" + USER + "/" + listplayers + "/" + playerscount + "/" + partida + "/" + position_sender;
 			
 			p= strtok (NULL,"/");
 			sprintf(expresion, p);
@@ -601,15 +629,24 @@ void *AtenderCliente (void *socket)
 			p= strtok (NULL,"/");
 			playerscount = atoi(p);
 			
+			p= strtok (NULL,"/");
+			sprintf(game_info, p);
+			
+			p= strtok (NULL,"/");
+			position_sender = atoi(p);
+			
 			printf("PICTUREMESSAGE %s expresion: %s\n", sender, expresion);
+			
+			BuscarForms(game_info, playerforms, position_sender, conn);
 			
 			BuscarSockets(players, playerscount, playersockets, conn);
 			
 			int k = 0;
-			
+			int numForm;
 			while (k < playerscount - 1)	//informamos a cada jugador de la partida
 			{
-				sprintf(respuesta, "51#%s#%s#%d#%d,", expresion, sender, numimagen, NForm);
+				numForm = playerforms[k];
+				sprintf(respuesta, "51#%s#%s#%d#%d,", expresion, sender, numimagen, numForm);
 				printf ("PICTUREMESSAGE player socket %d: %s\n", playersockets[k], respuesta);
 				write (sockets[playersockets[k]],respuesta, strlen(respuesta));
 				k++;
@@ -625,11 +662,13 @@ void *AtenderCliente (void *socket)
 			char game_info[60];
 			char players[100];
 			int playersockets[4];
+			int playerforms[4];
 			int playerscount;
+			int position_sender;
 			int operation;
 			int ronda;
 			
-			// "49/" + "0/" + Nform + "/" + USER + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + ronda;
+			// "49/" + "0/" + Nform + "/" + USER + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + ronda + "/" + position_sender;
 			
 			p= strtok (NULL,"/");
 			operation = atoi(p);
@@ -652,20 +691,26 @@ void *AtenderCliente (void *socket)
 			p= strtok (NULL,"/");
 			ronda = atoi(p);
 			
+			p= strtok (NULL,"/");
+			position_sender = atoi(p);
+			
 			char vectorimagenes_host[15] = "";
 			char vectorposiciones[15] = "";
 			char vectorimagenes_others[100] = "";
 			
 			resp = Shuffle(player, operation, ronda, game_info, players, playerscount, playersockets, vectorimagenes_host, vectorposiciones, vectorimagenes_others, conn);
 			
-			int k = 0;
+			BuscarForms(game_info, playerforms, position_sender, conn);
 			
+			int k = 0;
+			int numForm;
 			if (resp == 0)	//SHUFFLE next ronda
 			{
 				printf ("SHUFFLE Symbols NEXT ROUND\n");
 				while (k < playerscount - 1)	//informamos a cada jugador de la partida
 				{
-					sprintf(respuesta, "49#0#1#%s#%s#%s#%s#%d#%d,", vectorimagenes_host, vectorimagenes_others, vectorposiciones, player, ronda, NForm);
+					numForm = playerforms[k];
+					sprintf(respuesta, "49#0#1#%s#%s#%s#%s#%d#%d,", vectorimagenes_host, vectorimagenes_others, vectorposiciones, player, ronda, numForm);
 					printf ("SHUFFLE Symbols player socket %d: %s\n", playersockets[k], respuesta);
 					write (sockets[playersockets[k]],respuesta, strlen(respuesta));
 					k++;
@@ -678,7 +723,8 @@ void *AtenderCliente (void *socket)
 				printf ("SHUFFLE Symbols PLAYER LEFT\n");
 				while (k < playerscount - 1)	//informamos a cada jugador de la partida
 				{
-					sprintf(respuesta, "49#2#1#%s#%s#%s#%s#%d#%d,", vectorimagenes_host, vectorimagenes_others, vectorposiciones, player, ronda, NForm);
+					numForm = playerforms[k];
+					sprintf(respuesta, "49#2#1#%s#%s#%s#%s#%d#%d,", vectorimagenes_host, vectorimagenes_others, vectorposiciones, player, ronda, numForm);
 					printf ("SHUFFLE Symbols player socket %d: %s\n", playersockets[k], respuesta);
 					write (sockets[playersockets[k]],respuesta, strlen(respuesta));
 					k++;
@@ -696,11 +742,13 @@ void *AtenderCliente (void *socket)
 			char game_info[60];
 			char players[100];
 			int playersockets[4];
+			int playerforms[4];
 			int playerscount;
+			int position_sender;
 			int operation;
 			int ronda;
 			
-			// "48/" + "0/" + Nform + "/" + guest + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + ronda;
+			// "48/" + "0/" + Nform + "/" + guest + "/" + datos_partida + "/" + listplayers + "/" + playerscount + "/" + ronda  + "/" + position_sender;
 			
 			p= strtok (NULL,"/");
 			operation = atoi(p);
@@ -723,17 +771,22 @@ void *AtenderCliente (void *socket)
 			p= strtok (NULL,"/");
 			ronda = atoi(p);
 			
+			p= strtok (NULL,"/");
+			position_sender = atoi(p);
 			
 			resp = EndGame(player, operation, ronda, game_info, players, playerscount, playersockets, conn);
 			
-			int k = 0;
+			BuscarForms(game_info, playerforms, position_sender, conn);
 			
+			int k = 0;
+			int numForm;
 			if (resp == 0)	//button clicked 
 			{
 				//player corresponde al host de la partida (el unico que puede clicar el boton)
 				while (k < playerscount - 1)	//informamos a cada jugador de la partida
 				{
-					sprintf(respuesta, "48#0#%s#%d#%d,", player, ronda, NForm);
+					numForm = playerforms[k];
+					sprintf(respuesta, "48#0#%s#%d#%d,", player, ronda, numForm);
 					printf ("ENDGAME Symbols player socket %d: %s\n", playersockets[k], respuesta);
 					write (sockets[playersockets[k]],respuesta, strlen(respuesta));
 					k++;
@@ -752,7 +805,8 @@ void *AtenderCliente (void *socket)
 				//player es el jugador que ha cometido el error
 				while (k < playerscount - 1)	//informamos a cada jugador de la partida
 				{
-					sprintf(respuesta, "48#2#%s#%d#%d,", player, ronda, NForm);
+					numForm = playerforms[k];
+					sprintf(respuesta, "48#2#%s#%d#%d,", player, ronda, numForm);
 					printf ("ENDGAME Symbols player socket %d: %s\n", playersockets[k], respuesta);
 					write (sockets[playersockets[k]],respuesta, strlen(respuesta));
 					k++;
@@ -1369,7 +1423,61 @@ void BuscarSockets(char players[100], int playerscount, int playersockets[4], MY
 	printf("BUSCARSOCKETS sockets: %d %d %d %d \n", playersockets[0], playersockets[1], playersockets[2], playersockets[3]);
 }
 
-int CreateGame(char nombre[60], char partida[200], MYSQL *conn)
+void BuscarForms(char partida[60], int playerforms[4], int position_sender, MYSQL *conn)
+{
+	char server[20];
+	char partida_cpy[60];
+	char date[30];
+	int idplayerhost;
+	int idserver;
+	
+	int err;
+	MYSQL_RES *resultado;
+	MYSQL_ROW row;
+	char consulta[500];
+
+	sprintf(partida_cpy, "%s|", partida);
+	//cogemos los valores de la partida
+	char *h = strtok(partida_cpy, "|");
+	sprintf(server, h);
+	h = strtok(NULL, "|");
+	idplayerhost = atoi(h);
+	h = strtok(NULL, "|");
+	sprintf(date, h);
+	
+	//buscamos el id del server
+	sprintf (consulta, "SELECT id FROM Server WHERE host_id = '%s';", server);
+	err = mysql_query(conn, consulta);
+	resultado = mysql_store_result(conn);
+	row = mysql_fetch_row(resultado);
+	
+	idserver = atoi(row[0]);
+	
+	sprintf (consulta, "SELECT * FROM Game WHERE id_j1 = %d AND id_s = %d AND fecha = '%s';", idplayerhost, idserver, date);
+	printf("LEAVEGAME : %s \n", consulta);
+	err = mysql_query(conn, consulta);
+	resultado = mysql_store_result(conn);
+	row = mysql_fetch_row(resultado);
+	//(id_j1, id_j2, id_j3, id_j4, id_j5, id_s, fecha, ronda, ended, started, form_j1, form_j2, form_j3, form_j4, form_j5)		
+	int k = 10;
+	int t = 0;
+	int position = position_sender + 10;
+	while (k < 15)
+	{
+		if (atoi(row[k]) != -1)
+		{
+			if (k != position)
+			{
+				playerforms[t] = atoi(row[k]);	//el que retornaremos a la funcion
+				t++;
+			}
+		}
+		k++;
+	}
+	printf("BUSCARFORMS forms: %d %d %d %d \n", playerforms[0], playerforms[1], playerforms[2], playerforms[3]);
+}
+
+int CreateGame(char nombre[60], char partida[200], int numForm, MYSQL *conn)
 {
 	printf("J1: %s\n", nombre); 
 	int err;
@@ -1437,8 +1545,8 @@ int CreateGame(char nombre[60], char partida[200], MYSQL *conn)
 	printf("SERVER id %d: %s\n", id_s, server); 
 	
 	//INSERTAMOS EN GAME	(1 ES NEUTRAL - HOST DEVELOPPER)	| 0 indica que el juego aun exite (ended = 0)
-	sprintf (consulta, "INSERT INTO Game VALUES (%d,1,1,1,1,%d,'%s',0, 0, 0);", id_j1, id_s, date);
-	//(id_j1, id_j2, id_j3, id_j4, id_j5, id_s, fecha, minijuego)
+	sprintf (consulta, "INSERT INTO Game VALUES (%d,1,1,1,1,%d,'%s',0, 0, 0,%d,-1,-1,-1,-1);", id_j1, id_s, date, numForm);
+	//(id_j1, id_j2, id_j3, id_j4, id_j5, id_s, fecha, ronda, ended, started, form_j1, form_j2, form_j3, form_j4, form_j5)
 	printf("CREATEGAME: %s\n", consulta);
 	
 	err = mysql_query(conn, consulta);
@@ -1457,7 +1565,7 @@ int CreateGame(char nombre[60], char partida[200], MYSQL *conn)
 	}	
 }
 
-int JoinGame(char invited[30], char inviting[30], char partida[60], char otherplayers[100], int othersockets[4], MYSQL *conn)
+int JoinGame(char invited[30], char inviting[30], char partida[60], char otherplayers[100], int othersockets[4], int otherforms[4], int numForm, MYSQL *conn)
 {
 	printf("JOINGAME inviting: %s\n", inviting); 
 	printf("JOINGAME invited: %s\n", invited); 
@@ -1474,6 +1582,7 @@ int JoinGame(char invited[30], char inviting[30], char partida[60], char otherpl
 	int idserver;
 	char index_id_to_ad[5];
 	int id_to_ad;
+	char index_form_to_ad[10];
 	int idplayers[4] = {0};	//maximo otros 4 jugadores
 	int id_fromtable;
 	
@@ -1506,9 +1615,11 @@ int JoinGame(char invited[30], char inviting[30], char partida[60], char otherpl
 	err = mysql_query(conn, consulta);
 	resultado = mysql_store_result(conn);
 	row = mysql_fetch_row(resultado);
-	//(id_j1, id_j2, id_j3, id_j4, id_j5, id_s, fecha, ronda, ended, started)
+	//(id_j1, id_j2, id_j3, id_j4, id_j5, id_s, fecha, ronda, ended, started, form_j1, form_j2, form_j3, form_j4, form_j5)
 	int j = 1;
+	int t = 10;
 	int id_x;
+	int form_x;
 	bool found  = false;
 	
 	if(atoi(row[8]) == 1)
@@ -1525,15 +1636,18 @@ int JoinGame(char invited[30], char inviting[30], char partida[60], char otherpl
 	while((j < 5) && (!found))
 	{
 		id_x = atoi(row[j]);
+		form_x = atoi(row[t]);
 		if(id_x == 1)
 		{
 			found = true;
 		}
 		else
 		{
-			//guardamos los valores de id de los otros jugadores
+			//guardamos los valores de id de los otros jugadores y tambien de los forms
 			//si sobra algun hueco, el valor es de 0 en ese hueco
 			idplayers[j - 1] = id_x;
+			otherforms[j - 1] = form_x;
+			t++;
 			j++;
 		}
 	}
@@ -1550,6 +1664,13 @@ int JoinGame(char invited[30], char inviting[30], char partida[60], char otherpl
 	
 	//j + 1 ya que la row[j] para j = 1 es el id_2 (j + 1)
 	sprintf(index_id_to_ad, "id_j%d", j + 1);
+	sprintf(index_form_to_ad, "form_j%d", j + 1);
+	
+	//si solo esta el host, no se habra guardado el form en otherforms. lo anyadimos
+	if (t == 10)
+	{
+		otherforms[0] = form_x;
+	}
 	
 	//como nos podemos unir a la partida, buscamos el id del jugador a anyadir
 	sprintf (consulta, "SELECT id FROM Player WHERE nombre = '%s';", invited);
@@ -1559,8 +1680,13 @@ int JoinGame(char invited[30], char inviting[30], char partida[60], char otherpl
 
 	id_to_ad = atoi(row[0]);
 	
-	//anyadimos el jugador a la partida updateandola
+	//anyadimos el id del jugador a la partida updateandola
 	sprintf (consulta, "UPDATE Game SET %s = %d WHERE id_j1 = %d AND id_s = %d AND fecha = '%s';", index_id_to_ad, id_to_ad, idplayerhost, idserver, date);
+	printf("JOINGAME : %s \n", consulta);
+	err = mysql_query(conn, consulta);
+	
+	//anyadimos el form del jugador a la partida updateandola
+	sprintf (consulta, "UPDATE Game SET %s = %d WHERE id_j1 = %d AND id_s = %d AND fecha = '%s';", index_form_to_ad, numForm, idplayerhost, idserver, date);
 	printf("JOINGAME : %s \n", consulta);
 	err = mysql_query(conn, consulta);
 
@@ -1657,12 +1783,13 @@ int JoinGame(char invited[30], char inviting[30], char partida[60], char otherpl
 	printf("JOINGAME OK: \n");
 	printf("JOINGAME otherplayers: %s\n", otherplayers);
 	printf("JOINGAME othersockets: %d %d %d %d \n", othersockets[0], othersockets[1], othersockets[2], othersockets[3]);
+	printf("JOINGAME otherforms: %d %d %d %d \n", otherforms[0], otherforms[1], otherforms[2], otherforms[3]);
 	
 	return numplayers;
 }
 
 
-int LeaveGame(int creator, char disconnecting[30], char partida[60], char players[100], int playerscount, int playersockets[4], MYSQL *conn)
+int LeaveGame(int creator, char disconnecting[30], char partida[60], char players[100], int playerscount, int playersockets[4], int playerforms[4], int position_leaving, MYSQL *conn)
 {
 	printf("LEAVEGAME leaving: %s\n", disconnecting); 
 	printf("LEAVEGAME game: %s\n", partida); 
@@ -1677,7 +1804,8 @@ int LeaveGame(int creator, char disconnecting[30], char partida[60], char player
 	int idplayerhost;
 	int idserver;
 	int id_discon;
-	int idplayers[5] = {0};	//maximo otros 4 jugadores
+	int idplayers[5];	//maximo otros 4 jugadores
+	int formplayers[5];
 	int id_fromtable;
 	bool found = false;
 	
@@ -1704,6 +1832,23 @@ int LeaveGame(int creator, char disconnecting[30], char partida[60], char player
 	
 	idserver = atoi(row[0]);
 	
+	//buscamos los forms de los jugadores en la tabla de Game
+	BuscarForms(partida, playerforms, position_leaving, conn);
+	//y modificamos a partir de los forms obtenidos para introducirlos en la tabla
+	int k = 0;
+	while (k < playerscount)
+	{
+		formplayers[k] = playerforms[k];	//formplayers es el que introduciremos en la tabla
+		k++;
+	}
+
+	while (k < 5)	//llenamos el resto de posiciones con -1 para la tabla
+	{
+		formplayers[k] = -1;
+		k++;
+	}
+	
+	//buscamos los sockets a los que informar
 	BuscarSockets(players, playerscount, playersockets, conn);
 	
 	if (creator == 1)	//esta cerrando partida el host
@@ -1718,6 +1863,7 @@ int LeaveGame(int creator, char disconnecting[30], char partida[60], char player
 		printf("LEAVEGAME OK : leaving HOST\n");
 		printf("LEAVEGAME players now: %s\n", players);
 		printf("LEAVEGAME playersockets: %d %d %d %d \n", playersockets[0], playersockets[1], playersockets[2], playersockets[3]);
+		printf("LEAVEGAME playerforms: %d %d %d %d \n", playerforms[0], playerforms[1], playerforms[2], playerforms[3]);
 		
 		return 1;
 	}
@@ -1732,16 +1878,16 @@ int LeaveGame(int creator, char disconnecting[30], char partida[60], char player
 		err = mysql_query(conn, consulta);
 		resultado = mysql_store_result(conn);
 		row = mysql_fetch_row(resultado);
-		//(id_j1, id_j2, id_j3, id_j4, id_j5, id_s, fecha, minijuego, ended)
+		//(id_j1, id_j2, id_j3, id_j4, id_j5, id_s, fecha, ronda, ended, started, form_j1, form_j2, form_j3, form_j4, form_j5)		
 		int j = 0;
 		while (j < playerscount)
 		{
 			idplayers[j] = atoi(row[j]);
 			j++;
 		}
-		printf("LEAVEGAME : OK \n");
 		
 		printf ("LEAVEGAME ids : %d %d %d %d %d\n", idplayers[0], idplayers[1], idplayers[2], idplayers[3], idplayers[4]);
+		printf("LEAVEGAME playerforms: %d %d %d %d \n", playerforms[0], playerforms[1], playerforms[2], playerforms[3]);
 		//buscamos el id del jugador a desconectar
 		sprintf (consulta, "SELECT id FROM Player WHERE nombre = '%s';", disconnecting);
 		err = mysql_query(conn, consulta);
@@ -1749,9 +1895,9 @@ int LeaveGame(int creator, char disconnecting[30], char partida[60], char player
 		row = mysql_fetch_row(resultado);
 		
 		id_discon = atoi(row[0]);
-		printf("LEAVEGAME : OK \n");
 		//lo buscamos en la lista de ids de la partida
 		j = 0;
+		k = 0;
 		while (!found)
 		{
 			if (idplayers[j] == id_discon)
@@ -1763,7 +1909,6 @@ int LeaveGame(int creator, char disconnecting[30], char partida[60], char player
 				j++;
 			}
 		}
-		printf("LEAVEGAME : OK \n");
 		//lo sustituimos en la lista para luego insertarlo updated en la partida
 		while (j + 1 < playerscount)
 		{
@@ -1783,6 +1928,10 @@ int LeaveGame(int creator, char disconnecting[30], char partida[60], char player
 		printf("LEAVEGAME : %s \n", consulta);
 		err = mysql_query(conn, consulta);
 		
+		sprintf (consulta, "UPDATE Game SET form_j2 = %d, form_j3 = %d, form_j4 = %d, form_j5 = %d WHERE id_j1 = %d AND id_s = %d AND fecha = '%s';", formplayers[1], formplayers[2], formplayers[3], formplayers[4], idplayerhost, idserver, date);
+		printf("LEAVEGAME : %s \n", consulta);
+		err = mysql_query(conn, consulta);
+		
 		return 0;
 	}
 	else
@@ -1792,7 +1941,7 @@ int LeaveGame(int creator, char disconnecting[30], char partida[60], char player
 }
 
 
-int StartGame(char host[30], char partida[30],char players[100], int playerscount, int playersockets[4], char vectorimagenes_host[15], char vectorposiciones[15], char vectorimagenes_others[100], MYSQL *conn)
+int StartGame(char host[30], char partida[30],char players[100], int playerscount, int playersockets[4], char vectorimagenes_host[15], char vectorposiciones[15], char vectorimagenes_others[100], int playerforms[4], MYSQL *conn)
 {
 	//vectorimagenes_host[playerscount];
 	//vectorimagenes_others[playerscount * 5];
@@ -1814,27 +1963,7 @@ int StartGame(char host[30], char partida[30],char players[100], int playerscoun
 	int random_posiciones[5] = {-1};
 	int vector_final[20] = {-1};
 	
-	//partida del estilo : ("%s|%d|%s", server, id_j1, date)
-	sprintf(partida_cpy, "%s|", partida);
-	
-	//cogemos los valores de la partida
-	char *h = strtok(partida_cpy, "|");
-	sprintf(server, h);
-	h = strtok(NULL, "|");
-	idplayerhost = atoi(h);
-	h = strtok(NULL, "|");
-	sprintf(date, h);
-	
-	//buscamos el id del server
-	
-	sprintf (consulta, "SELECT id FROM Server WHERE host_id = '%s';", server);
-	err = mysql_query(conn, consulta);
-	resultado = mysql_store_result(conn);
-	row = mysql_fetch_row(resultado);
-	
-	//no hace falta pasar por filtros porque si ha llegado hasta aqui es que todo existe i es correcto
-	
-	idserver = atoi(row[0]);
+	BuscarForms(partida, playerforms, 0, conn);	//posicion del sender es 0 (posicion del host)
 
 	BuscarSockets(players, playerscount, playersockets, conn);
 	
@@ -1863,6 +1992,28 @@ int StartGame(char host[30], char partida[30],char players[100], int playerscoun
 		sprintf(vectorimagenes_others, "%s %d", vectorimagenes_others, vector_final[j]);
 		j++;
 	}
+	
+	//partida del estilo : ("%s|%d|%s", server, id_j1, date)
+	sprintf(partida_cpy, "%s|", partida);
+	
+	//cogemos los valores de la partida
+	char *h = strtok(partida_cpy, "|");
+	sprintf(server, h);
+	h = strtok(NULL, "|");
+	idplayerhost = atoi(h);
+	h = strtok(NULL, "|");
+	sprintf(date, h);
+	
+	//buscamos el id del server
+	
+	sprintf (consulta, "SELECT id FROM Server WHERE host_id = '%s';", server);
+	err = mysql_query(conn, consulta);
+	resultado = mysql_store_result(conn);
+	row = mysql_fetch_row(resultado);
+	
+	//no hace falta pasar por filtros porque si ha llegado hasta aqui es que todo existe i es correcto
+	
+	idserver = atoi(row[0]);
 
 	sprintf (consulta, "UPDATE Game SET started = 1 WHERE id_j1 = %d AND id_s = %d AND fecha = '%s';", idplayerhost, idserver, date);
 	//printf("JOINGAME : %s \n", consulta);
