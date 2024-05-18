@@ -208,15 +208,24 @@ void *AtenderCliente (void *socket)
 			strcpy(nombres,p);
 			
 			char Lista [500];
-			
+			printf ("GETLISTARESULTADOS : OK\n");
 			resp = GetListaResultados(nombre, nombres, Lista, conn);
+			
 			if (resp == 0)
 			{
 				sprintf(respuesta, "4#%s,", Lista);
 			}
-			else
+			else if (resp == -1)
 			{
-				sprintf(respuesta, "4#error,");
+				sprintf(respuesta, "4#error|error,");
+			}
+			else if (resp == -2)
+			{
+				sprintf(respuesta, "4#error|No results found matching your request,");
+			}
+			else if (resp == -3)
+			{
+				sprintf(respuesta, "4#error|A player introduced is not registered,");
 			}
 			printf ("GETLISTARESULTADOS : %s\n", respuesta);
 			
@@ -1189,7 +1198,7 @@ int GetListaJugadores(char nombre[60], char Lista[500], MYSQL *conn)
 	
 	printf("GETLISTAJUGADORES iduser : %d\n", idplayer);
 	
-	sprintf (consulta, "SELECT id_j1, id_j2, id_j3, id_j4, id_j5 FROM Game WHERE id_j1 = %d OR id_j2 = %d OR id_j3 = %d OR id_j4 = %d OR id_j5 = %d;", idplayer, idplayer, idplayer, idplayer, idplayer);
+	sprintf (consulta, "SELECT DISTINCT id_j1, id_j2, id_j3, id_j4, id_j5 FROM Game WHERE id_j1 = %d OR id_j2 = %d OR id_j3 = %d OR id_j4 = %d OR id_j5 = %d;", idplayer, idplayer, idplayer, idplayer, idplayer);
 	err = mysql_query(conn, consulta);
 	resultado = mysql_store_result (conn);
 	row = mysql_fetch_row (resultado);
@@ -1203,7 +1212,6 @@ int GetListaJugadores(char nombre[60], char Lista[500], MYSQL *conn)
 		//filtrem
 		while (row != NULL)
 		{
-			printf("ROW\n");
 			while (j < 5)	//guardamos los ids de los jugadores de cada row obtenida (distintos al del usuario solicitante)
 			{
 				if (atoi(row[j]) != idplayer)
@@ -1248,82 +1256,111 @@ int GetListaJugadores(char nombre[60], char Lista[500], MYSQL *conn)
 	
 }
 
-void GetListaResultados(char nombre[30], char nombres[200], char Lista[500], MYSQL *conn) 
+int GetListaResultados(char nombre[30], char nombres[200], char Lista[500], MYSQL *conn) 
 {
 	//Buscamos el nombre de la persona que ha ganado en esta fecha
 	int err;
 	MYSQL_RES *resultado;
 	MYSQL_ROW row;
 	char consulta[500];
-	char nombre1;
-	char nombre2;
-	char nombre3;
-	char nombre4;
+	char nombre1[30];
+	char nombre2[30];
+	char nombre3[30];
+	char nombre4[30];
 	int iduser;
 	int ids[4] = {-1,-1,-1,-1};
 	int idspartidas[4];
+	int numplayers;
 	char Lista_cpy[500];
 	bool first = true;
-	
-	sprintf (consulta," SELECT id FROM Player WHERE name = '%s';", nombre);
+
+	sprintf (consulta," SELECT id FROM Player WHERE nombre = '%s';", nombre);
 	err = mysql_query(conn, consulta);
 	resultado = mysql_store_result (conn);
 	row = mysql_fetch_row (resultado);
-	iduser = atoi(row[0]);
 	
+	iduser = atoi(row[0]);
 	
 	//puede haber varios jugadores, otro strtok
 	
 	char *h = strtok(nombres, " ");
-	if (strcmp(h, NULL) != 0)
+
+	
+	if (h != NULL)
 	{
-		sprintf(nombre1, h);
+		sprintf(nombre1, "%s", h);
+		numplayers = 1;
 		
-		sprintf (consulta," SELECT id FROM Player WHERE name = '%s';",nombre1);
+		sprintf (consulta," SELECT id FROM Player WHERE nombre = '%s';",nombre1);
 		err = mysql_query(conn, consulta);
 		resultado = mysql_store_result (conn);
 		row = mysql_fetch_row (resultado);
+		if (row == NULL)	//el jugador no existe
+		{
+			return -3;
+		}
 		ids[0] = atoi(row[0]);
+		printf("GETLISTARESULTADOS %s : %d\n", nombre1, ids[0]);
 		
 		h = strtok(NULL, " ");
 		
-		if (strcmp(h, NULL) != 0)
+		if (h != NULL)
 		{
-			sprintf(nombre2, h);
+			sprintf(nombre2, "%s", h);
+			numplayers = 2;
 			
-			sprintf (consulta," SELECT id FROM Player WHERE name = '%s';",nombre2);
+			sprintf (consulta," SELECT id FROM Player WHERE nombre = '%s';",nombre2);
 			err = mysql_query(conn, consulta);
 			resultado = mysql_store_result (conn);
 			row = mysql_fetch_row (resultado);
+			if (row == NULL)	//el jugador no existe
+			{
+				return -3;
+			}
 			ids[1] = atoi(row[0]);
+			printf("GETLISTARESULTADOS %s : %d\n", nombre2, ids[1]);
 			
 			h = strtok(NULL, " ");
-			if (strcmp(h, NULL) != 0)
+			if (h != NULL)
 			{
-				sprintf(nombre3, h);
+				sprintf(nombre3, "%s", h);
+				numplayers = 3;
 				
-				sprintf (consulta," SELECT id FROM Player WHERE name = '%s';",nombre3);
+				sprintf (consulta," SELECT id FROM Player WHERE nombre = '%s';",nombre3);
 				err = mysql_query(conn, consulta);
 				resultado = mysql_store_result (conn);
 				row = mysql_fetch_row (resultado);
+				if (row == NULL)	//el jugador no existe
+				{
+					return -3;
+				}
 				ids[2] = atoi(row[0]);
+				printf("GETLISTARESULTADOS %s : %d\n", nombre3, ids[2]);
 				
 				h = strtok(NULL, " ");
-				if (strcmp(h, NULL) != 0)
+				if (h != NULL)
 				{
-					sprintf(nombre4, h);
+					sprintf(nombre4, "%s", h);
+					numplayers = 4;
 					
-					sprintf (consulta," SELECT id FROM Player WHERE name = '%s';",nombre4);
+					sprintf (consulta," SELECT id FROM Player WHERE nombre = '%s';",nombre4);
 					err = mysql_query(conn, consulta);
 					resultado = mysql_store_result (conn);
 					row = mysql_fetch_row (resultado);
+					if (row == NULL)	//el jugador no existe
+					{
+						return -3;
+					}
 					ids[3] = atoi(row[0]);
+					printf("GETLISTARESULTADOS %s : %d\n", nombre4, ids[3]);
 				}
 			}
 		}
 	}
+	printf("GETLISTARESULTADOS player count : %d\n", numplayers);
+	printf("GETLISTARESULTADOS ids: %d %d %d %d \n", ids[0], ids[1], ids[2], ids[3]);
 	
-	sprintf (consulta, "SELECT id_j1, id_j2, id_j3, id_j4, id_j5 FROM Game WHERE id_j1 = %d OR id_j2 = %d OR id_j3 = %d OR id_j4 = %d OR id_j5 = %d;", ids[0], ids[0], ids[0], ids[0], ids[0]);
+	sprintf (consulta, "SELECT id_j1, id_j2, id_j3, id_j4, id_j5, ronda FROM Game WHERE id_j1 = %d OR id_j2 = %d OR id_j3 = %d OR id_j4 = %d OR id_j5 = %d;", ids[0], ids[0], ids[0], ids[0], ids[0]);
 	printf("GETLISTARESULTADOS: %s\n", consulta);
 	err = mysql_query(conn, consulta);
 	resultado = mysql_store_result (conn);
@@ -1331,8 +1368,9 @@ void GetListaResultados(char nombre[30], char nombres[200], char Lista[500], MYS
 	
 	int j = 0;
 	int k = 0;
+	int cont = 0;
 	
-	if(strcmp(row[0], NULL) == 0)	//no ha jugado ninguna partida
+	if(row == NULL)	//no ha jugado ninguna partida
 	{
 		return -1;
 	}
@@ -1340,45 +1378,57 @@ void GetListaResultados(char nombre[30], char nombres[200], char Lista[500], MYS
 	{
 		while (row != NULL)
 		{
+			printf("GETLISTARESULTADOS ROW\n");
 			while (j < 5)	//guardamos los ids de los jugadores de cada row obtenida (distintos al del usuario solicitante)
 			{
 				if (row[j] != iduser)
 				{
-					idspartidas[k] = row[j];
+					idspartidas[k] = atoi(row[j]);
 					k++;
 				}
 				j++;
 			}
+			printf("GETLISTARESULTADOS idspartidas: %d %d %d %d \n", idspartidas[0], idspartidas[1], idspartidas[2], idspartidas[3]);
 			k = 0;
-			while (k < 4)
+			j = 0;
+			while (ids[k] != -1)	//recorremos ids[k]
 			{
-				if (ids[k] != -1)
+				while ((j != 1) && (j < 4))	//recorremos idspartidas[j]
 				{
-					sprintf (consulta," SELECT nombre FROM Player WHERE id = %d;", ids[k]);
-					err = mysql_query(conn, consulta);
-					resultado = mysql_store_result (conn);
-					//row2 = mysql_fetch_row (resultado);
-					
-					//sprintf(name, row[0]);
-					
-					if (first)
+					if((idspartidas[j] == ids[k]) || (idspartidas[j] == iduser))
 					{
-						//sprintf(Lista_cpy, "%s", name);
-						first = false;
+						cont++;
 					}
-					else
-					{
-						//sprintf(Lista_cpy, "%s %s", Lista_cpy, name);
-					}
+					j++;
 				}
 				k++;
 			}
+			printf("GETLISTARESULTADOS cont %d\n", cont);
+			if (cont == numplayers)	//si en la partida hemos encontrado a todos los jugadores
+			{
+				printf("GETLISTARESULTADOS ronda %s\n", row[5]);
+				if (first)
+				{
+					sprintf(Lista_cpy, "%s", row[5]);	//guardamos la ronda
+					first = false;
+				}
+				else
+				{
+					sprintf(Lista_cpy, "%s %s", Lista_cpy, row[5]);
+				}
+			}
 			row = mysql_fetch_row (resultado);
+			cont = 0;
 			j = 0;
 			k = 0;
 		}
-		
+		if (first)	//si no se ha modificado el valor de la Lista (no hay resultados que coincidan con la petiticon)
+		{
+			printf("GETLISTARESULTADOS return -2\n");
+			return -2;
+		}
 		strcpy(Lista, Lista_cpy);
+		printf("GETLISTARESULTADOS return 0\n");
 		return 0;
 		
 	}

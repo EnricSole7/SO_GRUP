@@ -63,6 +63,7 @@ namespace WindowsFormsApplication1
             this.roundlbl.Visible = false;
             this.nextroundBox.Visible = false;
             this.endgameBox.Visible = false;
+            infoPictureBox.Visible = false;
 
             //
             this.setlifesTxt.Visible = false;
@@ -966,6 +967,14 @@ namespace WindowsFormsApplication1
             this.vectorposicions.Clear();
         }
 
+        private void infoPictureBox_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("" +
+            "                   Game Advice:\n" +
+            "     If you exit the game, your game save will be lost\n" +
+            "  Ask the host to end the game to keep all the information", "Formato de introducción", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
         ////////////////////////////////////////////////////    DELEGATES     /////////////////////////////////////////////////////////////////////////////////
 
         delegate void DelegatePRINTSERVER(string server, int numform);
@@ -986,6 +995,7 @@ namespace WindowsFormsApplication1
             else if (creator == null)
             {
                 minigameBox.Enabled = false;    //NOMES EL HOST POT SELECCIONAR EL JOC
+                infoPictureBox.Visible = true;
             }
         }
 

@@ -23,48 +23,6 @@ namespace WindowsFormsApplication1
         public Stats()
         {
             InitializeComponent();
-
-            //RowCount = rows;
-            jugadoresGrid.ColumnCount = 3;
-            jugadoresGrid.RowHeadersVisible = false;
-            jugadoresGrid.ColumnHeadersDefaultCellStyle.BackColor = Color.Black;
-            jugadoresGrid.ColumnHeadersDefaultCellStyle.ForeColor = Color.DarkOrange;
-            jugadoresGrid.Columns[0].HeaderText = "ID";
-            jugadoresGrid.Columns[1].HeaderText = "NAME";
-            jugadoresGrid.Columns[2].HeaderText = "PASSWORD";
-
-            jugadoresGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-
-            //RowCount = rows;
-            serversGrid.ColumnCount = 2;
-            serversGrid.RowHeadersVisible = false;
-            serversGrid.ColumnHeadersDefaultCellStyle.BackColor = Color.Black;
-            serversGrid.ColumnHeadersDefaultCellStyle.ForeColor = Color.DarkOrange;
-            serversGrid.Columns[0].HeaderText = "ID";
-            serversGrid.Columns[1].HeaderText = "HOST";
-
-            serversGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-
-            //RowCount = rows;
-            partidasGrid.ColumnCount = 8;
-            partidasGrid.RowHeadersVisible = false;
-            partidasGrid.ColumnHeadersDefaultCellStyle.BackColor = Color.Black;
-            partidasGrid.ColumnHeadersDefaultCellStyle.ForeColor = Color.DarkOrange;
-            partidasGrid.Columns[0].HeaderText = "PLAYER 1";
-            partidasGrid.Columns[1].HeaderText = "PLAYER 2";
-            partidasGrid.Columns[2].HeaderText = "PLAYER 3";
-            partidasGrid.Columns[3].HeaderText = "PLAYER 4";
-            partidasGrid.Columns[4].HeaderText = "PLAYER 5";
-            partidasGrid.Columns[5].HeaderText = "HOST";
-            partidasGrid.Columns[6].HeaderText = "DATE";
-            partidasGrid.Columns[7].HeaderText = "MINIGAME";
-
-            partidasGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-        }
-
-        private void FormLogin_Load_1(object sender, EventArgs e)
-        {
-            
         }
 
         public void LoadStats(string usuari, Socket server)
@@ -124,11 +82,21 @@ namespace WindowsFormsApplication1
 
         public void SetResponse(string llista, int consulta)
         {
-            if (llista == "error")
+            this.PlayerList.Clear();
+            this.ResultsList.Clear();
+            this.GamesList.Clear();
+
+            string error = llista.Split('|')[0];
+
+            if (error == "error")
             {
                 if (consulta == 1)
                 {
                     MessageBox.Show("You have no games played so far", "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                if (consulta == 2)
+                {
+                    MessageBox.Show(error, "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             else
@@ -149,19 +117,21 @@ namespace WindowsFormsApplication1
                     }
                     if (intermid != null)
                     {
-                        if (consulta == 1)
+                        if ((consulta == 1) && (!PlayerList.Contains(intermid)))
                         {
                             this.PlayerList.Add(intermid);
+                            row_counter++;
                         }
-                        else if (consulta == 2)
+                        else if ((consulta == 2) && (!ResultsList.Contains(intermid)))
                         {
                             this.ResultsList.Add(intermid);
+                            row_counter++;
                         }
-                        else if (consulta == 3)
+                        else if ((consulta == 3) && (!GamesList.Contains(intermid)))
                         {
                             this.GamesList.Add(intermid);
+                            row_counter++;
                         }
-                        row_counter++;
                     }
                     intermid = null;
                     i++;
@@ -169,7 +139,6 @@ namespace WindowsFormsApplication1
 
                 DelegateSETGRID del = new DelegateSETGRID(SETGRID);
                 grid.Invoke(del, new object[] { consulta, row_counter });
-
             }
 
         }
@@ -177,9 +146,9 @@ namespace WindowsFormsApplication1
         private void infoPictureBox_cons2_Click(object sender, EventArgs e)
         {
             MessageBox.Show("" +
-            "              Message Format:\n" +
+            "                 Message Format:\n" +
             "   If multiple names, separate them by a blank space\n" +
-            "           i.e. : Harry Paula Maia", "Formato de introducción", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            "              i.e. : Harry Paula Maia", "Formato de introducción", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void infoPictureBox_cons3_Click(object sender, EventArgs e)
@@ -190,6 +159,15 @@ namespace WindowsFormsApplication1
             "             i.e. : 11/5/2021", "Formato de introducción", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
+        private void returnbtn_Click(object sender, EventArgs e)
+        {
+            DelegateRESETTEXTS del = new DelegateRESETTEXTS(RESETTEXTS);
+            playertxt.Invoke(del);
+            this.PlayerList.Clear();
+            this.ResultsList.Clear();
+            this.GamesList.Clear();
+            this.Close();
+        }
 
         ////////////////////////////////////////////////////    DELEGATES     //////////////////////////////////////////////////////////////////////////////
 
@@ -231,6 +209,14 @@ namespace WindowsFormsApplication1
             }
         }
 
+        delegate void DelegateRESETTEXTS();
+
+        public void RESETTEXTS()
+        {
+            this.playertxt.Text = null;
+            this.date1.Text = null;
+            this.date2.Text = null;
+        }
 
 
 
@@ -239,6 +225,44 @@ namespace WindowsFormsApplication1
 
 
         /*
+         * 
+        //RowCount = rows;
+        jugadoresGrid.ColumnCount = 3;
+        jugadoresGrid.RowHeadersVisible = false;
+        jugadoresGrid.ColumnHeadersDefaultCellStyle.BackColor = Color.Black;
+        jugadoresGrid.ColumnHeadersDefaultCellStyle.ForeColor = Color.DarkOrange;
+        jugadoresGrid.Columns[0].HeaderText = "ID";
+        jugadoresGrid.Columns[1].HeaderText = "NAME";
+        jugadoresGrid.Columns[2].HeaderText = "PASSWORD";
+
+        jugadoresGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+        //RowCount = rows;
+        serversGrid.ColumnCount = 2;
+        serversGrid.RowHeadersVisible = false;
+        serversGrid.ColumnHeadersDefaultCellStyle.BackColor = Color.Black;
+        serversGrid.ColumnHeadersDefaultCellStyle.ForeColor = Color.DarkOrange;
+        serversGrid.Columns[0].HeaderText = "ID";
+        serversGrid.Columns[1].HeaderText = "HOST";
+
+        serversGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+        //RowCount = rows;
+        partidasGrid.ColumnCount = 8;
+        partidasGrid.RowHeadersVisible = false;
+        partidasGrid.ColumnHeadersDefaultCellStyle.BackColor = Color.Black;
+        partidasGrid.ColumnHeadersDefaultCellStyle.ForeColor = Color.DarkOrange;
+        partidasGrid.Columns[0].HeaderText = "PLAYER 1";
+        partidasGrid.Columns[1].HeaderText = "PLAYER 2";
+        partidasGrid.Columns[2].HeaderText = "PLAYER 3";
+        partidasGrid.Columns[3].HeaderText = "PLAYER 4";
+        partidasGrid.Columns[4].HeaderText = "PLAYER 5";
+        partidasGrid.Columns[5].HeaderText = "HOST";
+        partidasGrid.Columns[6].HeaderText = "DATE";
+        partidasGrid.Columns[7].HeaderText = "MINIGAME";
+
+        partidasGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
         public void SetBD(string BD)
         {
             this.BaseDades = BD;
