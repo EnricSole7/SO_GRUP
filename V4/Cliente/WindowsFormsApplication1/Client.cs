@@ -25,6 +25,8 @@ namespace WindowsFormsApplication1
 
         string invitation;
 
+        Stats stats = new Stats();
+
         //STATE CHECKS
         string ServerState;
         bool JoinClick = false;
@@ -42,7 +44,7 @@ namespace WindowsFormsApplication1
         //private static IPAddress direc = IPAddress.Parse("10.4.119.5");
         //private static IPEndPoint ipep = new IPEndPoint(direc, 50080);
         private static IPAddress direc = IPAddress.Parse("192.168.56.102");
-        private static IPEndPoint ipep = new IPEndPoint(direc, 9091);
+        private static IPEndPoint ipep = new IPEndPoint(direc, 9092);
 
         public Client()
         {
@@ -53,15 +55,14 @@ namespace WindowsFormsApplication1
             //this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             //this.Bounds = Screen.PrimaryScreen.WorkingArea;
 
-            database.Enabled = false;
             createGAME.Enabled = false;
             joinGame.Enabled = false;
             statsbtn.Enabled = false;
             DEV_closebtn.Visible = false;
             logout.Visible = false;
+            unregisterbtn.Visible = false;
             welcomelbl.Visible = false;
-            returnbtn.Visible = false;
-            statsBox.Visible = false;
+            
             USER = null;
 
             playersonlineGrid.ColumnCount = 1;
@@ -170,36 +171,22 @@ namespace WindowsFormsApplication1
 
                                 break;
                             }
-                        case 3:  //CONSULTA 1
+                        case 3:  //CONSULTA 1 (Llista jugadors amb els que he jugat alguna partida)
                             {
-                                response = parts[1].Split(',')[0];
-                                MessageBox.Show(response, "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                DelegateREFRESHCONSULTAS del = new DelegateREFRESHCONSULTAS(REFRESHCONSULTAS);
-                                name_txt.Invoke(del);
+                                string llistajugadors = parts[1].Split(',')[0];
+                                stats.SetResponse(llistajugadors, 1);
                                 break;
                             }
-                        case 4:  //CONSULTA 2
+                        case 4:  //CONSULTA 2 (Resultat partides amb un jugador determinat)
                             {
-                                response = parts[1].Split(',')[0];
-                                MessageBox.Show(response, "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                DelegateREFRESHCONSULTAS del = new DelegateREFRESHCONSULTAS(REFRESHCONSULTAS);
-                                date_txt.Invoke(del);
+                                string llistaresultats = parts[1].Split(',')[0];
+                                stats.SetResponse(llistaresultats, 2);
                                 break;
                             }
-                        case 5:  //CONSULTA 3
+                        case 5:  //CONSULTA 3 (Llista partides en un rang de temps determinat)
                             {
-                                response = parts[1].Split(',')[0];
-                                MessageBox.Show(response, "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                DelegateREFRESHCONSULTAS del = new DelegateREFRESHCONSULTAS(REFRESHCONSULTAS);
-                                server_txt.Invoke(del);
-                                break;
-                            }
-                        case 100:    //SHOW DATABASE
-                            {
-                                response = parts[1].Split(',')[0];
-                                DataBase formDB = new DataBase();
-                                formDB.SetBD(response);
-                                formDB.ShowDialog();
+                                string llistapartides = parts[1].Split(',')[0];
+                                stats.SetResponse(llistapartides, 3);
                                 break;
                             }
                         case 99: //NOTIFICACIO CONECTATS/DESCONNECTATS
@@ -345,17 +332,8 @@ namespace WindowsFormsApplication1
                                     GAME = game_info;
                                     OTHERPLAYERS = otherplayers;
 
-                                    //MessageBox.Show("OK", "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-
                                     Joining = true;
 
-                                    //creem i inicialitzem el thread corresponent a aquest client per la partida a la que s'uneix (segons el numero de form del que convida)
-                                    /*
-                                    if (GameWndwForms[NForm] != null)
-                                    {
-                                        MessageBox.Show("A new game has started in one of your current lobbys", "Client", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
-                                    }
-                                    */
                                     ThreadStart thGame = delegate { STARTGAME(NForm); };
                                     game = new Thread(thGame);
                                     game.Start();
@@ -663,7 +641,7 @@ namespace WindowsFormsApplication1
             //this.Close();
         }
 
-        ////////////////////////////////////////////////////    LOGIN, LOGOUT, REGISTER     ////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////    LOGIN, LOGOUT, REGISTER, UNREGISTER    ////////////////////////////////////////////////////////////////////////
         private void logout_Click(object sender, EventArgs e)
         {
             string mensaje = "0/1/" + USER;
@@ -687,7 +665,7 @@ namespace WindowsFormsApplication1
             }
             else
             {
-                MessageBox.Show("Introduce Valid Values", "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("Introduce valid values", "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
 
@@ -698,76 +676,31 @@ namespace WindowsFormsApplication1
 
             if (((nombre != null) && (nombre != "")) && ((password != null) && (password != "")))
             {
-                string mensaje_usuario = "2/" + nombre + "/" + password;
-                // Enviamos al servidor el nombre tecleado
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje_usuario);
-                server.Send(msg);
+                if ((nombre.Contains(" ")) || (password.Contains(" ")))
+                {
+                    MessageBox.Show("Introduce credentials without using a blank space, please", "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
+                else
+                {
+                    string mensaje_usuario = "2/" + nombre + "/" + password;
+                    // Enviamos al servidor el nombre tecleado
+                    byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje_usuario);
+                    server.Send(msg);
+                }
             }
             else
             {
-                MessageBox.Show("Introduce Valid Values", "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("Introduce valid values", "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
 
-        ////////////////////////////////////////////////////    PETICIONS STATS     //////////////////////////////////////////////////////////////////////////////
-        private void Enviar_nombre_Click(object sender, EventArgs e)
+        private void unregisterbtn_Click(object sender, EventArgs e)
         {
-            string name = name_txt.Text;
-
-            if (name != null)
-            {
-                string mensaje_usuario = "3/" + name;
-                // Enviamos al servidor el nombre tecleado
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje_usuario);
-                server.Send(msg);
-            }
-            else
-            {
-                MessageBox.Show("Introduce Valid Values", "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            }
-        }
-
-        private void Enviar_fecha_Click(object sender, EventArgs e)
-        {
-            string date = date_txt.Text;
-
-            if (date != null)
-            {
-                string mensaje_usuario = "4/" + date;
-                // Enviamos al servidor el nombre tecleado
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje_usuario);
-                server.Send(msg);
-            }
-            else
-            {
-                MessageBox.Show("Introduce Valid Values", "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            }
-        }
-
-        private void Enviar_server_Click(object sender, EventArgs e)
-        {
-            string servr = server_txt.Text;
-
-            if (servr != null)
-            {
-                string mensaje_usuario = "5/" + servr;
-                // Enviamos al servidor el nombre tecleado
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje_usuario);
-                server.Send(msg);
-            }
-            else
-            {
-                MessageBox.Show("Introduce Valid Values", "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            }
-        }
-
-        ////////////////////////////////////////////////////    DATABASE     //////////////////////////////////////////////////////////////////////////////////
-        private void database_Click(object sender, EventArgs e)
-        {
-            string mensaje_usuario = "100/";
-            // Enviamos al servidor el nombre i contraseña introducidos
-            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje_usuario);
+            string mensaje = "0/2/" + USER;
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
+
+            Invitations.Clear();
         }
 
         ////////////////////////////////////////////////////    CREATE GAME & THREAD     ///////////////////////////////////////////////////////////////////////
@@ -808,6 +741,9 @@ namespace WindowsFormsApplication1
 
             //quan acabi el joc:
             GameWndwForms.RemoveAt(numform);
+
+            DelegateDISABLEJOIN del = new DelegateDISABLEJOIN(DISABLEJOIN);
+            joinGame.Invoke(del);
         }
 
         ////////////////////////////////////////////////////    JOIN GAME     ////////////////////////////////////////////////////////////////////////////////
@@ -886,17 +822,9 @@ namespace WindowsFormsApplication1
 
         private void statsbtn_Click(object sender, EventArgs e)
         {
-            DelegateSHOWSTATS del = new DelegateSHOWSTATS(SHOWSTATS);
-            statsBox.Invoke(del);
+            stats.LoadStats(USER, server);
+            stats.ShowDialog();
         }
-
-        private void returnbtn_Click(object sender, EventArgs e)
-        {
-            DelegateQUITSTATS del = new DelegateQUITSTATS(QUITSTATS);
-            statsBox.Invoke(del);
-        }
-
-
 
         ////////////////////////////////////////////////////    DELEGATES     //////////////////////////////////////////////////
 
@@ -906,8 +834,8 @@ namespace WindowsFormsApplication1
         {
             welcomelbl.Text = "WELCOME " + name;
             welcomelbl.Visible = true;
-            database.Enabled = true;
             logout.Visible = true;
+            unregisterbtn.Visible = true;
             statsbtn.Enabled = true;
             createGAME.Enabled = true;
             playersonlineGrid.Enabled = true;
@@ -934,8 +862,8 @@ namespace WindowsFormsApplication1
         {
             welcomelbl.Visible = false;
             welcomelbl.Text = null;
-            database.Enabled = false;
             logout.Visible = false;
+            unregisterbtn.Visible = false;
             statsbtn.Enabled = false;
             createGAME.Enabled = false;
             joinGame.Enabled = false;
@@ -948,15 +876,13 @@ namespace WindowsFormsApplication1
             namelbl.Visible = true;
             pswdlbl.Visible = true;
         }
-
-        delegate void DelegateREFRESHCONSULTAS();
-        public void REFRESHCONSULTAS()
+        
+        delegate void DelegateDISABLEJOIN();
+        public void DISABLEJOIN()
         {
-            name_txt.Text = null;
-            date_txt.Text = null;
-            server_txt.Text = null;
+            joinGame.Enabled = false;
         }
-
+        
         delegate void DelegateOFFLINEnot();
         public void OFFLINEnot()
         {
@@ -1034,15 +960,12 @@ namespace WindowsFormsApplication1
         {
             createGAME.Visible = false;
             joinGame.Visible = false;
-            database.Visible = false;
             statsbtn.Visible = false;
             Desconectar.Visible = false;
             playersonlineGrid.Visible = false;
             playersonlinelbl.Visible = false;
             invitationsGrid.Visible = false;
             invitationslbl.Visible = false;
-            returnbtn.Visible = true;
-            statsBox.Visible = true;
         }
 
         delegate void DelegateQUITSTATS();
@@ -1050,15 +973,12 @@ namespace WindowsFormsApplication1
         {
             createGAME.Visible = true;
             joinGame.Visible = true;
-            database.Visible = true;
             statsbtn.Visible = true;
             Desconectar.Visible = true;
             playersonlineGrid.Visible = true;
             playersonlinelbl.Visible = true;
             invitationsGrid.Visible = true;
             invitationslbl.Visible = true;
-            returnbtn.Visible = false;
-            statsBox.Visible = false;
         }
 
 
@@ -1199,6 +1119,6 @@ namespace WindowsFormsApplication1
             MessageBox.Show(user_conn + "\nUsers Online: " + list, "Client", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
         */
-        
+
     }
 }

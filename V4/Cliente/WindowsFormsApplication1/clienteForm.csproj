@@ -59,11 +59,11 @@
     <Compile Include="Client.Designer.cs">
       <DependentUpon>Client.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataBase.cs">
+    <Compile Include="Stats.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DataBase.Designer.cs">
-      <DependentUpon>DataBase.cs</DependentUpon>
+    <Compile Include="Stats.Designer.cs">
+      <DependentUpon>Stats.cs</DependentUpon>
     </Compile>
     <Compile Include="GameWndw.cs">
       <SubType>Form</SubType>
@@ -76,8 +76,8 @@
     <EmbeddedResource Include="Client.resx">
       <DependentUpon>Client.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataBase.resx">
-      <DependentUpon>DataBase.cs</DependentUpon>
+    <EmbeddedResource Include="Stats.resx">
+      <DependentUpon>Stats.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GameWndw.resx">
       <DependentUpon>GameWndw.cs</DependentUpon>

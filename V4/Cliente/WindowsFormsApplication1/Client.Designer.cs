@@ -28,27 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.label2 = new System.Windows.Forms.Label();
-            this.name_txt = new System.Windows.Forms.TextBox();
-            this.Enviar_nombre = new System.Windows.Forms.Button();
-            this.statsBox = new System.Windows.Forms.GroupBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.Enviar_server = new System.Windows.Forms.Button();
-            this.server_txt = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.Enviar_fecha = new System.Windows.Forms.Button();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.date_txt = new System.Windows.Forms.TextBox();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle25 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle26 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle27 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle28 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle29 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle30 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle31 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle32 = new System.Windows.Forms.DataGridViewCellStyle();
             this.Desconectar = new System.Windows.Forms.Button();
             this.login = new System.Windows.Forms.Button();
             this.user_lbl = new System.Windows.Forms.Label();
@@ -57,7 +44,6 @@
             this.pswdBox = new System.Windows.Forms.TextBox();
             this.namelbl = new System.Windows.Forms.Label();
             this.pswdlbl = new System.Windows.Forms.Label();
-            this.database = new System.Windows.Forms.Button();
             this.welcomelbl = new System.Windows.Forms.Label();
             this.logout = new System.Windows.Forms.Button();
             this.conectserver = new System.Windows.Forms.Button();
@@ -67,162 +53,20 @@
             this.DEV_closebtn = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.numplayerslbl = new System.Windows.Forms.Label();
-            this.numgameslbl = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.labelTitulo = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.statsbtn = new System.Windows.Forms.Button();
-            this.returnbtn = new System.Windows.Forms.Button();
             this.playersonlineGrid = new System.Windows.Forms.DataGridView();
             this.invitationsGrid = new System.Windows.Forms.DataGridView();
             this.invitationslbl = new System.Windows.Forms.Label();
             this.playersonlinelbl = new System.Windows.Forms.Label();
-            this.statsBox.SuspendLayout();
+            this.unregisterbtn = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.playersonlineGrid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.invitationsGrid)).BeginInit();
             this.SuspendLayout();
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(22, 37);
-            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(70, 25);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "NAME";
-            // 
-            // name_txt
-            // 
-            this.name_txt.Location = new System.Drawing.Point(100, 37);
-            this.name_txt.Margin = new System.Windows.Forms.Padding(4);
-            this.name_txt.Name = "name_txt";
-            this.name_txt.Size = new System.Drawing.Size(219, 22);
-            this.name_txt.TabIndex = 3;
-            // 
-            // Enviar_nombre
-            // 
-            this.Enviar_nombre.Location = new System.Drawing.Point(327, 37);
-            this.Enviar_nombre.Margin = new System.Windows.Forms.Padding(4);
-            this.Enviar_nombre.Name = "Enviar_nombre";
-            this.Enviar_nombre.Size = new System.Drawing.Size(100, 24);
-            this.Enviar_nombre.TabIndex = 5;
-            this.Enviar_nombre.Text = "SEND";
-            this.Enviar_nombre.UseVisualStyleBackColor = true;
-            this.Enviar_nombre.Click += new System.EventHandler(this.Enviar_nombre_Click);
-            // 
-            // statsBox
-            // 
-            this.statsBox.BackColor = System.Drawing.SystemColors.Control;
-            this.statsBox.Controls.Add(this.label7);
-            this.statsBox.Controls.Add(this.Enviar_server);
-            this.statsBox.Controls.Add(this.server_txt);
-            this.statsBox.Controls.Add(this.label6);
-            this.statsBox.Controls.Add(this.label5);
-            this.statsBox.Controls.Add(this.Enviar_fecha);
-            this.statsBox.Controls.Add(this.label4);
-            this.statsBox.Controls.Add(this.label3);
-            this.statsBox.Controls.Add(this.date_txt);
-            this.statsBox.Controls.Add(this.label2);
-            this.statsBox.Controls.Add(this.Enviar_nombre);
-            this.statsBox.Controls.Add(this.name_txt);
-            this.statsBox.Location = new System.Drawing.Point(340, 116);
-            this.statsBox.Margin = new System.Windows.Forms.Padding(4);
-            this.statsBox.Name = "statsBox";
-            this.statsBox.Padding = new System.Windows.Forms.Padding(4);
-            this.statsBox.Size = new System.Drawing.Size(459, 251);
-            this.statsBox.TabIndex = 6;
-            this.statsBox.TabStop = false;
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(29, 215);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(310, 16);
-            this.label7.TabIndex = 17;
-            this.label7.Text = "Returns the player/s that have played on this server";
-            // 
-            // Enviar_server
-            // 
-            this.Enviar_server.Location = new System.Drawing.Point(327, 188);
-            this.Enviar_server.Margin = new System.Windows.Forms.Padding(4);
-            this.Enviar_server.Name = "Enviar_server";
-            this.Enviar_server.Size = new System.Drawing.Size(100, 24);
-            this.Enviar_server.TabIndex = 16;
-            this.Enviar_server.Text = "SEND";
-            this.Enviar_server.UseVisualStyleBackColor = true;
-            this.Enviar_server.Click += new System.EventHandler(this.Enviar_server_Click);
-            // 
-            // server_txt
-            // 
-            this.server_txt.Location = new System.Drawing.Point(122, 189);
-            this.server_txt.Margin = new System.Windows.Forms.Padding(4);
-            this.server_txt.Name = "server_txt";
-            this.server_txt.Size = new System.Drawing.Size(197, 22);
-            this.server_txt.TabIndex = 15;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(29, 140);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(303, 16);
-            this.label6.TabIndex = 14;
-            this.label6.Text = "Returns the minigame that was played on this date";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(22, 189);
-            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(92, 25);
-            this.label5.TabIndex = 13;
-            this.label5.Text = "SERVER";
-            // 
-            // Enviar_fecha
-            // 
-            this.Enviar_fecha.Location = new System.Drawing.Point(327, 111);
-            this.Enviar_fecha.Margin = new System.Windows.Forms.Padding(4);
-            this.Enviar_fecha.Name = "Enviar_fecha";
-            this.Enviar_fecha.Size = new System.Drawing.Size(100, 24);
-            this.Enviar_fecha.TabIndex = 8;
-            this.Enviar_fecha.Text = "SEND";
-            this.Enviar_fecha.UseVisualStyleBackColor = true;
-            this.Enviar_fecha.Click += new System.EventHandler(this.Enviar_fecha_Click);
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(29, 62);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(308, 16);
-            this.label4.TabIndex = 12;
-            this.label4.Text = "Returns the location/s where this player has played\r\n";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(22, 111);
-            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(66, 25);
-            this.label3.TabIndex = 11;
-            this.label3.Text = "DATE";
-            // 
-            // date_txt
-            // 
-            this.date_txt.Location = new System.Drawing.Point(100, 114);
-            this.date_txt.Margin = new System.Windows.Forms.Padding(4);
-            this.date_txt.Name = "date_txt";
-            this.date_txt.Size = new System.Drawing.Size(219, 22);
-            this.date_txt.TabIndex = 10;
             // 
             // Desconectar
             // 
@@ -301,17 +145,6 @@
             this.pswdlbl.TabIndex = 14;
             this.pswdlbl.Text = "Password:";
             // 
-            // database
-            // 
-            this.database.Location = new System.Drawing.Point(340, 217);
-            this.database.Margin = new System.Windows.Forms.Padding(4);
-            this.database.Name = "database";
-            this.database.Size = new System.Drawing.Size(130, 50);
-            this.database.TabIndex = 15;
-            this.database.Text = "SHOW DATABASE";
-            this.database.UseVisualStyleBackColor = true;
-            this.database.Click += new System.EventHandler(this.database_Click);
-            // 
             // welcomelbl
             // 
             this.welcomelbl.AutoSize = true;
@@ -356,7 +189,7 @@
             // 
             // createGAME
             // 
-            this.createGAME.Location = new System.Drawing.Point(340, 119);
+            this.createGAME.Location = new System.Drawing.Point(340, 121);
             this.createGAME.Margin = new System.Windows.Forms.Padding(4);
             this.createGAME.Name = "createGAME";
             this.createGAME.Size = new System.Drawing.Size(130, 39);
@@ -367,7 +200,7 @@
             // 
             // joinGame
             // 
-            this.joinGame.Location = new System.Drawing.Point(340, 170);
+            this.joinGame.Location = new System.Drawing.Point(340, 190);
             this.joinGame.Margin = new System.Windows.Forms.Padding(4);
             this.joinGame.Name = "joinGame";
             this.joinGame.Size = new System.Drawing.Size(130, 39);
@@ -389,8 +222,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.unregisterbtn);
             this.groupBox1.Controls.Add(this.numplayerslbl);
-            this.groupBox1.Controls.Add(this.numgameslbl);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.user_lbl);
             this.groupBox1.Controls.Add(this.login);
@@ -411,19 +244,10 @@
             // 
             this.numplayerslbl.AutoSize = true;
             this.numplayerslbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.numplayerslbl.Location = new System.Drawing.Point(16, 315);
+            this.numplayerslbl.Location = new System.Drawing.Point(16, 265);
             this.numplayerslbl.Name = "numplayerslbl";
             this.numplayerslbl.Size = new System.Drawing.Size(0, 20);
             this.numplayerslbl.TabIndex = 28;
-            // 
-            // numgameslbl
-            // 
-            this.numgameslbl.AutoSize = true;
-            this.numgameslbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.numgameslbl.Location = new System.Drawing.Point(16, 271);
-            this.numgameslbl.Name = "numgameslbl";
-            this.numgameslbl.Size = new System.Drawing.Size(0, 20);
-            this.numgameslbl.TabIndex = 27;
             // 
             // label1
             // 
@@ -442,10 +266,10 @@
             this.labelTitulo.Font = new System.Drawing.Font("Brandish", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelTitulo.Location = new System.Drawing.Point(326, 12);
             this.labelTitulo.Name = "labelTitulo";
-            this.labelTitulo.Size = new System.Drawing.Size(386, 81);
+            this.labelTitulo.Size = new System.Drawing.Size(323, 81);
             this.labelTitulo.TabIndex = 25;
             this.labelTitulo.Tag = "04";
-            this.labelTitulo.Text = "PLAY COOP";
+            this.labelTitulo.Text = "SYMBOLS";
             // 
             // label11
             // 
@@ -469,7 +293,7 @@
             // 
             // statsbtn
             // 
-            this.statsbtn.Location = new System.Drawing.Point(340, 277);
+            this.statsbtn.Location = new System.Drawing.Point(340, 262);
             this.statsbtn.Margin = new System.Windows.Forms.Padding(4);
             this.statsbtn.Name = "statsbtn";
             this.statsbtn.Size = new System.Drawing.Size(130, 39);
@@ -478,59 +302,48 @@
             this.statsbtn.UseVisualStyleBackColor = true;
             this.statsbtn.Click += new System.EventHandler(this.statsbtn_Click);
             // 
-            // returnbtn
-            // 
-            this.returnbtn.Location = new System.Drawing.Point(817, 320);
-            this.returnbtn.Margin = new System.Windows.Forms.Padding(4);
-            this.returnbtn.Name = "returnbtn";
-            this.returnbtn.Size = new System.Drawing.Size(130, 39);
-            this.returnbtn.TabIndex = 33;
-            this.returnbtn.Text = "RETURN";
-            this.returnbtn.UseVisualStyleBackColor = true;
-            this.returnbtn.Click += new System.EventHandler(this.returnbtn_Click);
-            // 
             // playersonlineGrid
             // 
             this.playersonlineGrid.AllowUserToAddRows = false;
             this.playersonlineGrid.AllowUserToDeleteRows = false;
             this.playersonlineGrid.AllowUserToResizeColumns = false;
             this.playersonlineGrid.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.MenuText;
-            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.MenuText;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.White;
-            this.playersonlineGrid.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle25.BackColor = System.Drawing.SystemColors.MenuText;
+            dataGridViewCellStyle25.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle25.SelectionBackColor = System.Drawing.SystemColors.MenuText;
+            dataGridViewCellStyle25.SelectionForeColor = System.Drawing.Color.White;
+            this.playersonlineGrid.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle25;
             this.playersonlineGrid.BackgroundColor = System.Drawing.SystemColors.MenuText;
             this.playersonlineGrid.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.playersonlineGrid.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.MenuText;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.MenuText;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.playersonlineGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle26.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle26.BackColor = System.Drawing.SystemColors.MenuText;
+            dataGridViewCellStyle26.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle26.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle26.SelectionBackColor = System.Drawing.SystemColors.MenuText;
+            dataGridViewCellStyle26.SelectionForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle26.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.playersonlineGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle26;
             this.playersonlineGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.MenuText;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.MenuText;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.playersonlineGrid.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle27.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle27.BackColor = System.Drawing.SystemColors.MenuText;
+            dataGridViewCellStyle27.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle27.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle27.SelectionBackColor = System.Drawing.SystemColors.MenuText;
+            dataGridViewCellStyle27.SelectionForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle27.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.playersonlineGrid.DefaultCellStyle = dataGridViewCellStyle27;
             this.playersonlineGrid.GridColor = System.Drawing.SystemColors.MenuText;
             this.playersonlineGrid.Location = new System.Drawing.Point(761, 55);
             this.playersonlineGrid.Name = "playersonlineGrid";
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.MenuText;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.MenuText;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.playersonlineGrid.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle28.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle28.BackColor = System.Drawing.SystemColors.MenuText;
+            dataGridViewCellStyle28.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle28.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle28.SelectionBackColor = System.Drawing.SystemColors.MenuText;
+            dataGridViewCellStyle28.SelectionForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle28.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.playersonlineGrid.RowHeadersDefaultCellStyle = dataGridViewCellStyle28;
             this.playersonlineGrid.RowHeadersVisible = false;
             this.playersonlineGrid.RowHeadersWidth = 51;
             this.playersonlineGrid.RowTemplate.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
@@ -548,42 +361,42 @@
             this.invitationsGrid.AllowUserToDeleteRows = false;
             this.invitationsGrid.AllowUserToResizeColumns = false;
             this.invitationsGrid.AllowUserToResizeRows = false;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.MenuText;
-            dataGridViewCellStyle5.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.MenuText;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.Color.White;
-            this.invitationsGrid.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle29.BackColor = System.Drawing.SystemColors.MenuText;
+            dataGridViewCellStyle29.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle29.SelectionBackColor = System.Drawing.SystemColors.MenuText;
+            dataGridViewCellStyle29.SelectionForeColor = System.Drawing.Color.White;
+            this.invitationsGrid.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle29;
             this.invitationsGrid.BackgroundColor = System.Drawing.SystemColors.MenuText;
             this.invitationsGrid.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.invitationsGrid.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.MenuText;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle6.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.MenuText;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.invitationsGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle30.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle30.BackColor = System.Drawing.SystemColors.MenuText;
+            dataGridViewCellStyle30.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle30.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle30.SelectionBackColor = System.Drawing.SystemColors.MenuText;
+            dataGridViewCellStyle30.SelectionForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle30.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.invitationsGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle30;
             this.invitationsGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.MenuText;
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle7.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.MenuText;
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.invitationsGrid.DefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle31.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle31.BackColor = System.Drawing.SystemColors.MenuText;
+            dataGridViewCellStyle31.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle31.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle31.SelectionBackColor = System.Drawing.SystemColors.MenuText;
+            dataGridViewCellStyle31.SelectionForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle31.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.invitationsGrid.DefaultCellStyle = dataGridViewCellStyle31;
             this.invitationsGrid.GridColor = System.Drawing.SystemColors.MenuText;
             this.invitationsGrid.Location = new System.Drawing.Point(761, 216);
             this.invitationsGrid.Name = "invitationsGrid";
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.MenuText;
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle8.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.MenuText;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.invitationsGrid.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle32.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle32.BackColor = System.Drawing.SystemColors.MenuText;
+            dataGridViewCellStyle32.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle32.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle32.SelectionBackColor = System.Drawing.SystemColors.MenuText;
+            dataGridViewCellStyle32.SelectionForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle32.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.invitationsGrid.RowHeadersDefaultCellStyle = dataGridViewCellStyle32;
             this.invitationsGrid.RowHeadersVisible = false;
             this.invitationsGrid.RowHeadersWidth = 51;
             this.invitationsGrid.RowTemplate.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
@@ -616,16 +429,26 @@
             this.playersonlinelbl.TabIndex = 37;
             this.playersonlinelbl.Text = "ONLINE";
             // 
+            // unregisterbtn
+            // 
+            this.unregisterbtn.Location = new System.Drawing.Point(74, 308);
+            this.unregisterbtn.Margin = new System.Windows.Forms.Padding(4);
+            this.unregisterbtn.Name = "unregisterbtn";
+            this.unregisterbtn.Size = new System.Drawing.Size(130, 37);
+            this.unregisterbtn.TabIndex = 29;
+            this.unregisterbtn.Text = "UNREGISTER";
+            this.unregisterbtn.UseVisualStyleBackColor = true;
+            this.unregisterbtn.Click += new System.EventHandler(this.unregisterbtn_Click);
+            // 
             // Client
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(960, 397);
+            this.ClientSize = new System.Drawing.Size(960, 624);
             this.Controls.Add(this.playersonlinelbl);
             this.Controls.Add(this.invitationslbl);
             this.Controls.Add(this.invitationsGrid);
             this.Controls.Add(this.playersonlineGrid);
-            this.Controls.Add(this.returnbtn);
             this.Controls.Add(this.statsbtn);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label11);
@@ -636,16 +459,12 @@
             this.Controls.Add(this.createGAME);
             this.Controls.Add(this.offlinelbl);
             this.Controls.Add(this.conectserver);
-            this.Controls.Add(this.database);
             this.Controls.Add(this.Desconectar);
-            this.Controls.Add(this.statsBox);
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Client";
             this.Text = "Client";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Client_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
-            this.statsBox.ResumeLayout(false);
-            this.statsBox.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.playersonlineGrid)).EndInit();
@@ -656,20 +475,7 @@
         }
 
         #endregion
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox name_txt;
-        private System.Windows.Forms.Button Enviar_nombre;
-        private System.Windows.Forms.GroupBox statsBox;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox date_txt;
         private System.Windows.Forms.Button Desconectar;
-        private System.Windows.Forms.Button Enviar_fecha;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Button Enviar_server;
-        private System.Windows.Forms.TextBox server_txt;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button login;
         private System.Windows.Forms.Label user_lbl;
         private System.Windows.Forms.Button register;
@@ -677,7 +483,6 @@
         private System.Windows.Forms.TextBox pswdBox;
         private System.Windows.Forms.Label namelbl;
         private System.Windows.Forms.Label pswdlbl;
-        private System.Windows.Forms.Button database;
         private System.Windows.Forms.Label welcomelbl;
         private System.Windows.Forms.Button logout;
         private System.Windows.Forms.Button conectserver;
@@ -687,17 +492,16 @@
         private System.Windows.Forms.Button DEV_closebtn;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label numgameslbl;
         private System.Windows.Forms.Label labelTitulo;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Button statsbtn;
-        private System.Windows.Forms.Button returnbtn;
         private System.Windows.Forms.Label numplayerslbl;
         private System.Windows.Forms.DataGridView playersonlineGrid;
         private System.Windows.Forms.DataGridView invitationsGrid;
         private System.Windows.Forms.Label invitationslbl;
         private System.Windows.Forms.Label playersonlinelbl;
+        private System.Windows.Forms.Button unregisterbtn;
     }
 }
 

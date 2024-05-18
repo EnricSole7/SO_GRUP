@@ -42,6 +42,11 @@ CREATE TABLE Connected(
 conectado VARCHAR(20)
 )ENGINE=innoDB;
 
+CREATE TABLE Months(
+name VARCHAR(40),
+referencenumber INTEGER
+)ENGINE=innoDB;
+
 INSERT INTO Player VALUES (1, 'HOST','DEV');
 INSERT INTO Player VALUES (2, 'Maria','M12aria34');
 INSERT INTO Player VALUES (3, 'Lucas','L012345');
@@ -56,11 +61,21 @@ INSERT INTO Server VALUES (4, 'Tarragona');
 
 
 INSERT INTO Game  VALUES (1,1,1,1,1,1, '10/11/2023',100,1,1,-1,-1,-1,-1,-1);
-/*
-INSERT INTO Game  VALUES (1,2,2, '04/12/2023','SYMBOLS');
-INSERT INTO Game  VALUES (1,4,4, '12/01/2024','SYMBOLS');
-INSERT INTO Game  VALUES (2,3,4, '29/02/2024','MAZE');
-INSERT INTO Game  VALUES (2,4,2, '07/06/2023','MAZE');
-INSERT INTO Game  VALUES (4,3,3, '02/03/2024','TBD');
-INSERT INTO Game  VALUES (3,2,1, '30/01/2024','TBD');
-*/
+
+INSERT INTO Months  VALUES ('Jan', 01);
+INSERT INTO Months  VALUES ('Feb', 02);
+INSERT INTO Months  VALUES ('Mar', 03);
+INSERT INTO Months  VALUES ('Apr', 04);
+INSERT INTO Months  VALUES ('May', 05);
+INSERT INTO Months  VALUES ('Jun', 06);
+INSERT INTO Months  VALUES ('Jul', 07);
+INSERT INTO Months  VALUES ('Aug', 08);
+INSERT INTO Months  VALUES ('Sep', 09);
+INSERT INTO Months  VALUES ('Oct', 10);
+INSERT INTO Months  VALUES ('Nov', 11);
+INSERT INTO Months  VALUES ('Dec', 12);
+
+
+
+
+
