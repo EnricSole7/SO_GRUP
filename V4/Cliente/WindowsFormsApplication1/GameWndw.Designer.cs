@@ -146,6 +146,7 @@
             this.chatGrid = new System.Windows.Forms.DataGridView();
             this.minigameslbl = new System.Windows.Forms.Label();
             this.optionsBox = new System.Windows.Forms.GroupBox();
+            this.infoPictureBox = new System.Windows.Forms.PictureBox();
             this.chatlbl = new System.Windows.Forms.Label();
             this.sendmsgbtn = new System.Windows.Forms.Button();
             this.SetLifes = new System.Windows.Forms.Button();
@@ -153,7 +154,6 @@
             this.roundlbl = new System.Windows.Forms.Label();
             this.timerManager = new System.Windows.Forms.Timer(this.components);
             this.setlifesTxt = new System.Windows.Forms.TextBox();
-            this.infoPictureBox = new System.Windows.Forms.PictureBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.minigameBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.playersonlineGrid)).BeginInit();
@@ -329,7 +329,7 @@
             // 
             this.server_value.AutoSize = true;
             this.server_value.Font = new System.Drawing.Font("Barlow Condensed", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.server_value.Location = new System.Drawing.Point(127, 37);
+            this.server_value.Location = new System.Drawing.Point(124, 48);
             this.server_value.Name = "server_value";
             this.server_value.Size = new System.Drawing.Size(0, 33);
             this.server_value.TabIndex = 22;
@@ -1466,6 +1466,18 @@
             this.optionsBox.TabIndex = 34;
             this.optionsBox.TabStop = false;
             // 
+            // infoPictureBox
+            // 
+            this.infoPictureBox.BackColor = System.Drawing.Color.Transparent;
+            this.infoPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("infoPictureBox.Image")));
+            this.infoPictureBox.Location = new System.Drawing.Point(126, 722);
+            this.infoPictureBox.Name = "infoPictureBox";
+            this.infoPictureBox.Size = new System.Drawing.Size(40, 39);
+            this.infoPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.infoPictureBox.TabIndex = 70;
+            this.infoPictureBox.TabStop = false;
+            this.infoPictureBox.Click += new System.EventHandler(this.infoPictureBox_Click);
+            // 
             // chatlbl
             // 
             this.chatlbl.AutoSize = true;
@@ -1545,18 +1557,6 @@
             this.setlifesTxt.Name = "setlifesTxt";
             this.setlifesTxt.Size = new System.Drawing.Size(147, 34);
             this.setlifesTxt.TabIndex = 69;
-            // 
-            // infoPictureBox
-            // 
-            this.infoPictureBox.BackColor = System.Drawing.Color.Transparent;
-            this.infoPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("infoPictureBox.Image")));
-            this.infoPictureBox.Location = new System.Drawing.Point(126, 722);
-            this.infoPictureBox.Name = "infoPictureBox";
-            this.infoPictureBox.Size = new System.Drawing.Size(40, 39);
-            this.infoPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.infoPictureBox.TabIndex = 70;
-            this.infoPictureBox.TabStop = false;
-            this.infoPictureBox.Click += new System.EventHandler(this.infoPictureBox_Click);
             // 
             // groupBox1
             // 

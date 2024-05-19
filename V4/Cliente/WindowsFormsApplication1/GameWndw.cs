@@ -970,7 +970,7 @@ namespace WindowsFormsApplication1
         private void infoPictureBox_Click(object sender, EventArgs e)
         {
             MessageBox.Show("" +
-            "                   Game Advice:\n" +
+            "                       Game Advice:\n" +
             "     If you exit the game, your game save will be lost\n" +
             "  Ask the host to end the game to keep all the information", "Formato de introducción", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }

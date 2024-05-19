@@ -53,6 +53,7 @@
             this.joinGame = new System.Windows.Forms.Button();
             this.DEV_closebtn = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.unregisterbtn = new System.Windows.Forms.Button();
             this.numplayerslbl = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -64,7 +65,6 @@
             this.invitationsGrid = new System.Windows.Forms.DataGridView();
             this.invitationslbl = new System.Windows.Forms.Label();
             this.playersonlinelbl = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.playersonlineGrid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.invitationsGrid)).BeginInit();
@@ -259,6 +259,7 @@
             // 
             this.groupBox1.BackColor = System.Drawing.Color.SandyBrown;
             this.groupBox1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("groupBox1.BackgroundImage")));
+            this.groupBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.unregisterbtn);
             this.groupBox1.Controls.Add(this.numplayerslbl);
@@ -277,6 +278,18 @@
             this.groupBox1.Size = new System.Drawing.Size(284, 369);
             this.groupBox1.TabIndex = 24;
             this.groupBox1.TabStop = false;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.BackColor = System.Drawing.Color.Transparent;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.ForeColor = System.Drawing.Color.OrangeRed;
+            this.label2.Location = new System.Drawing.Point(86, 20);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(159, 16);
+            this.label2.TabIndex = 30;
+            this.label2.Text = "___________________";
             // 
             // unregisterbtn
             // 
@@ -488,18 +501,6 @@
             this.playersonlinelbl.Size = new System.Drawing.Size(75, 33);
             this.playersonlinelbl.TabIndex = 37;
             this.playersonlinelbl.Text = "ONLINE";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.BackColor = System.Drawing.Color.Transparent;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.ForeColor = System.Drawing.Color.OrangeRed;
-            this.label2.Location = new System.Drawing.Point(86, 20);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(159, 16);
-            this.label2.TabIndex = 30;
-            this.label2.Text = "___________________";
             // 
             // Client
             // 

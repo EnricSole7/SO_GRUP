@@ -283,21 +283,31 @@ namespace WindowsFormsApplication1
                                     string datos_partida = parts[3].Split(',')[0];
                                     NumForm = Convert.ToInt32(parts[4].Split(',')[0]);
                                     int cont = 0;
-                                    while (j < Invitations.Count)   //mirem si ja hem rebut una invitacio d'aquell jugador
+                                    string invitacio;
+
+                                    if (!GameInvitations.ContainsValue(datos_partida))  //si no hem rebut ja una invitacio d aquesta partida
                                     {
-                                        if (Invitations[j] == inviting)
+                                        while (j < Invitations.Count)   //mirem si ja hem rebut una invitacio d'aquell jugador
                                         {
-                                            cont++;
-                                            string invit_mod = inviting + "#" + cont.ToString();
-                                            Invitations.Add(invit_mod);
-                                            GameInvitations.Add(invit_mod, datos_partida);
+                                            invitacio = Invitations[j];
+                                            if (Invitations[j].Contains("#"))
+                                            {
+                                                invitacio = invitacio.Split('#')[0];
+                                            }
+                                            if (invitacio == inviting)
+                                            {
+                                                cont++;
+                                                string invit_mod = inviting + "#" + cont.ToString();
+                                                Invitations.Add(invit_mod);
+                                                GameInvitations.Add(invit_mod, datos_partida);
+                                            }
+                                            j++;
                                         }
-                                        j++;
-                                    }
-                                    if (cont == 0)  //si es la primera invitacio que rebem del jugador
-                                    {
-                                        Invitations.Add(inviting);
-                                        GameInvitations.Add(inviting, datos_partida);
+                                        if (cont == 0)  //si es la primera invitacio que rebem del jugador
+                                        {
+                                            Invitations.Add(inviting);
+                                            GameInvitations.Add(inviting, datos_partida);
+                                        }
                                     }
                                     
                                     DelegateREFRESHINVITATIONS del = new DelegateREFRESHINVITATIONS(REFRESHINVITATIONS);
@@ -649,6 +659,9 @@ namespace WindowsFormsApplication1
             server.Send(msg);
 
             Invitations.Clear();
+
+            DelegateREFRESHnumCONNECTED del = new DelegateREFRESHnumCONNECTED(REFRESHnumCONNECTED);
+            numplayerslbl.Invoke(del);
         }
 
         private void login_Click(object sender, EventArgs e)
@@ -953,32 +966,6 @@ namespace WindowsFormsApplication1
                 invitationsGrid.Rows[j].Cells[0].Value = Invitations[j];
                 j++;
             }
-        }
-
-        delegate void DelegateSHOWSTATS();
-        public void SHOWSTATS()
-        {
-            createGAME.Visible = false;
-            joinGame.Visible = false;
-            statsbtn.Visible = false;
-            Desconectar.Visible = false;
-            playersonlineGrid.Visible = false;
-            playersonlinelbl.Visible = false;
-            invitationsGrid.Visible = false;
-            invitationslbl.Visible = false;
-        }
-
-        delegate void DelegateQUITSTATS();
-        public void QUITSTATS()
-        {
-            createGAME.Visible = true;
-            joinGame.Visible = true;
-            statsbtn.Visible = true;
-            Desconectar.Visible = true;
-            playersonlineGrid.Visible = true;
-            playersonlinelbl.Visible = true;
-            invitationsGrid.Visible = true;
-            invitationslbl.Visible = true;
         }
 
 
