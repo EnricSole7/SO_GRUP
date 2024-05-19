@@ -309,6 +309,7 @@
             this.playersonlineGrid.DefaultCellStyle = dataGridViewCellStyle1;
             this.playersonlineGrid.Location = new System.Drawing.Point(47, 353);
             this.playersonlineGrid.Name = "playersonlineGrid";
+            this.playersonlineGrid.ReadOnly = true;
             this.playersonlineGrid.RowHeadersWidth = 51;
             this.playersonlineGrid.RowTemplate.Height = 24;
             this.playersonlineGrid.Size = new System.Drawing.Size(201, 245);

@@ -22,8 +22,14 @@ id_j4 INTEGER NOT NULL,
 id_j5 INTEGER NOT NULL,
 id_s  INTEGER NOT NULL,
 fecha VARCHAR(30),
-minijuego VARCHAR(30),
+ronda INTEGER,
 ended INTEGER,
+started INTEGER,
+form_j1 INTEGER,
+form_j2 INTEGER,
+form_j3 INTEGER,
+form_j4 INTEGER,
+form_j5 INTEGER,
 FOREIGN KEY (id_j1) REFERENCES Player(id),
 FOREIGN KEY (id_j2) REFERENCES Player(id),
 FOREIGN KEY (id_j3) REFERENCES Player(id),
@@ -34,6 +40,12 @@ FOREIGN KEY (id_s) REFERENCES Server(id)
 
 CREATE TABLE Connected(
 conectado VARCHAR(20)
+)ENGINE=innoDB;
+
+CREATE TABLE Time(
+month VARCHAR(4),
+referencenumber INTEGER,
+weekday VARCHAR(4)
 )ENGINE=innoDB;
 
 INSERT INTO Player VALUES (1, 'HOST','DEV');
@@ -49,12 +61,23 @@ INSERT INTO Server VALUES (3, 'Sevilla');
 INSERT INTO Server VALUES (4, 'Tarragona');
 
 
-INSERT INTO Game  VALUES (1,1,1,1,1,1, '10/11/2023','TBD',1);
-/*
-INSERT INTO Game  VALUES (1,2,2, '04/12/2023','SYMBOLS');
-INSERT INTO Game  VALUES (1,4,4, '12/01/2024','SYMBOLS');
-INSERT INTO Game  VALUES (2,3,4, '29/02/2024','MAZE');
-INSERT INTO Game  VALUES (2,4,2, '07/06/2023','MAZE');
-INSERT INTO Game  VALUES (4,3,3, '02/03/2024','TBD');
-INSERT INTO Game  VALUES (3,2,1, '30/01/2024','TBD');
-*/
+INSERT INTO Game  VALUES (1,1,1,1,1,1, 'Tue May 11 23:50:00 2021',100,1,1,-1,-1,-1,-1,-1);
+
+INSERT INTO Time  VALUES ('-'  , 00, 'Sun');
+INSERT INTO Time  VALUES ('Jan', 01, 'Mon');
+INSERT INTO Time  VALUES ('Feb', 02, 'Tue');
+INSERT INTO Time  VALUES ('Mar', 03, 'Wed');
+INSERT INTO Time  VALUES ('Apr', 04, 'Thu');
+INSERT INTO Time  VALUES ('May', 05, 'Fri');
+INSERT INTO Time  VALUES ('Jun', 06, 'Sat');
+INSERT INTO Time  VALUES ('Jul', 07, '-');
+INSERT INTO Time  VALUES ('Aug', 08, '-');
+INSERT INTO Time  VALUES ('Sep', 09, '-');
+INSERT INTO Time  VALUES ('Oct', 10, '-');
+INSERT INTO Time  VALUES ('Nov', 11, '-');
+INSERT INTO Time  VALUES ('Dec', 12, '-');
+
+
+
+
+

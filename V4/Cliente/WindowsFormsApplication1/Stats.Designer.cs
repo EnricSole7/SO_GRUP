@@ -68,7 +68,7 @@
             this.date1.Location = new System.Drawing.Point(139, 229);
             this.date1.Margin = new System.Windows.Forms.Padding(4);
             this.date1.Name = "date1";
-            this.date1.Size = new System.Drawing.Size(107, 22);
+            this.date1.Size = new System.Drawing.Size(133, 22);
             this.date1.TabIndex = 15;
             // 
             // label6
@@ -77,9 +77,9 @@
             this.label6.Font = new System.Drawing.Font("Barlow Condensed", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label6.Location = new System.Drawing.Point(52, 159);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(363, 23);
+            this.label6.Size = new System.Drawing.Size(358, 23);
             this.label6.TabIndex = 14;
-            this.label6.Text = "Returns the results of the games you played with this player/s";
+            this.label6.Text = "Returns the games\' results you have played with this player/s";
             // 
             // gameslbl
             // 
@@ -164,10 +164,10 @@
             // 
             // date2
             // 
-            this.date2.Location = new System.Drawing.Point(259, 229);
+            this.date2.Location = new System.Drawing.Point(285, 229);
             this.date2.Margin = new System.Windows.Forms.Padding(4);
             this.date2.Name = "date2";
-            this.date2.Size = new System.Drawing.Size(107, 22);
+            this.date2.Size = new System.Drawing.Size(133, 22);
             this.date2.TabIndex = 32;
             // 
             // check3
@@ -194,7 +194,7 @@
             this.grid.BackgroundColor = System.Drawing.Color.Coral;
             this.grid.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle1.BackColor = System.Drawing.Color.Coral;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
@@ -204,9 +204,10 @@
             this.grid.DefaultCellStyle = dataGridViewCellStyle1;
             this.grid.Location = new System.Drawing.Point(652, 39);
             this.grid.Name = "grid";
+            this.grid.ReadOnly = true;
             this.grid.RowHeadersWidth = 51;
             this.grid.RowTemplate.Height = 24;
-            this.grid.Size = new System.Drawing.Size(201, 234);
+            this.grid.Size = new System.Drawing.Size(246, 234);
             this.grid.TabIndex = 34;
             // 
             // infoPictureBox_cons2
@@ -237,7 +238,7 @@
             this.returnbtn.FlatAppearance.BorderColor = System.Drawing.Color.OrangeRed;
             this.returnbtn.Font = new System.Drawing.Font("Barlow Condensed", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.returnbtn.ForeColor = System.Drawing.Color.OrangeRed;
-            this.returnbtn.Location = new System.Drawing.Point(694, 298);
+            this.returnbtn.Location = new System.Drawing.Point(719, 292);
             this.returnbtn.Margin = new System.Windows.Forms.Padding(4);
             this.returnbtn.Name = "returnbtn";
             this.returnbtn.Size = new System.Drawing.Size(123, 44);
@@ -251,7 +252,7 @@
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
             this.pictureBox1.Location = new System.Drawing.Point(626, 27);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(253, 322);
+            this.pictureBox1.Size = new System.Drawing.Size(302, 322);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 39;
             this.pictureBox1.TabStop = false;
@@ -261,7 +262,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.SeaShell;
-            this.ClientSize = new System.Drawing.Size(904, 361);
+            this.ClientSize = new System.Drawing.Size(958, 361);
             this.Controls.Add(this.returnbtn);
             this.Controls.Add(this.infoPictureBox_cons3);
             this.Controls.Add(this.infoPictureBox_cons2);

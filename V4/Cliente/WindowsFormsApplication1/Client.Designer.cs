@@ -409,6 +409,7 @@
             this.playersonlineGrid.GridColor = System.Drawing.SystemColors.MenuText;
             this.playersonlineGrid.Location = new System.Drawing.Point(761, 64);
             this.playersonlineGrid.Name = "playersonlineGrid";
+            this.playersonlineGrid.ReadOnly = true;
             dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.MenuText;
             dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -462,6 +463,7 @@
             this.invitationsGrid.GridColor = System.Drawing.SystemColors.MenuText;
             this.invitationsGrid.Location = new System.Drawing.Point(761, 235);
             this.invitationsGrid.Name = "invitationsGrid";
+            this.invitationsGrid.ReadOnly = true;
             dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.MenuText;
             dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));

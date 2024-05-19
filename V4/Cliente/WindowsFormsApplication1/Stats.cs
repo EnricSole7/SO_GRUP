@@ -86,22 +86,41 @@ namespace WindowsFormsApplication1
             this.ResultsList.Clear();
             this.GamesList.Clear();
 
+            DelegateRESETGRID del = new DelegateRESETGRID(RESETGRID);
+            grid.Invoke(del);
+
             string error = llista.Split('|')[0];
 
             if (error == "error")
             {
                 if (consulta == 1)
                 {
-                    MessageBox.Show("You have no games played so far", "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(llista.Split('|')[1], "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 if (consulta == 2)
                 {
-                    MessageBox.Show(error, "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(llista.Split('|')[1], "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                if (consulta == 3)
+                {
+                    MessageBox.Show(llista.Split('|')[1], "Client", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             else
             {
-                llista = llista + " ";
+                string spliting;
+
+                if (consulta != 3)
+                {
+                    spliting = " ";
+                    llista += spliting;
+                }
+                else
+                {
+                    spliting = "|";
+                    llista += spliting;
+                }
+
                 int i = 0;
                 int separador;
                 string intermid = null;
@@ -109,7 +128,8 @@ namespace WindowsFormsApplication1
 
                 while (i < llista.Length)
                 {
-                    separador = llista.IndexOf(" ", i);
+                    separador = llista.IndexOf(spliting, i);
+
                     while (i < separador)
                     {
                         intermid += llista[i];
@@ -137,8 +157,8 @@ namespace WindowsFormsApplication1
                     i++;
                 }
 
-                DelegateSETGRID del = new DelegateSETGRID(SETGRID);
-                grid.Invoke(del, new object[] { consulta, row_counter });
+                DelegateSETGRID del1 = new DelegateSETGRID(SETGRID);
+                grid.Invoke(del1, new object[] { consulta, row_counter });
             }
 
         }
@@ -148,15 +168,16 @@ namespace WindowsFormsApplication1
             MessageBox.Show("" +
             "                 Message Format:\n" +
             "   If multiple names, separate them by a blank space\n" +
-            "              i.e. : Harry Paula Maia", "Formato de introducción", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            "              i.e. : Harry Paula Maia", "Format", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void infoPictureBox_cons3_Click(object sender, EventArgs e)
         {
             MessageBox.Show("" +
-            "              Message Format:\n" +
-            " Display Day/Month/Year - Month with no 0 added\n" +
-            "             i.e. : 11/5/2021", "Formato de introducción", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            "                        Message Format:\n" +
+            "  Display Day/Month/Year hour:minutes - Month with no 0 added\n" +
+            "Please, make sure the second date is bigger than the first one\n" +
+            "                     i.e. : 11-5-2021 17:14", "Format", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void returnbtn_Click(object sender, EventArgs e)
@@ -175,8 +196,8 @@ namespace WindowsFormsApplication1
         delegate void DelegateSETGRID(int consulta, int rows);
         public void SETGRID(int consulta, int rows)
         {
-            grid.ColumnCount = 1;
             grid.Rows.Clear();
+            grid.ColumnCount = 1;
             grid.RowCount = rows;
             grid.RowHeadersVisible = false;
             grid.ColumnHeadersVisible = false;
@@ -216,6 +237,13 @@ namespace WindowsFormsApplication1
             this.playertxt.Text = null;
             this.date1.Text = null;
             this.date2.Text = null;
+        }
+
+        delegate void DelegateRESETGRID();
+
+        public void RESETGRID()
+        {
+            this.grid.Rows.Clear();
         }
 
 
