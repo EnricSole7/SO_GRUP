@@ -41,10 +41,10 @@ namespace WindowsFormsApplication1
         Dictionary<string, string> GameInvitations = new Dictionary<string, string>();  //utilitzat per unir-se a partides
 
 
-        //private static IPAddress direc = IPAddress.Parse("10.4.119.5");
-        //private static IPEndPoint ipep = new IPEndPoint(direc, 50080);
-        private static IPAddress direc = IPAddress.Parse("192.168.56.102");
-        private static IPEndPoint ipep = new IPEndPoint(direc, 9093);
+        private static IPAddress direc = IPAddress.Parse("10.4.119.5");
+        private static IPEndPoint ipep = new IPEndPoint(direc, 50080);
+        //private static IPAddress direc = IPAddress.Parse("192.168.56.102");
+        //private static IPEndPoint ipep = new IPEndPoint(direc, 9093);
 
         public Client()
         {

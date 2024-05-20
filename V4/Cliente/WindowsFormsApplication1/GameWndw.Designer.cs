@@ -155,6 +155,7 @@
             this.timerManager = new System.Windows.Forms.Timer(this.components);
             this.setlifesTxt = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.infoPictureBox_game = new System.Windows.Forms.PictureBox();
             this.minigameBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.playersonlineGrid)).BeginInit();
             this.playersBox.SuspendLayout();
@@ -246,6 +247,7 @@
             this.optionsBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.infoPictureBox)).BeginInit();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.infoPictureBox_game)).BeginInit();
             this.SuspendLayout();
             // 
             // exitbtn
@@ -1574,12 +1576,24 @@
             this.groupBox1.TabIndex = 71;
             this.groupBox1.TabStop = false;
             // 
+            // infoPictureBox_game
+            // 
+            this.infoPictureBox_game.Image = ((System.Drawing.Image)(resources.GetObject("infoPictureBox_game.Image")));
+            this.infoPictureBox_game.Location = new System.Drawing.Point(402, 70);
+            this.infoPictureBox_game.Name = "infoPictureBox_game";
+            this.infoPictureBox_game.Size = new System.Drawing.Size(40, 39);
+            this.infoPictureBox_game.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.infoPictureBox_game.TabIndex = 72;
+            this.infoPictureBox_game.TabStop = false;
+            this.infoPictureBox_game.Click += new System.EventHandler(this.infoPictureBox_game_Click);
+            // 
             // GameWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.SeaShell;
             this.ClientSize = new System.Drawing.Size(1924, 1055);
+            this.Controls.Add(this.infoPictureBox_game);
             this.Controls.Add(this.setlifesTxt);
             this.Controls.Add(this.endgamebtn);
             this.Controls.Add(this.SetLifes);
@@ -1692,6 +1706,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.infoPictureBox)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.infoPictureBox_game)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1818,5 +1833,6 @@
         private System.Windows.Forms.TextBox setlifesTxt;
         private System.Windows.Forms.PictureBox infoPictureBox;
         private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.PictureBox infoPictureBox_game;
     }
 }

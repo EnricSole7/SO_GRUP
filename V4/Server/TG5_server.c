@@ -53,7 +53,7 @@ void *AtenderCliente (void *socket)
 	}
 	
 	//inicializar la conexion
-	conn = mysql_real_connect (conn, "localhost","root", "mysql", "TG5_data_base",0, NULL, 0);
+	conn = mysql_real_connect (conn, "shiva2.upc.es","root", "mysql", "TG5_data_base",0, NULL, 0);
 	//MYSQL *mysql, char *host, char *user, char *passwd, char *db, int port, char *unix_socket, long client_flag
 	
 	if (conn==NULL) 
@@ -933,8 +933,8 @@ int main(int argc, char *argv[])
 	//htonl formatea el numero que recibe al formato necesario
 	serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);
 	// escucharemos en el port 9050
-	int port = 50080;
-	serv_adr.sin_port = htons(9092);
+	int port = 50081;
+	serv_adr.sin_port = htons(port);
 	if (bind(socket_listen, (struct sockaddr *) &serv_adr, sizeof(serv_adr)) < 0)
 		printf ("Error al bind\n");
 	//La cola de peticiones pendientes no podr? ser superior a 4
@@ -2565,7 +2565,7 @@ void SymbolsRandomGeneration(int random_escogidas[5], int random_posiciones[5], 
 	//generamos las 5 imagenes que se tendrasn que descifrar
 	while (j < numplayers)
 	{
-		random = rand() % 40;
+		random = rand() % 60;
 		
 		while ((!equal) && (k < numplayers))
 		{

@@ -363,7 +363,7 @@ namespace WindowsFormsApplication1
 
             int k = 0;
             List<Image> vecimag = new List<Image>();
-            for (k = 0; k < 40; k++)
+            for (k = 0; k < 60; k++)
             {
                 vecimag.Add(Image.FromFile(@"imagenes/" + (k + 1) + ".png"));
             }
@@ -975,6 +975,20 @@ namespace WindowsFormsApplication1
             "  Ask the host to end the game to keep all the information", "Formato de introducción", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
+        private void infoPictureBox_game_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("" +
+            "                      SYMBOLS:\n" +
+            "In this game, the host has as many symbols as players\n" +
+            "there are in the game. The rest of the players have 5\n" +
+            " symbols each. The host has to describe to the other \n" +
+            "players the symbols that he has, so that they have to\n" +
+            "select them to pass to the next round. But be careful,\n" +
+            "if you make 3 mistakes, you lose, and the symbols are\n" +
+            "                   very similar...\n" +
+            "                    Good luck!", "Symbols", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
         ////////////////////////////////////////////////////    DELEGATES     /////////////////////////////////////////////////////////////////////////////////
 
         delegate void DelegatePRINTSERVER(string server, int numform);
@@ -1312,5 +1326,6 @@ namespace WindowsFormsApplication1
             Chat.Clear();
             this.Close();
         }
+
     }
 }
