@@ -44,7 +44,7 @@ namespace WindowsFormsApplication1
         //private static IPAddress direc = IPAddress.Parse("10.4.119.5");
         //private static IPEndPoint ipep = new IPEndPoint(direc, 50080);
         private static IPAddress direc = IPAddress.Parse("192.168.56.102");
-        private static IPEndPoint ipep = new IPEndPoint(direc, 9092);
+        private static IPEndPoint ipep = new IPEndPoint(direc, 9093);
 
         public Client()
         {
@@ -298,8 +298,11 @@ namespace WindowsFormsApplication1
                                             {
                                                 cont++;
                                                 string invit_mod = inviting + "#" + cont.ToString();
-                                                Invitations.Add(invit_mod);
-                                                GameInvitations.Add(invit_mod, datos_partida);
+                                                if (!Invitations.Contains(invit_mod))
+                                                {
+                                                    Invitations.Add(invit_mod);
+                                                    GameInvitations.Add(invit_mod, datos_partida);
+                                                }
                                             }
                                             j++;
                                         }
