@@ -1307,13 +1307,14 @@ namespace WindowsFormsApplication1
 
             timerManager.Interval = 3500;
             timerManager.Start();
-            this.endgameBox.Visible = true;
+            this.messageupdateBox.Visible = true;
         }
         private void timerManager_Tick(object sender, EventArgs e)
         {
             timerManager.Stop();
             this.nextroundBox.Visible = false;
             this.endgameBox.Visible = false;
+            this.messageupdateBox.Visible = false;
             this.symbolsBox.Enabled = true;
         }
 
