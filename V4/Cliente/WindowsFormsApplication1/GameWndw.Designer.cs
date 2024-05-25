@@ -156,6 +156,8 @@
             this.setlifesTxt = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.infoPictureBox_game = new System.Windows.Forms.PictureBox();
+            this.messageupdateBox = new System.Windows.Forms.GroupBox();
+            this.messageupdateLbl = new System.Windows.Forms.Label();
             this.minigameBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.playersonlineGrid)).BeginInit();
             this.playersBox.SuspendLayout();
@@ -248,6 +250,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.infoPictureBox)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.infoPictureBox_game)).BeginInit();
+            this.messageupdateBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // exitbtn
@@ -454,6 +457,7 @@
             // backscreenBox
             // 
             this.backscreenBox.BackColor = System.Drawing.Color.NavajoWhite;
+            this.backscreenBox.Controls.Add(this.messageupdateBox);
             this.backscreenBox.Controls.Add(this.endgameBox);
             this.backscreenBox.Controls.Add(this.pictureBox74);
             this.backscreenBox.Controls.Add(this.pictureBox64);
@@ -1416,7 +1420,7 @@
             dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle4.BackColor = System.Drawing.Color.Black;
             dataGridViewCellStyle4.Font = new System.Drawing.Font("Barlow Condensed", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.Color.Transparent;
+            dataGridViewCellStyle4.ForeColor = System.Drawing.Color.White;
             dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.Black;
             dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.White;
             dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
@@ -1587,6 +1591,27 @@
             this.infoPictureBox_game.TabStop = false;
             this.infoPictureBox_game.Click += new System.EventHandler(this.infoPictureBox_game_Click);
             // 
+            // messageupdateBox
+            // 
+            this.messageupdateBox.BackColor = System.Drawing.Color.Black;
+            this.messageupdateBox.Controls.Add(this.messageupdateLbl);
+            this.messageupdateBox.ForeColor = System.Drawing.Color.Transparent;
+            this.messageupdateBox.Location = new System.Drawing.Point(223, 523);
+            this.messageupdateBox.Name = "messageupdateBox";
+            this.messageupdateBox.Size = new System.Drawing.Size(702, 94);
+            this.messageupdateBox.TabIndex = 73;
+            this.messageupdateBox.TabStop = false;
+            // 
+            // messageupdateLbl
+            // 
+            this.messageupdateLbl.AutoSize = true;
+            this.messageupdateLbl.Font = new System.Drawing.Font("Barlow Condensed", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.messageupdateLbl.Location = new System.Drawing.Point(30, 29);
+            this.messageupdateLbl.Name = "messageupdateLbl";
+            this.messageupdateLbl.Size = new System.Drawing.Size(240, 40);
+            this.messageupdateLbl.TabIndex = 30;
+            this.messageupdateLbl.Text = "Ending game at round";
+            // 
             // GameWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -1707,6 +1732,8 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.infoPictureBox_game)).EndInit();
+            this.messageupdateBox.ResumeLayout(false);
+            this.messageupdateBox.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1834,5 +1861,7 @@
         private System.Windows.Forms.PictureBox infoPictureBox;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.PictureBox infoPictureBox_game;
+        private System.Windows.Forms.GroupBox messageupdateBox;
+        private System.Windows.Forms.Label messageupdateLbl;
     }
 }

@@ -138,7 +138,7 @@
             this.check1.FlatAppearance.BorderColor = System.Drawing.Color.OrangeRed;
             this.check1.Font = new System.Drawing.Font("Barlow Condensed", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.check1.ForeColor = System.Drawing.Color.OrangeRed;
-            this.check1.Location = new System.Drawing.Point(504, 39);
+            this.check1.Location = new System.Drawing.Point(540, 37);
             this.check1.Margin = new System.Windows.Forms.Padding(4);
             this.check1.Name = "check1";
             this.check1.Size = new System.Drawing.Size(115, 44);
@@ -153,7 +153,7 @@
             this.check2.FlatAppearance.BorderColor = System.Drawing.Color.OrangeRed;
             this.check2.Font = new System.Drawing.Font("Barlow Condensed", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.check2.ForeColor = System.Drawing.Color.OrangeRed;
-            this.check2.Location = new System.Drawing.Point(504, 131);
+            this.check2.Location = new System.Drawing.Point(540, 129);
             this.check2.Margin = new System.Windows.Forms.Padding(4);
             this.check2.Name = "check2";
             this.check2.Size = new System.Drawing.Size(115, 44);
@@ -176,7 +176,7 @@
             this.check3.FlatAppearance.BorderColor = System.Drawing.Color.OrangeRed;
             this.check3.Font = new System.Drawing.Font("Barlow Condensed", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.check3.ForeColor = System.Drawing.Color.OrangeRed;
-            this.check3.Location = new System.Drawing.Point(504, 229);
+            this.check3.Location = new System.Drawing.Point(540, 227);
             this.check3.Margin = new System.Windows.Forms.Padding(4);
             this.check3.Name = "check3";
             this.check3.Size = new System.Drawing.Size(115, 44);
@@ -202,7 +202,7 @@
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.OrangeRed;
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.grid.DefaultCellStyle = dataGridViewCellStyle1;
-            this.grid.Location = new System.Drawing.Point(652, 39);
+            this.grid.Location = new System.Drawing.Point(688, 37);
             this.grid.Name = "grid";
             this.grid.ReadOnly = true;
             this.grid.RowHeadersWidth = 51;
@@ -213,7 +213,7 @@
             // infoPictureBox_cons2
             // 
             this.infoPictureBox_cons2.Image = ((System.Drawing.Image)(resources.GetObject("infoPictureBox_cons2.Image")));
-            this.infoPictureBox_cons2.Location = new System.Drawing.Point(446, 136);
+            this.infoPictureBox_cons2.Location = new System.Drawing.Point(482, 134);
             this.infoPictureBox_cons2.Name = "infoPictureBox_cons2";
             this.infoPictureBox_cons2.Size = new System.Drawing.Size(40, 39);
             this.infoPictureBox_cons2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -224,7 +224,7 @@
             // infoPictureBox_cons3
             // 
             this.infoPictureBox_cons3.Image = ((System.Drawing.Image)(resources.GetObject("infoPictureBox_cons3.Image")));
-            this.infoPictureBox_cons3.Location = new System.Drawing.Point(446, 234);
+            this.infoPictureBox_cons3.Location = new System.Drawing.Point(482, 232);
             this.infoPictureBox_cons3.Name = "infoPictureBox_cons3";
             this.infoPictureBox_cons3.Size = new System.Drawing.Size(40, 39);
             this.infoPictureBox_cons3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -238,7 +238,7 @@
             this.returnbtn.FlatAppearance.BorderColor = System.Drawing.Color.OrangeRed;
             this.returnbtn.Font = new System.Drawing.Font("Barlow Condensed", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.returnbtn.ForeColor = System.Drawing.Color.OrangeRed;
-            this.returnbtn.Location = new System.Drawing.Point(719, 292);
+            this.returnbtn.Location = new System.Drawing.Point(755, 290);
             this.returnbtn.Margin = new System.Windows.Forms.Padding(4);
             this.returnbtn.Name = "returnbtn";
             this.returnbtn.Size = new System.Drawing.Size(123, 44);
@@ -250,7 +250,7 @@
             // pictureBox1
             // 
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(626, 27);
+            this.pictureBox1.Location = new System.Drawing.Point(662, 25);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(302, 322);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -262,7 +262,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.SeaShell;
-            this.ClientSize = new System.Drawing.Size(958, 361);
+            this.ClientSize = new System.Drawing.Size(985, 366);
             this.Controls.Add(this.returnbtn);
             this.Controls.Add(this.infoPictureBox_cons3);
             this.Controls.Add(this.infoPictureBox_cons2);

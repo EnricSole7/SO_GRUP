@@ -63,7 +63,8 @@ namespace WindowsFormsApplication1
             this.roundlbl.Visible = false;
             this.nextroundBox.Visible = false;
             this.endgameBox.Visible = false;
-            infoPictureBox.Visible = false;
+            this.infoPictureBox.Visible = false;
+            this.messageupdateBox.Visible = false;
 
             //
             this.setlifesTxt.Visible = false;
@@ -468,7 +469,13 @@ namespace WindowsFormsApplication1
             if (this.round == 1)
             {
                 gamestarted = true;
-                MessageBox.Show("The game has started!\nWatch out, you have " + contador_errors + " lives.", "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                string msg = "The game has started!\nWatch out, you have " + contador_errors + " lives";
+                DelegateMESSAGEUPDATE del1 = new DelegateMESSAGEUPDATE(MESSAGEUPDATE);
+                messageupdateLbl.Invoke(del1, new object[] { msg });
+
+                //MessageBox.Show("The game has started!\nWatch out, you have " + contador_errors + " lives.", "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
                 DelegateSYMBOLSBOX del3 = new DelegateSYMBOLSBOX(SYMBOLSBOX);
                 symbolsBox.Invoke(del3);
             }
@@ -747,7 +754,11 @@ namespace WindowsFormsApplication1
                 contador_found++;
                 if (contador_found != PLAYERS.Count)    //quan siguin iguals, enviarem una alta notificacio de canvi de ronda
                 {
-                    MessageBox.Show(sender + " has found a Symbol!\n" + contador_found + " out of " + PLAYERS.Count, "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    string msg = sender + " has found a Symbol!\n" + contador_found + " out of " + PLAYERS.Count;
+                    DelegateMESSAGEUPDATE del1 = new DelegateMESSAGEUPDATE(MESSAGEUPDATE);
+                    messageupdateLbl.Invoke(del1, new object[] { msg });
+
+                    //MessageBox.Show(sender + " has found a Symbol!\n" + contador_found + " out of " + PLAYERS.Count, "Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                     if (USER == PLAYERS[0])
                     {
@@ -772,7 +783,14 @@ namespace WindowsFormsApplication1
             {
                 contador_errors--;
                 if (contador_errors != 0)   //quan sigui 0, enviarem una altra notificacio que s ha acabat la partida
-                    MessageBox.Show(sender + " has missed...\nYou have " + contador_errors + " remaining lives", "Game", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                {
+
+                    string msg = sender + " has missed... You have " + contador_errors + " remaining lives";
+                    DelegateMESSAGEUPDATE del1 = new DelegateMESSAGEUPDATE(MESSAGEUPDATE);
+                    messageupdateLbl.Invoke(del1, new object[] { msg });
+                    
+                    //MessageBox.Show(sender + " has missed...\nYou have " + contador_errors + " remaining lives", "Game", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
             }
 
              if (USER == PLAYERS[0]) //NOMES EL HOST DEMANA EL CHECK DE LA RONDA
@@ -1247,6 +1265,7 @@ namespace WindowsFormsApplication1
         delegate void DelegateNEXTROUND(string name);
         public void NEXTROUND(string name)  //SHUFFLE NEXT ROUND MSG
         {
+            this.symbolsBox.Enabled = false;
             nextroundlbl1.Text = name;
             nextroundlbl2.Text = "has found the last Symbol!";
             nextroundlbl3.Text = "Starting next round";
@@ -1257,6 +1276,7 @@ namespace WindowsFormsApplication1
         delegate void DelegateSAMEROUND(string name);
         public void SAMEROUND(string name)  //SHUFFLE SAME ROUND MSG (player left)
         {
+            this.symbolsBox.Enabled = false;
             nextroundlbl1.Text = name;
             nextroundlbl2.Text = "     has disconnected     ";
             nextroundlbl3.Text = "Restarting round";
@@ -1267,6 +1287,7 @@ namespace WindowsFormsApplication1
         delegate void DelegateENDGAME(string msg);
         public void ENDGAME(string msg) //ENDING GAME (per dif motius)
         {
+            this.symbolsBox.Enabled = false;
             string[] tr = msg.Split('/');
             endgamelbl1.Text = tr[0];
             endgamelbl2.Text = tr[1];
@@ -1277,11 +1298,23 @@ namespace WindowsFormsApplication1
             timerManager.Start();
             this.endgameBox.Visible = true;
         }
+
+        delegate void DelegateMESSAGEUPDATE(string msg);
+        public void MESSAGEUPDATE(string msg) //ENDING GAME (per dif motius)
+        {
+            this.symbolsBox.Enabled = false;
+            messageupdateLbl.Text = msg;
+
+            timerManager.Interval = 3500;
+            timerManager.Start();
+            this.endgameBox.Visible = true;
+        }
         private void timerManager_Tick(object sender, EventArgs e)
         {
             timerManager.Stop();
             this.nextroundBox.Visible = false;
             this.endgameBox.Visible = false;
+            this.symbolsBox.Enabled = true;
         }
 
         delegate void DelegateSHOWPICTUREBOX();

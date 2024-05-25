@@ -2184,9 +2184,6 @@ int JoinGame(char invited[30], char inviting[30], char partida[60], char otherpl
 		return -1;
 	}
 	
-	//j + 1 ya que la row[j] para j = 1 es el id_2 (j + 1)
-	sprintf(index_id_to_ad, "id_j%d", j + 1);
-	sprintf(index_form_to_ad, "form_j%d", j + 1);
 	
 	//si solo esta el host, no se habra guardado el form en otherforms. lo anyadimos
 	if (t == 10)
@@ -2202,10 +2199,15 @@ int JoinGame(char invited[30], char inviting[30], char partida[60], char otherpl
 
 	id_to_ad = atoi(row[0]);
 	
+	//j + 1 ya que la row[j] para j = 1 es el id_2 (j + 1)
+	sprintf(index_id_to_ad, "id_j%d", j + 1);
+	
 	//anyadimos el id del jugador a la partida updateandola
 	sprintf (consulta, "UPDATE Game SET %s = %d WHERE id_j1 = %d AND id_s = %d AND fecha = '%s';", index_id_to_ad, id_to_ad, idplayerhost, idserver, date);
 	printf("JOINGAME : %s \n", consulta);
 	err = mysql_query(conn, consulta);
+	
+	sprintf(index_form_to_ad, "form_j%d", j + 1);
 	
 	//anyadimos el form del jugador a la partida updateandola
 	sprintf (consulta, "UPDATE Game SET %s = %d WHERE id_j1 = %d AND id_s = %d AND fecha = '%s';", index_form_to_ad, numForm, idplayerhost, idserver, date);
