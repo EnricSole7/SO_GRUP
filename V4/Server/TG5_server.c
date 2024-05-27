@@ -1311,6 +1311,8 @@ int GetListaResultados(char nombre[30], char nombres[200], char Lista[500], MYSQ
 	
 	iduser = atoi(row[0]);
 	
+	printf("GETLISTARESULTADOS user %s : %d\n", nombre, iduser);
+	
 	//puede haber varios jugadores, otro strtok
 	
 	char *h = strtok(nombres, " ");
@@ -1423,38 +1425,39 @@ int GetListaResultados(char nombre[30], char nombres[200], char Lista[500], MYSQ
 				}
 				j++;
 			}
-			if (!Iaminthegame)
+			if (Iaminthegame)
 			{
-				return -2;
-			}
-			printf("GETLISTARESULTADOS idspartidas: %d %d %d %d \n", idspartidas[0], idspartidas[1], idspartidas[2], idspartidas[3]);
-			k = 0;
-			j = 0;
-			while (ids[k] != -1)	//recorremos ids[k]
-			{
-				while ((j != 1) && (j < 4))	//recorremos idspartidas[j]
+				printf("GETLISTARESULTADOS idspartidas: %d %d %d %d \n", idspartidas[0], idspartidas[1], idspartidas[2], idspartidas[3]);
+				k = 0;
+				j = 0;
+				while (ids[k] != -1)	//recorremos ids[k]
 				{
-					if((idspartidas[j] == ids[k]) || (idspartidas[j] == iduser))
+					while ((idspartidas[j] != 1) && (j < 4))	//recorremos idspartidas[j]
 					{
-						cont++;
+						if((idspartidas[j] == ids[k]) || (idspartidas[j] == iduser))
+						{
+							cont++;
+						}
+						j++;
 					}
-					j++;
+					j = 0;
+					k++;
 				}
-				k++;
-			}
-			printf("GETLISTARESULTADOS cont %d\n", cont);
-			if (cont == numplayers)	//si en la partida hemos encontrado a todos los jugadores
-			{
-				printf("GETLISTARESULTADOS ronda %s\n", row[5]);
-				if (first)
+				printf("GETLISTARESULTADOS cont %d\n", cont);
+				if (cont == numplayers)	//si en la partida hemos encontrado a todos los jugadores
 				{
-					sprintf(Lista_cpy, "%s", row[5]);	//guardamos la ronda
-					first = false;
+					printf("GETLISTARESULTADOS ronda %s\n", row[5]);
+					if (first)
+					{
+						sprintf(Lista_cpy, "Round:%s", row[5]);	//guardamos la ronda
+						first = false;
+					}
+					else
+					{
+						sprintf(Lista_cpy, "%s Round:%s", Lista_cpy, row[5]);
+					}
 				}
-				else
-				{
-					sprintf(Lista_cpy, "%s %s", Lista_cpy, row[5]);
-				}
+				Iaminthegame = false;
 			}
 			row = mysql_fetch_row (resultado);
 			cont = 0;

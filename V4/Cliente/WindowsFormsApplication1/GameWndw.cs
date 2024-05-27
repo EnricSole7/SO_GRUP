@@ -66,6 +66,10 @@ namespace WindowsFormsApplication1
             this.infoPictureBox.Visible = false;
             this.messageupdateBox.Visible = false;
 
+            nextroundlbl1.Visible = true;
+            nextroundlbl2.Visible = true;
+            nextroundlbl3.Visible = true;
+
             //
             this.setlifesTxt.Visible = false;
             this.SetLifes.Visible = false;
@@ -470,7 +474,7 @@ namespace WindowsFormsApplication1
             {
                 gamestarted = true;
 
-                string msg = "The game has started!\nWatch out, you have " + contador_errors + " lives";
+                string msg = "The game has started! Watch out, you have " + contador_errors + " lifes";
                 DelegateMESSAGEUPDATE del1 = new DelegateMESSAGEUPDATE(MESSAGEUPDATE);
                 messageupdateLbl.Invoke(del1, new object[] { msg });
 
@@ -754,7 +758,7 @@ namespace WindowsFormsApplication1
                 contador_found++;
                 if (contador_found != PLAYERS.Count)    //quan siguin iguals, enviarem una alta notificacio de canvi de ronda
                 {
-                    string msg = sender + " has found a Symbol!\n" + contador_found + " out of " + PLAYERS.Count;
+                    string msg = sender + " has found a Symbol! " + contador_found + " out of " + PLAYERS.Count;
                     DelegateMESSAGEUPDATE del1 = new DelegateMESSAGEUPDATE(MESSAGEUPDATE);
                     messageupdateLbl.Invoke(del1, new object[] { msg });
 
@@ -785,7 +789,7 @@ namespace WindowsFormsApplication1
                 if (contador_errors != 0)   //quan sigui 0, enviarem una altra notificacio que s ha acabat la partida
                 {
 
-                    string msg = sender + " has missed... You have " + contador_errors + " remaining lives";
+                    string msg = sender + " has missed... You have " + contador_errors + " remaining lifes";
                     DelegateMESSAGEUPDATE del1 = new DelegateMESSAGEUPDATE(MESSAGEUPDATE);
                     messageupdateLbl.Invoke(del1, new object[] { msg });
                     
@@ -974,8 +978,7 @@ namespace WindowsFormsApplication1
                 endgamelbl1.Invoke(del1, new object[] { msgs });
             }
             gamestarted = false;
-            DelegateSYMBOLSBOX del = new DelegateSYMBOLSBOX(SYMBOLSBOX);
-            symbolsBox.Invoke(del);
+            
 
             this.contador_errors = 3;
             this.contador_found = 0;
@@ -1259,63 +1262,90 @@ namespace WindowsFormsApplication1
         delegate void DelegateROUNDSLBL(int round);
         public void ROUNDSLBL(int round)
         {
-            roundlbl.Text = "Round " + round.ToString();
+            this.roundlbl.Text = "Round " + round.ToString();
         }
 
         delegate void DelegateNEXTROUND(string name);
         public void NEXTROUND(string name)  //SHUFFLE NEXT ROUND MSG
         {
-            this.symbolsBox.Enabled = false;
-            nextroundlbl1.Text = name;
-            nextroundlbl2.Text = "has found the last Symbol!";
-            nextroundlbl3.Text = "Starting next round";
-            timerManager.Interval = 3000;
-            timerManager.Start();
+            //this.symbolsBox.Enabled = false;
+            this.picture1.Enabled = false; 
+            this.picture2.Enabled = false; 
+            this.picture3.Enabled = false;
+            this.picture4.Enabled = false;
+            this.picture5.Enabled = false;
             this.nextroundBox.Visible = true;
+            this.nextroundlbl1.Text = name;
+            this.nextroundlbl2.Text = "has found the last Symbol!";
+            this.nextroundlbl3.Text = "Starting next round";
+            this.timerManager.Interval = 3000;
+            this.timerManager.Start();
         }
         delegate void DelegateSAMEROUND(string name);
         public void SAMEROUND(string name)  //SHUFFLE SAME ROUND MSG (player left)
         {
-            this.symbolsBox.Enabled = false;
-            nextroundlbl1.Text = name;
-            nextroundlbl2.Text = "     has disconnected     ";
-            nextroundlbl3.Text = "Restarting round";
-            timerManager.Interval = 3000;
-            timerManager.Start();
+            this.picture1.Enabled = false;
+            this.picture2.Enabled = false;
+            this.picture3.Enabled = false;
+            this.picture4.Enabled = false;
+            this.picture5.Enabled = false;
+            this.nextroundlbl1.Text = name;
+            this.nextroundlbl2.Text = "     has disconnected     ";
+            this.nextroundlbl3.Text = "Restarting round";
+            this.timerManager.Interval = 3000;
+            this.timerManager.Start();
             this.nextroundBox.Visible = true;
         }
         delegate void DelegateENDGAME(string msg);
         public void ENDGAME(string msg) //ENDING GAME (per dif motius)
         {
-            this.symbolsBox.Enabled = false;
+            this.picture1.Enabled = false;
+            this.picture2.Enabled = false;
+            this.picture3.Enabled = false;
+            this.picture4.Enabled = false;
+            this.picture5.Enabled = false;
             string[] tr = msg.Split('/');
-            endgamelbl1.Text = tr[0];
-            endgamelbl2.Text = tr[1];
-            endgamelbl3.Text = tr[2];
-            endgamelbl4.Text = "Ending game at round " + this.round.ToString();
-            
-            timerManager.Interval = 3500;
-            timerManager.Start();
+            this.endgamelbl1.Text = tr[0];
+            this.endgamelbl2.Text = tr[1];
+            this.endgamelbl3.Text = tr[2];
+            this.endgamelbl4.Text = "Ending game at round " + this.round.ToString();
+
+            this.timerManager.Interval = 3500;
+            this.timerManager.Start();
             this.endgameBox.Visible = true;
         }
 
         delegate void DelegateMESSAGEUPDATE(string msg);
-        public void MESSAGEUPDATE(string msg) //ENDING GAME (per dif motius)
+        public void MESSAGEUPDATE(string msg)
         {
-            this.symbolsBox.Enabled = false;
-            messageupdateLbl.Text = msg;
+            this.picture1.Enabled = false;
+            this.picture2.Enabled = false;
+            this.picture3.Enabled = false;
+            this.picture4.Enabled = false;
+            this.picture5.Enabled = false;
+            this.messageupdateLbl.Text = msg;
 
-            timerManager.Interval = 3500;
-            timerManager.Start();
+            this.timerManager.Interval = 3500;
+            this.timerManager.Start();
             this.messageupdateBox.Visible = true;
         }
         private void timerManager_Tick(object sender, EventArgs e)
         {
-            timerManager.Stop();
+            this.timerManager.Stop();
             this.nextroundBox.Visible = false;
             this.endgameBox.Visible = false;
             this.messageupdateBox.Visible = false;
-            this.symbolsBox.Enabled = true;
+            this.picture1.Enabled = true;
+            this.picture2.Enabled = true;
+            this.picture3.Enabled = true;
+            this.picture4.Enabled = true;
+            this.picture5.Enabled = true;
+
+            if(gamestarted == false)
+            {
+                DelegateSYMBOLSBOX del = new DelegateSYMBOLSBOX(SYMBOLSBOX);
+                symbolsBox.Invoke(del);
+            }
         }
 
         delegate void DelegateSHOWPICTUREBOX();

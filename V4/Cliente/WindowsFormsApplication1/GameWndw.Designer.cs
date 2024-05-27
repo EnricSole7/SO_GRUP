@@ -52,6 +52,8 @@
             this.form_value = new System.Windows.Forms.Label();
             this.form_lbl = new System.Windows.Forms.Label();
             this.backscreenBox = new System.Windows.Forms.GroupBox();
+            this.messageupdateBox = new System.Windows.Forms.GroupBox();
+            this.messageupdateLbl = new System.Windows.Forms.Label();
             this.endgameBox = new System.Windows.Forms.GroupBox();
             this.endgamelbl3 = new System.Windows.Forms.Label();
             this.endgamelbl4 = new System.Windows.Forms.Label();
@@ -62,9 +64,6 @@
             this.pictureBox73 = new System.Windows.Forms.PictureBox();
             this.symbolsBox = new System.Windows.Forms.GroupBox();
             this.nextroundBox = new System.Windows.Forms.GroupBox();
-            this.nextroundlbl3 = new System.Windows.Forms.Label();
-            this.nextroundlbl2 = new System.Windows.Forms.Label();
-            this.nextroundlbl1 = new System.Windows.Forms.Label();
             this.picture5 = new System.Windows.Forms.PictureBox();
             this.picture4 = new System.Windows.Forms.PictureBox();
             this.picture3 = new System.Windows.Forms.PictureBox();
@@ -156,12 +155,14 @@
             this.setlifesTxt = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.infoPictureBox_game = new System.Windows.Forms.PictureBox();
-            this.messageupdateBox = new System.Windows.Forms.GroupBox();
-            this.messageupdateLbl = new System.Windows.Forms.Label();
+            this.nextroundlbl1 = new System.Windows.Forms.Label();
+            this.nextroundlbl2 = new System.Windows.Forms.Label();
+            this.nextroundlbl3 = new System.Windows.Forms.Label();
             this.minigameBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.playersonlineGrid)).BeginInit();
             this.playersBox.SuspendLayout();
             this.backscreenBox.SuspendLayout();
+            this.messageupdateBox.SuspendLayout();
             this.endgameBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox74)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox64)).BeginInit();
@@ -250,7 +251,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.infoPictureBox)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.infoPictureBox_game)).BeginInit();
-            this.messageupdateBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // exitbtn
@@ -458,7 +458,6 @@
             // 
             this.backscreenBox.BackColor = System.Drawing.Color.NavajoWhite;
             this.backscreenBox.Controls.Add(this.messageupdateBox);
-            this.backscreenBox.Controls.Add(this.endgameBox);
             this.backscreenBox.Controls.Add(this.pictureBox74);
             this.backscreenBox.Controls.Add(this.pictureBox64);
             this.backscreenBox.Controls.Add(this.pictureBox73);
@@ -540,6 +539,27 @@
             this.backscreenBox.TabIndex = 30;
             this.backscreenBox.TabStop = false;
             // 
+            // messageupdateBox
+            // 
+            this.messageupdateBox.BackColor = System.Drawing.Color.Black;
+            this.messageupdateBox.Controls.Add(this.messageupdateLbl);
+            this.messageupdateBox.ForeColor = System.Drawing.Color.Transparent;
+            this.messageupdateBox.Location = new System.Drawing.Point(223, 523);
+            this.messageupdateBox.Name = "messageupdateBox";
+            this.messageupdateBox.Size = new System.Drawing.Size(702, 94);
+            this.messageupdateBox.TabIndex = 73;
+            this.messageupdateBox.TabStop = false;
+            // 
+            // messageupdateLbl
+            // 
+            this.messageupdateLbl.AutoSize = true;
+            this.messageupdateLbl.Font = new System.Drawing.Font("Barlow Condensed", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.messageupdateLbl.Location = new System.Drawing.Point(30, 29);
+            this.messageupdateLbl.Name = "messageupdateLbl";
+            this.messageupdateLbl.Size = new System.Drawing.Size(240, 40);
+            this.messageupdateLbl.TabIndex = 30;
+            this.messageupdateLbl.Text = "Ending game at round";
+            // 
             // endgameBox
             // 
             this.endgameBox.BackColor = System.Drawing.Color.Black;
@@ -548,7 +568,7 @@
             this.endgameBox.Controls.Add(this.endgamelbl2);
             this.endgameBox.Controls.Add(this.endgamelbl1);
             this.endgameBox.ForeColor = System.Drawing.Color.Transparent;
-            this.endgameBox.Location = new System.Drawing.Point(391, 145);
+            this.endgameBox.Location = new System.Drawing.Point(318, 0);
             this.endgameBox.Name = "endgameBox";
             this.endgameBox.Size = new System.Drawing.Size(377, 358);
             this.endgameBox.TabIndex = 71;
@@ -625,6 +645,7 @@
             // 
             this.symbolsBox.BackColor = System.Drawing.Color.Black;
             this.symbolsBox.Controls.Add(this.nextroundBox);
+            this.symbolsBox.Controls.Add(this.endgameBox);
             this.symbolsBox.Controls.Add(this.picture5);
             this.symbolsBox.Controls.Add(this.picture4);
             this.symbolsBox.Controls.Add(this.picture3);
@@ -644,41 +665,11 @@
             this.nextroundBox.Controls.Add(this.nextroundlbl2);
             this.nextroundBox.Controls.Add(this.nextroundlbl1);
             this.nextroundBox.ForeColor = System.Drawing.Color.Transparent;
-            this.nextroundBox.Location = new System.Drawing.Point(324, 0);
+            this.nextroundBox.Location = new System.Drawing.Point(325, 0);
             this.nextroundBox.Name = "nextroundBox";
             this.nextroundBox.Size = new System.Drawing.Size(377, 358);
             this.nextroundBox.TabIndex = 70;
             this.nextroundBox.TabStop = false;
-            // 
-            // nextroundlbl3
-            // 
-            this.nextroundlbl3.AutoSize = true;
-            this.nextroundlbl3.Font = new System.Drawing.Font("Barlow Condensed", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.nextroundlbl3.Location = new System.Drawing.Point(78, 221);
-            this.nextroundlbl3.Name = "nextroundlbl3";
-            this.nextroundlbl3.Size = new System.Drawing.Size(222, 40);
-            this.nextroundlbl3.TabIndex = 30;
-            this.nextroundlbl3.Text = "Next round starting!";
-            // 
-            // nextroundlbl2
-            // 
-            this.nextroundlbl2.AutoSize = true;
-            this.nextroundlbl2.Font = new System.Drawing.Font("Barlow Condensed", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.nextroundlbl2.Location = new System.Drawing.Point(58, 151);
-            this.nextroundlbl2.Name = "nextroundlbl2";
-            this.nextroundlbl2.Size = new System.Drawing.Size(277, 40);
-            this.nextroundlbl2.TabIndex = 29;
-            this.nextroundlbl2.Text = "has found the las Symbol!";
-            // 
-            // nextroundlbl1
-            // 
-            this.nextroundlbl1.AutoSize = true;
-            this.nextroundlbl1.Font = new System.Drawing.Font("Barlow Condensed", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.nextroundlbl1.Location = new System.Drawing.Point(140, 82);
-            this.nextroundlbl1.Name = "nextroundlbl1";
-            this.nextroundlbl1.Size = new System.Drawing.Size(73, 40);
-            this.nextroundlbl1.TabIndex = 28;
-            this.nextroundlbl1.Text = "name";
             // 
             // picture5
             // 
@@ -1420,7 +1411,7 @@
             dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle4.BackColor = System.Drawing.Color.Black;
             dataGridViewCellStyle4.Font = new System.Drawing.Font("Barlow Condensed", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle4.ForeColor = System.Drawing.Color.Transparent;
             dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.Black;
             dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.White;
             dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
@@ -1591,26 +1582,35 @@
             this.infoPictureBox_game.TabStop = false;
             this.infoPictureBox_game.Click += new System.EventHandler(this.infoPictureBox_game_Click);
             // 
-            // messageupdateBox
+            // nextroundlbl1
             // 
-            this.messageupdateBox.BackColor = System.Drawing.Color.Black;
-            this.messageupdateBox.Controls.Add(this.messageupdateLbl);
-            this.messageupdateBox.ForeColor = System.Drawing.Color.Transparent;
-            this.messageupdateBox.Location = new System.Drawing.Point(223, 523);
-            this.messageupdateBox.Name = "messageupdateBox";
-            this.messageupdateBox.Size = new System.Drawing.Size(702, 94);
-            this.messageupdateBox.TabIndex = 73;
-            this.messageupdateBox.TabStop = false;
+            this.nextroundlbl1.AutoSize = true;
+            this.nextroundlbl1.Font = new System.Drawing.Font("Barlow Condensed", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.nextroundlbl1.Location = new System.Drawing.Point(149, 69);
+            this.nextroundlbl1.Name = "nextroundlbl1";
+            this.nextroundlbl1.Size = new System.Drawing.Size(73, 40);
+            this.nextroundlbl1.TabIndex = 31;
+            this.nextroundlbl1.Text = "name";
             // 
-            // messageupdateLbl
+            // nextroundlbl2
             // 
-            this.messageupdateLbl.AutoSize = true;
-            this.messageupdateLbl.Font = new System.Drawing.Font("Barlow Condensed", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.messageupdateLbl.Location = new System.Drawing.Point(30, 29);
-            this.messageupdateLbl.Name = "messageupdateLbl";
-            this.messageupdateLbl.Size = new System.Drawing.Size(240, 40);
-            this.messageupdateLbl.TabIndex = 30;
-            this.messageupdateLbl.Text = "Ending game at round";
+            this.nextroundlbl2.AutoSize = true;
+            this.nextroundlbl2.Font = new System.Drawing.Font("Barlow Condensed", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.nextroundlbl2.Location = new System.Drawing.Point(56, 172);
+            this.nextroundlbl2.Name = "nextroundlbl2";
+            this.nextroundlbl2.Size = new System.Drawing.Size(73, 40);
+            this.nextroundlbl2.TabIndex = 32;
+            this.nextroundlbl2.Text = "name";
+            // 
+            // nextroundlbl3
+            // 
+            this.nextroundlbl3.AutoSize = true;
+            this.nextroundlbl3.Font = new System.Drawing.Font("Barlow Condensed", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.nextroundlbl3.Location = new System.Drawing.Point(56, 265);
+            this.nextroundlbl3.Name = "nextroundlbl3";
+            this.nextroundlbl3.Size = new System.Drawing.Size(73, 40);
+            this.nextroundlbl3.TabIndex = 33;
+            this.nextroundlbl3.Text = "name";
             // 
             // GameWindow
             // 
@@ -1639,6 +1639,8 @@
             this.playersBox.ResumeLayout(false);
             this.playersBox.PerformLayout();
             this.backscreenBox.ResumeLayout(false);
+            this.messageupdateBox.ResumeLayout(false);
+            this.messageupdateBox.PerformLayout();
             this.endgameBox.ResumeLayout(false);
             this.endgameBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox74)).EndInit();
@@ -1732,8 +1734,6 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.infoPictureBox_game)).EndInit();
-            this.messageupdateBox.ResumeLayout(false);
-            this.messageupdateBox.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1848,9 +1848,6 @@
         private System.Windows.Forms.Button endgamebtn;
         private System.Windows.Forms.Label roundlbl;
         private System.Windows.Forms.GroupBox nextroundBox;
-        private System.Windows.Forms.Label nextroundlbl1;
-        private System.Windows.Forms.Label nextroundlbl3;
-        private System.Windows.Forms.Label nextroundlbl2;
         private System.Windows.Forms.Timer timerManager;
         private System.Windows.Forms.GroupBox endgameBox;
         private System.Windows.Forms.Label endgamelbl4;
@@ -1863,5 +1860,8 @@
         private System.Windows.Forms.PictureBox infoPictureBox_game;
         private System.Windows.Forms.GroupBox messageupdateBox;
         private System.Windows.Forms.Label messageupdateLbl;
+        private System.Windows.Forms.Label nextroundlbl3;
+        private System.Windows.Forms.Label nextroundlbl2;
+        private System.Windows.Forms.Label nextroundlbl1;
     }
 }
