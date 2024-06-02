@@ -13,4 +13,7 @@ Video de la Versió 4 del projecte:
      --- https://youtu.be/FeRGQ3XBPLg
 
 Video de la Versió 5 del projecte:
-     --- https://youtu.be/umOngjaFU1A
+     --- https://youtu.be/umOngjaFU1A 
+     
+Video de la versión final del projecte:
+     --- https://youtu.be/Oy915rP0TBU
